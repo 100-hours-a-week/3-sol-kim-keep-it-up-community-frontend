@@ -49,25 +49,26 @@
         <form class="signupForm" action="" method="post">
             <div class = "flex-container column">
                 <b>이메일*</b>
-                <input type="text" class="email" placeholder="이메일을 입력하세요">
+                <input type="text" class="email" name = "email" placeholder="이메일을 입력하세요">
                 <p class = "helper-text email"></p>
             </div>
             
             <div class = "flex-container column">
                 <b>비밀번호*</b>
-                <input type="password" class="password" placeholder="비밀번호를 입력하세요">
+                <!--get을 쓰려면 name을 써야 한다. -->
+                <input type="password" class="password" name = "password" placeholder="비밀번호를 입력하세요">
                 <p class = "helper-text password"></p>
             </div>
 
             <div class = "flex-container column">
                 <b>비밀번호 확인*</b>
-                <input type="password" class="password-verification" placeholder="비밀번호를 한 번 더 입력하세요">
+                <input type="password" class="password-verification" name = "password-verification" placeholder="비밀번호를 한 번 더 입력하세요">
                 <p class = "helper-text password-verification"></p>
             </div>
             
             <div class = "flex-container column">
                 <b>닉네임*</b>
-                <input type="text" class="nickname" placeholder="닉네임을 입력하세요">
+                <input type="text" class="nickname" name = "nickname" placeholder="닉네임을 입력하세요">
                 <p class = "helper-text nickname"></p>
             </div>
 
