@@ -77,16 +77,19 @@ form.addEventListener('submit', async (e) => {
                   body: JSON.stringify({ email, password, nickname })
             });
 
-            if (!response.ok) {
+            if (response.status === 409) {
                   const errorData = await response.json();
                   console.error(errorData);
-                  throw new Error(`회원가입에 실패했습니다`);
-            } else if (response.status === 409) {
+                  
                   if (errorData.message.includes('Email')) {
                         emailHelperText.textContent = '이미 사용 중인 이메일입니다.';
                   } else if (errorData.message.includes('Nickname')) {
                         nicknameHelperText.textContent = '이미 사용 중인 닉네임입니다.';
                   }
+            } else if (!response.ok) {
+                  const errorData = await response.json();
+                  console.error(errorData);
+                  throw new Error(`회원가입에 실패했습니다`);
             } else {
                   alert('회원가입되었습니다. 로그인 페이지로 이동합니다.');
                   location.href = 'auth/signin.html';
