@@ -1,0 +1,68 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Righteous&display=swap");
+
+@import "reset.css";
+@import "variables.css";
+
+/* Components */
+@import "components/header.css";
+@import "components/footer.css";
+@import "components/button.css";
+@import "components/detail.css";
+@import "components/post_list.css";
+@import "components/post_form.css";
+@import "components/post.css";
+@import "components/comment.css";
+@import "components/autocomplete.css";
+
+/* Pages */
+/* @import "pages/main.css"; */
+@import "pages/post_list.css";
+@import "pages/auth.css";
+@import "pages/signup.css";
+@import "pages/signin.css";
+@import "pages/profile_update.css";
+@import "pages/password_reset.css";
+
+html {
+  /* min-width: 1440px; */
+}
+
+body {
+  font-family: "Noto Sans KR", sans-serif;
+  background-color: var(--bg);
+  color: var(--d-gray);
+}
+
+/* .container {
+  width: 1040px;
+  padding: 0;
+} */
+
+/* .container2 {
+  width: 990px;
+  min-height: 100vh;
+  margin-left: 50px;
+} */
+
+/* flex 기본 */
+.flex-container { display: flex; }
+
+/* 메인축 정렬 (justify-content) */
+.justify-start   { justify-content: flex-start; }
+.justify-center  { justify-content: center; }
+.justify-end     { justify-content: flex-end; }
+.justify-between { justify-content: space-between; }
+.justify-around  { justify-content: space-around; }
+
+/* 교차축 정렬 (align-items) */
+.align-start   { align-items: flex-start; }
+.align-center  { align-items: center; }
+.align-end     { align-items: flex-end; }
+.align-stretch { align-items: stretch; }
+
+/* 방향/간격 유틸(선택) */
+.column { flex-direction: column; }
+.row    { flex-direction: row; }
+.gap-8  { gap: 8px; }
+.gap-16 { gap: 16px; }
