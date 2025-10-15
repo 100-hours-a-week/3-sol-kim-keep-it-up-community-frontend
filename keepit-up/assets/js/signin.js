@@ -1,6 +1,9 @@
 import { API_BASE } from './config.js';
 
-const form = document.querySelector('form.signinForm'); // form에서 클래스 이름이 signinForm인 요소 선택
+
+export default function signInInit() {
+
+const form = document.querySelector('form.signin_form'); // form에서 클래스 이름이 signin_form인 요소 선택
 const btn = form.querySelector('button');
 
 const emailInput = form.querySelector('input.email'); // input에서 클래스 이름이 email인 요소 선택 
@@ -62,7 +65,7 @@ form.addEventListener('submit', async (e) => {
                   // sessionStorage.setItem('token', data.token);
                   // sessionStorage.setItem('profileImage', data.profileImage);
                   // sessionStorage.setItem('email', email);
-                  localStorage.setItem('id', data.id);
+                  localStorage.setItem('userId', data.id);
             }
             
             location.href = '/posts/index.html';
@@ -72,3 +75,5 @@ form.addEventListener('submit', async (e) => {
             btn.disabled = false;
       }
 });
+
+}
