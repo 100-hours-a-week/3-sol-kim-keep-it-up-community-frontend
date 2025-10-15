@@ -53,8 +53,9 @@ form.addEventListener('submit', async (e) => {
             } else {
                   alert('로그인되었습니다.');
                   // sessionStorage.setItem('token', data.token);
+                  // sessionStorage.setItem('profileImage', data.profileImage);
                   // sessionStorage.setItem('email', email);
-                  // sessionStorage.setItem('id', data.id);
+                  sessionStorage.setItem('id', data.id);
             }
             
             location.href = 'auth/signin.html';
