@@ -110,7 +110,7 @@ form.addEventListener('submit', async (e) => {
                   throw new Error(`회원가입에 실패했습니다`);
             } else {
                   alert('회원가입되었습니다. 로그인 페이지로 이동합니다.');
-                  location.href = 'auth/signin.html';
+                  location.href = '/auth/signin.html';
             }
             
       } catch (err) {

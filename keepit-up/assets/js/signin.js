@@ -65,7 +65,7 @@ form.addEventListener('submit', async (e) => {
                   localStorage.setItem('id', data.id);
             }
             
-            location.href = 'auth/signin.html';
+            location.href = '/posts/index.html';
       } catch (err) {
             alert('회원가입 실패: ' + err.message);
       } finally {
