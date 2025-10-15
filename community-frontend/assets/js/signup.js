@@ -13,6 +13,24 @@ const passwordInput = form.querySelector('input.password');
 const passwordConfirmInput = form.querySelector('input.password-verification');
 const nicknameInput = form.querySelector('input.nickname');
 
+function updateButtonState() {
+      const allFilled =
+      emailInput.value.trim() !== '' &&
+      passwordInput.value.trim() !== '' &&
+      passwordConfirmInput.value.trim() !== '' &&
+      nicknameInput.value.trim() !== '';
+
+      const noErrors =
+      emailHelperText.textContent.trim() === '' &&
+      passwordHelperText.textContent.trim() === '' &&
+      passwordConfirmHelperText.textContent.trim() === '' &&
+      nicknameHelperText.textContent.trim() === '';
+
+      btn.disabled = !(allFilled && noErrors);
+}
+
+[emailInput, passwordInput, passwordConfirmInput, nicknameInput].forEach(inputElement => inputElement.addEventListener('input', updateButtonState));
+
 emailInput.addEventListener('input', () => {
       const email = emailInput.value;
       if (email == undefined || email.trim() === '') {
