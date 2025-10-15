@@ -1,14 +1,14 @@
-import { API_BASE } from '../api/config.js';
+import { API_BASE } from './config.js';
 
 export default function passwordUpdateInit() {
-    const passwordResetForm = document.querySelector('form.password_reset_form');
-    const btn = passwordResetForm.querySelector('button.update-button');
+    const passwordUpdateForm = document.querySelector('form.password_update_form');
+    const btn = passwordUpdateForm.querySelector('button.update-button');
 
-    const passwordHelperText = passwordResetForm.querySelector('.helper-text.password');
-    const passwordConfirmHelperText = passwordResetForm.querySelector('.helper-text.password-verification');
+    const passwordHelperText = passwordUpdateForm.querySelector('.helper-text.password');
+    const passwordConfirmHelperText = passwordUpdateForm.querySelector('.helper-text.password-verification');
 
-    const passwordInput = passwordResetForm.querySelector('input.password');
-    const passwordConfirmInput = passwordResetForm.querySelector('input.password-verification');
+    const passwordInput = passwordUpdateForm.querySelector('input.password');
+    const passwordConfirmInput = passwordUpdateForm.querySelector('input.password-verification');
 
     function updateButtonState() {
         const allFilled =
@@ -22,11 +22,9 @@ export default function passwordUpdateInit() {
         btn.disabled = !(allFilled && noErrors);
     }
 
-    [passwordInput, passwordConfirmInput].forEach(inputElement => inputElement.addEventListener('input', updateButtonState));
-
     passwordInput.addEventListener('input', () => {
         const password = passwordInput.value;
-        if (password.length < 8 ||
+        if (password.length < 8 || 
             password.length > 20 ||
             !/[a-z]/.test(password) ||
             !/[A-Z]/.test(password) ||
@@ -36,6 +34,7 @@ export default function passwordUpdateInit() {
         } else {
             passwordHelperText.textContent = '';
         }
+        updateButtonState();
     });
 
     passwordConfirmInput.addEventListener('input', () => {
@@ -47,18 +46,20 @@ export default function passwordUpdateInit() {
         } else {
             passwordConfirmHelperText.textContent = '';
         }
+        updateButtonState();
     }); 
 
-    passwordResetForm.addEventListener('submit', async (e) => {
+    passwordUpdateForm.addEventListener('submit', async (e) => {
         try {
             console.log('button clicked');
             e.preventDefault();
             btn.disabled = true;
-            const formData = new FormData(passwordResetForm);
-            const password = formData.get('password');
+            const formData = new FormData(passwordUpdateForm);
+            const password = formData.get('password'); // 인풋 필드가 name="password"를 가져야 한다. 
+
             const userId = sessionStorage.getItem('userId');
 
-            const response = await fetch(`${API_BASE}/users/${userId}`, {
+            const response = await fetch(`${API_BASE}/users/${userId}/password`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ password }),
@@ -79,3 +80,5 @@ export default function passwordUpdateInit() {
         }
     });
 }
+
+passwordUpdateInit();
