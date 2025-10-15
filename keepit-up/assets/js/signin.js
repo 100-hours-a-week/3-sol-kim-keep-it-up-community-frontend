@@ -1,20 +1,25 @@
 import { API_BASE } from './config.js';
 
-const form = document.querySelector('form.signinForm');
+const form = document.querySelector('form.signinForm'); // form에서 클래스 이름이 signinForm인 요소 선택
 const btn = form.querySelector('button');
 
-const helperText = form.querySelector('.helper-text.password');
+const emailInput = form.querySelector('input.email'); // input에서 클래스 이름이 email인 요소 선택 
+const passwordInput = form.querySelector('input.password');
+const helperText = form.querySelector('.helper-text');
 
-helperText.addEventListener('input', () => {
-      const password = form.querySelector('input.password').value;
-      const email = form.querySelector('input.email').value;
+function updateButtonState() {
+      const password = passwordInput.value;
+      const email = emailInput.value;
 
       if (email == undefined || email.trim() === '') {
             helperText.textContent = '이메일을 입력해주세요.';
+            btn.disabled = true;
       } else if (!/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(email)) {
             helperText.textContent = '올바른 이메일 주소 형식을 입력해주세요. (예: example@example.com)';
+            btn.disabled = true;
       } else if (password == undefined || password.trim() === '') {
             helperText.textContent = '비밀번호를 입력해주세요.';
+            btn.disabled = true;
       } else if (password.length < 8 ||
             password.length > 20 ||
             !/[a-z]/.test(password) ||
@@ -22,12 +27,14 @@ helperText.addEventListener('input', () => {
             !/[0-9]/.test(password) ||
             !/[`~!@#$%^&*()-_=+]/.test(password)) {
             helperText.textContent = '비밀번호는 8자 이상 20자 이하이며, 대문자, 소문자, 숫자, 특수문자를 각각 최소 1개 포함해야 합니다.';
+            btn.disabled = true;
       } else {
             helperText.textContent = '';
             btn.disabled = false;
-            btn.style.backgroundColor = '#7f6aee'; // 활성화 시 버튼 색상 변경
       }
-});
+};
+
+[emailInput, passwordInput].forEach(e => e.addEventListener('input', updateButtonState));
 
 form.addEventListener('submit', async (e) => {
       try {
@@ -55,7 +62,7 @@ form.addEventListener('submit', async (e) => {
                   // sessionStorage.setItem('token', data.token);
                   // sessionStorage.setItem('profileImage', data.profileImage);
                   // sessionStorage.setItem('email', email);
-                  sessionStorage.setItem('id', data.id);
+                  localStorage.setItem('id', data.id);
             }
             
             location.href = 'auth/signin.html';
