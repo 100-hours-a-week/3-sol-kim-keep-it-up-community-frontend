@@ -53,19 +53,22 @@ form.addEventListener('submit', async (e) => {
                   body: JSON.stringify({ email, password }),
             });
 
-            const data = await response.json();
+            const response_json = await response.json();
             if (response.status == 401) {
-                  console.error(data);
+                  console.error(response_json);
                   throw new Error(`아이디 또는 비밀번호를 확인해주세요.`);
             } else if (!response.ok) {
-                  console.error(data);
+                  console.error(response_json);
                   throw new Error(`로그인에 실패했습니다.`);
             } else {
-                  alert('로그인되었습니다.');
+                  console.log('response_json:',response_json);
                   // sessionStorage.setItem('token', data.token);
                   // sessionStorage.setItem('profileImage', data.profileImage);
                   // sessionStorage.setItem('email', email);
-                  localStorage.setItem('userId', data.id);
+                  console.log('userId:', response_json.data.id);
+                  sessionStorage.setItem('userId', response_json.data.id);
+                  
+                  alert('로그인되었습니다.');
             }
             
             location.href = '/posts/index.html';

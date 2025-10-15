@@ -1,6 +1,6 @@
 import { API_BASE } from './config.js';
 
-export default function profileUpdateInit() {
+export default async function profileUpdateInit() {
 
     const email = document.querySelector('.email');
     const nicknameInput = document.querySelector('input.nickname');
@@ -8,25 +8,21 @@ export default function profileUpdateInit() {
 
     const updateButton = document.querySelector('.update-button');
 
-    const userId = localStorage.getItem('userId');
+    const userId = sessionStorage.getItem('userId');
     console.log('userId:', userId);
     
     // 사용자 정보 가져오기
-    fetch(`${API_BASE}/users/${userId}`, {
+    const response = await fetch(`${API_BASE}/users/${userId}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
             // 'Authorization': `Bearer ${sessionStorage.getItem('token')}`
         },
-    })
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-            email.textContent = data.email;
-        })
-        .catch(error => {
-            console.error('Error fetching user data:', error);
-        });
+    });
+    const response_json = await response.json();
+    console.log(response_json);
+    email.textContent = response_json.data.email;
+    nicknameInput.value = response_json.data.nickname;
 
     nicknameInput.addEventListener('input', () => {
         const nickname = nicknameInput.value;
@@ -36,6 +32,7 @@ export default function profileUpdateInit() {
             nicknameHelperText.textContent = '닉네임은 최대 10자까지 가능합니다.';
         } else {
             nicknameHelperText.textContent = '';
+            updateButton.disabled = false;
         }
     });
 
@@ -62,6 +59,7 @@ export default function profileUpdateInit() {
             } else {
                 alert('회원정보가 수정되었습니다.');
                 // sessionStorage.setItem('nickname', nickname);
+                location.href = '/posts/index.html';
             }
         } catch (error) {
             alert(error.message);
