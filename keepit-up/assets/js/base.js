@@ -9,17 +9,11 @@ headerInit();
 
 if (document.querySelector('form.signin_form')) {
     signInInit();
-}
-
-if (document.querySelector('form.signup_form')) {
+} else if (document.querySelector('form.signup_form')) {
     signUpInit();
-}
-
-if (document.querySelector('form.profile_update_form')) {
+} else if (document.querySelector('form.profile_update_form')) {
     profileUpdateInit();
-}   
-
-if (document.querySelector('form.password_update_form')) {
+} else if (document.querySelector('form.password_update_form')) {
     passwordUpdateInit();
 }
 
