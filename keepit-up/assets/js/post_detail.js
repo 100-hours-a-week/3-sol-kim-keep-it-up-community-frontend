@@ -125,6 +125,13 @@ function renderComments(comments) {
     });
 }
 
+const response = await fetch(`${API_BASE}/posts/${postId}/viewcount`, {
+    method: 'PATCH',    
+    headers: { 'Content-Type': 'application/json' },
+})
+const response_json = await response.json();
+console.log(response_json);
+
 fetchPost().then(post => {
     console.log('post:', post);
     renderPost(post);
@@ -134,6 +141,8 @@ fetchComments().then(comments => {
     console.log('comments:', comments);
     renderComments(comments);
 });
+
+
 
 commentForm.addEventListener('submit', async (e) => {
     try {
