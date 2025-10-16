@@ -6,6 +6,38 @@ const commentsSection = postDetailSection.querySelector('.comments-section');
 const commentForm = commentsSection.querySelector('form.comment-form');
 const commentList = commentsSection.querySelector('.comments-list');
 
+const postEditButton = postSection.querySelector('.post-edit-button');
+const postDeleteButton = postSection.querySelector('.post-delete-button');
+
+postEditButton.addEventListener('click', () => {
+    const postId = new URLSearchParams(window.location.search).get('postId');
+    window.location.href = `/posts/post_edit.html?postId=${postId}`;
+});
+
+postDeleteButton.addEventListener('click', async () => {
+    try {
+        const postId = new URLSearchParams(window.location.search).get('postId');
+        const response = await fetch(`${API_BASE}/posts/${postId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                // 'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+            },
+        });
+        const data = await response.json();
+        if (response.ok) {
+            alert('게시글이 삭제되었습니다.');
+            window.location.href = '/posts/post_list.html';
+        } else {
+            console.error(data);
+            throw new Error(`게시글 삭제에 실패했습니다.`);
+        }
+    } catch (error) {
+        console.error(error);
+        alert(error.message);
+    }
+});
+
 const postId = new URLSearchParams(window.location.search).get('postId');
 console.log('postId:', postId);
 
@@ -54,9 +86,14 @@ function renderPost(post) {
     postCreatedAt.textContent = post.createdAt;
     postContent.textContent = post.contents;
     postLikesCount.textContent = post.likesCount;
-    // postViewsCount.textContent = post.viewsCount;
-    // postCommentsCount.textContent = post.commentsList.length;
-}
+    postViewsCount.textContent = post.viewsCount;
+    postCommentsCount.textContent = post.commentsCount;
+
+    if (post.writer.id !== parseInt(userId)) {
+        postSection.querySelector('.post-edit-button').style.display = 'none';
+        postSection.querySelector('.post-delete-button').style.display = 'none';
+    }
+} 
 
 function renderComments(comments) {
     comments.forEach(comment => {
@@ -65,24 +102,24 @@ function renderComments(comments) {
                 `
                 <div class = "post-comment">
                     <div>
-                        <img src="${comment.writer.imageUrl}" alt="댓글 작성자 사진">
+                        <img src="${comment.writer.imageUrl}" alt="">
                         <span class = "comment-author">${comment.writer.nickname}</span>
                         <span class = "comment-date">${comment.createdAt}</span>
                         <button class = "comment-edit-button">수정</button>
                         <button class = "comment-delete-button">삭제</button>
                     </div>
-                    <p class = "comment-content">${comment.content}</p>
+                    <p class = "comment-content">${comment.contents}</p>
                 </div>`;
         } else {
             commentList.innerHTML +=
             `
                 <div class = "post-comment">
                     <div>
-                        <img src="${comment.writer.imageUrl}" alt="댓글 작성자 사진">
+                        <img src="${comment.writer.imageUrl}" alt="">
                         <span class = "comment-author">${comment.writer.nickname}</span>
                         <span class = "comment-date">${comment.createdAt}</span> 
                     </div>
-                    <p class = "comment-content">${comment.content}</p>
+                    <p class = "comment-content">${comment.contents}</p>
                 </div>`;
         }
     });

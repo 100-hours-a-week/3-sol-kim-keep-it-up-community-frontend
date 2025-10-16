@@ -4,7 +4,7 @@ const postList = document.querySelector('.post-list');
 const postCreateButton = document.querySelector('.post-create-button');
 
 postCreateButton.addEventListener('click', () => {
-    window.location.href = '/posts/post_create.html';
+    window.location.href = '/posts/post_edit.html';
 });
 
 const response = await fetch(`${API_BASE}/posts`, {
