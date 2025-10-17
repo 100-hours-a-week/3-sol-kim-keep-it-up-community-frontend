@@ -9,6 +9,9 @@ const commentList = commentsSection.querySelector('.comments-list');
 const postEditButton = postSection.querySelector('.post-edit-button');
 const postDeleteButton = postSection.querySelector('.post-delete-button');
 
+/*
+ Event Listeners
+*/
 postEditButton.addEventListener('click', () => {
     const postId = new URLSearchParams(window.location.search).get('postId');
     window.location.href = `/posts/post_edit.html?postId=${postId}`;
@@ -38,6 +41,9 @@ postDeleteButton.addEventListener('click', async () => {
     }
 });
 
+/*
+    Main Logic
+*/
 const postId = new URLSearchParams(window.location.search).get('postId');
 console.log('postId:', postId);
 
@@ -97,59 +103,116 @@ function renderPost(post) {
 
 function renderComments(comments) {
     comments.forEach(comment => {
-        if (comment.writer.id !== parseInt(userId)) {
-            commentList.innerHTML +=
-                `
+        commentList.innerHTML +=
+            `
                 <div class = "post-comment">
-                    <div>
+                    <div id=${comment.id}">
                         <img src="${comment.writer.imageUrl}" alt="">
                         <span class = "comment-author">${comment.writer.nickname}</span>
                         <span class = "comment-date">${comment.createdAt}</span>
                         <button class = "comment-edit-button">수정</button>
                         <button class = "comment-delete-button">삭제</button>
                     </div>
-                    <p class = "comment-content">${comment.contents}</p>
+                    <p class = "comment-contents">${comment.contents}</p>
                 </div>`;
-        } else {
-            commentList.innerHTML +=
-            `
-                <div class = "post-comment">
-                    <div>
-                        <img src="${comment.writer.imageUrl}" alt="">
-                        <span class = "comment-author">${comment.writer.nickname}</span>
-                        <span class = "comment-date">${comment.createdAt}</span> 
-                    </div>
-                    <p class = "comment-content">${comment.contents}</p>
-                </div>`;
+        
+        // 댓글 작성자일 때만 수정, 삭제 버트 보이도록. 
+        if (comment.writer.id !== parseInt(userId)) {
+            commentList.querySelector('.comment-edit-button').style.display = 'none';
+            commentList.querySelector('.comment-delete-button').style.display = 'none';
         }
+
+        /*
+            댓글 수정 이벤트 리스너
+        */
+        const myCommentsEditButtons = commentList.querySelectorAll('.comment-edit-button');
+        myCommentsEditButtons.forEach((editButton, index) => {
+            editButton.addEventListener('click', () => {
+                console.log('수정 버튼 클릭 됨');
+                const commentContents = commentList.querySelectorAll('.comment-contents')[index];
+                const originalContents = commentContents.textContent;
+                commentContents.innerHTML =
+                    `<textarea class="edit-comment-textarea">${originalContents}</textarea>
+                <button class="save-comment-button">저장</button>
+                <button class="cancel-comment-button">취소</button>`;
+
+                const saveButton = commentContents.querySelector('.save-comment-button');
+                const cancelButton = commentContents.querySelector('.cancel-comment-button');
+                const editTextarea = commentContents.querySelector('.edit-comment-textarea');
+
+                saveButton.addEventListener('click', async () => {
+                    try {
+                        const updatedContents = editTextarea.value;
+                        const response = await fetch(`${API_BASE}/posts/${postId}/comments/${comment.id}`, {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ contents: updatedContents }),
+                        });
+                        const data = await response.json();
+                        if (!response.ok) {
+                            console.error(data);
+                            throw new Error(`댓글 수정에 실패했습니다.`);
+                        } else {
+                            alert('댓글이 수정되었습니다.');
+                            commentList.innerHTML = '';
+                            const comments = await fetchComments();
+                            renderComments(comments);
+                        }
+                    } catch (error) {
+                        console.error(error);
+                        alert(error.message);
+                    }
+                });
+            
+                cancelButton.addEventListener('click', () => {
+                    commentContents.textContent = originalContents;
+                });
+            });
+        });
+        /*
+            댓글 삭제 이벤트 리스너
+       */
+        const myCommentsDeleteButtons = commentList.querySelectorAll('.comment-delete-button');
+        myCommentsDeleteButtons.forEach((deleteButton, index) => {
+            deleteButton.addEventListener('click', async () => {
+                console.log('삭제 버튼 클릭 됨');
+
+                if (!confirm('정말로 댓글을 삭제하시겠습니까?')) return;
+
+                try {
+                    const response = await fetch(`${API_BASE}/posts/${postId}/comments/${comment.id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            // 'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+                        },
+                    });
+                    const data = await response.json();
+                    if (response.ok) {
+                        alert('댓글이 삭제되었습니다.');
+                        commentList.innerHTML = '';
+                        const comments = await fetchComments();
+                        renderComments(comments);
+                    } else {
+                        console.error(data);
+                        throw new Error(`댓글 삭제에 실패했습니다.`);
+                    }
+                } catch (error) {
+                    console.error(error);
+                    alert(error.message);
+                }
+            });
+        });
+        
     });
+    
 }
-
-const response = await fetch(`${API_BASE}/posts/${postId}/viewcount`, {
-    method: 'PATCH',    
-    headers: { 'Content-Type': 'application/json' },
-})
-const response_json = await response.json();
-console.log(response_json);
-
-fetchPost().then(post => {
-    console.log('post:', post);
-    renderPost(post);
-});
-
-fetchComments().then(comments => {
-    console.log('comments:', comments);
-    renderComments(comments);
-});
-
-
-
 commentForm.addEventListener('submit', async (e) => {
     try {
         console.log('button clicked');
         e.preventDefault();
         const formData = new FormData(commentForm);
-        const contents = formData.get('contents'); // 인풋 필드가 name="content"를 가져야 한다.
+        const contents = formData.get('contents'); // 인풋 필드가 name="contents"가 있어야 한다.
         console.log('content:', contents);
         const writerId = userId;
 
@@ -172,4 +235,21 @@ commentForm.addEventListener('submit', async (e) => {
         console.error(error);
         alert(error.message);
     }
+});
+
+const response = await fetch(`${API_BASE}/posts/${postId}/viewcount`, {
+    method: 'PATCH',    
+    headers: { 'Content-Type': 'application/json' },
+})
+const response_json = await response.json();
+console.log(response_json);
+
+fetchPost().then(post => {
+    console.log('post:', post);
+    renderPost(post);
+});
+
+fetchComments().then(comments => {
+    console.log('comments:', comments);
+    renderComments(comments);
 });
