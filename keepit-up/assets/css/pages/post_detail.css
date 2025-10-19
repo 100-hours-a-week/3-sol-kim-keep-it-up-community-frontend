@@ -1,0 +1,124 @@
+.post-detail-section {
+    width: 595px;
+}
+
+.post-detail-section .post-title {
+    margin-bottom: 24px;
+    font-weight: 500;
+}
+
+.post-detail-section .post-info > img {
+    width: 36px;
+    height: 36px;
+    background-color: #D9D9D9;
+    border-radius: 50%;
+}
+
+.post-detail-section .post-manage > button {
+    width: 50px;
+    height: 27px;
+    border-radius: 10px;
+    border-width: 1.5px;
+}
+
+.post-detail-section .post-author {
+    font-size: 15px;
+    margin-left: 10px;
+    margin-right: 8px;
+}
+
+.post-detail-section .post-created-at {
+    font-size: 14px;
+}
+.post-detail-section .info-box {
+    width: 116px;
+    height: 77px;
+    background-color: #D9D9D9;
+    border-radius: 16px;
+    margin: 8px;
+}
+
+.post-detail-section .post-content {
+    margin-top: 24px;
+    margin-bottom: 24px;
+}
+
+.post-detail-section .comments-section {
+    width: 595px;
+}
+
+.post-detail-section .comment-form {
+    min-height: 205px;
+    background-color: white;
+    border-radius: 12px;
+    padding: 10px;
+}
+
+.post-detail-section .comment-textarea {
+    border: none;
+    margin-top: 24px;
+    width: 100%;
+    flex: 1 1 auto;
+}
+
+.post-detail-section .comment-submit-button {
+    margin-top: 10px;
+}
+
+.post-detail-section .comment-form > hr {
+    margin: 0px;
+}
+
+.post-detail-section .comment-submit-button {
+    width: 138px;
+    height: 39px;
+    border-radius: 16px;
+    border: none;
+}
+
+.post-detail-section .post-comment {
+    width: 580px;
+    margin-top: 24px;
+    margin-bottom: 12px;
+}
+.post-detail-section .post-comment > img {
+    width: 36px;
+    height: 36px;
+    background-color: #D9D9D9;
+    border-radius: 18px;
+}
+
+.comment-header {
+    margin-left: 24px;
+    margin-bottom: 18px;
+    margin-right: 24px;
+}
+
+.post-comment img {
+    width: 36px;
+    height: 36px;
+    background-color: #D9D9D9;
+    border-radius: 50%;
+}
+
+.comment-author {
+    margin-left: 10px;
+    margin-right: 24px;
+}
+
+.comment-manage button {
+    border-radius: 8px;
+    width: 42px;
+    height: 24px;
+    border-width: 1px;
+}
+
+.comment-edit-button {
+    margin-right: 10px;
+
+}
+
+.comment-contents {
+    margin-left: 24px;
+    margin-right: 24px;
+}

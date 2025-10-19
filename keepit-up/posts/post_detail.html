@@ -12,22 +12,16 @@
 </head>
 <body>
     <header class="">
-        <div class="">
-            <a href="" class="header_logo"><img src="/assets/images/header_logo.svg" alt="header_logo"></a>
-            <div>
-                <div>
-                    <div>
-                        <a class="" href="/posts/post_list.html">Keepit-up</a>
-                    </div>
-                </div>
-                
-                <div>
-                    <a class="" href="/auth/signup.html"><span>회원가입</span></a>
-                    <a class="" href="/auth/signin.html"><span>로그인</span></a>
-                </div>
-                
+        <div class = "grid-container">
+            <div class = "flex-self justify-self-center align-center">
+                <!-- <a href="" class="header_logo"><img src="/assets/images/header_logo.svg" alt="header_logo"></a> -->
+                <a class="site-title" href="/posts/post_list.html">Keepit-up</a>
+            </div>
+            <div class = "flex-self justify-self-end align-center header-contents">
+                <a class="signup-button" href="/auth/signup.html"><span>회원가입</span></a>
+                <a class="signin-button" href="/auth/signin.html"><span>로그인</span></a>
                 <div class="after-login">
-                    <span class = "dropdown-button">내 프로필</span> <!-- 추후 이미지 파일로 변경-->
+                    <img class = "dropdown-button"></img> <!-- 추후 이미지 파일로 변경-->
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="/profile/profile_update.html">회원정보 수정</a></li>
                         <li><a class="dropdown-item" href="/profile/password_update.html">비밀번호 수정</a></li>
@@ -35,48 +29,51 @@
                     </ul>
                 </div>
             </div>
-            
-        
         </div>
     </header>
     <main>
-        <div class="flex-container justify-center align-center column">
+        <div class="main-container flex-container justify-center align-center column">
             <div class = "flex-container column post-detail-section">
                 <div class = "post-section">
-                    <span class = "post-title">제목</span>
-                    <div class = "post-info">
-                        <img src="" alt="작성자 사진">
-                        <span class = "post-author">작성자</span>
-                        <span class = "post-created-at">작성일</span> 
-                        <button class = "post-edit-button">수정</button>
-                        <button class = "post-delete-button">삭제</button>
+                    <h3 class = "post-title">제목</h3>
+                    <div class = "post-header flex-container justify-between align-center">
+                        <div class = "post-info flex-container align-center">
+                            <img src="" alt="">
+                            <span class = "post-author">작성자</span>
+                            <span class = "post-created-at">작성일</span> 
+                        </div>
+                        <div class = "post-manage">
+                            <button class = "post-edit-button">수정</button>
+                            <button class = "post-delete-button">삭제</button>
+                        </div>
                     </div>
                     <hr/>
-                    <div class = "post-content">내용</div>  
-                    <div class = "post-info-likes-view-comments">
-                        <div class = "info-box">
-                            <span class = "post-likes-count">0</span>
+                    <p class = "post-content">내용</p>  
+                    <div class = "post-info-likes-view-comments flex-container justify-center">
+                        <div class = "info-box flex-container justify-center column align-center">
+                            <span class = "">0</span>
                             <span class = "post-likes">좋아요</span> 
                         </div>
-                        <div class = "info-box">
+                        <div class = "info-box flex-container justify-center column align-center">
                             <span class = "post-views-count">0</span>
                             <span class = "post-views">조회수</span> 
                         </div>
-                        <div class = "info-box">
+                        <div class = "info-box flex-container justify-center column align-center">
                             <span class = "post-comments-count">0</span>
                             <span class = "post-comments">댓글</span> 
                         </div>
                     </div>
                 </div>
-                
                 <hr/>
-                <div class = "comments-section">
-                    <form class = "comment-form" action="" method="post">
-                        <textarea class = "comment-input" name  = "contents" placeholder="댓글을 남겨주세요!"></textarea>
+                <div class = "comments-section flex-container column">
+                    <form class = "comment-form flex-container column" action="" method="post">
+                        <textarea class = "comment-textarea" name  = "contents" placeholder="댓글을 남겨주세요!"></textarea>
                         <hr/>
-                        <button type = "submit" class = "comment-submit-button">댓글 등록</button>
+                        <div class ="flex-container justify-end">
+                            <button type = "submit" class = "comment-submit-button flex-self justify-center align-center">댓글 등록</button>
+                        </div>
                     </form>
-                    <div class = "comments-list">
+                    <div class = "comments-list flex-container justify-center column">
                     </div>
                 </div>
             </div>

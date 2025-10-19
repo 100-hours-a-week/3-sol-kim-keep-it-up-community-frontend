@@ -105,18 +105,22 @@ function renderComments(comments) {
     comments.forEach(comment => {
         commentList.innerHTML +=
             `
-                <div class = "post-comment">
-                    <div id=${comment.id}">
-                        <img src="${comment.writer.imageUrl}" alt="">
-                        <span class = "comment-author">${comment.writer.nickname}</span>
-                        <span class = "comment-date">${comment.createdAt}</span>
-                        <button class = "comment-edit-button">수정</button>
-                        <button class = "comment-delete-button">삭제</button>
+                <div class = "post-comment" id=${comment.id}">
+                    <div class = "comment-header flex-container justify-between align-center">
+                        <div class = "comment-info flex-container align-center">
+                            <img src="${comment.writer.imageUrl}" alt="">
+                            <span class = "comment-author">${comment.writer.nickname}</span>
+                            <span class = "comment-date">${comment.createdAt}</span>
+                        </div>
+                        <div class = "comment-manage flex-container align-center">
+                            <button class = "comment-edit-button">수정</button>
+                            <button class = "comment-delete-button">삭제</button>
+                        </div>
                     </div>
                     <p class = "comment-contents">${comment.contents}</p>
                 </div>`;
         
-        // 댓글 작성자일 때만 수정, 삭제 버트 보이도록. 
+        // 댓글 작성자일 때만 수정, 삭제 버튼 보이도록. 
         if (comment.writer.id !== parseInt(userId)) {
             commentList.querySelector('.comment-edit-button').style.display = 'none';
             commentList.querySelector('.comment-delete-button').style.display = 'none';
