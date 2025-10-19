@@ -136,9 +136,14 @@ function renderComments(comments) {
                 const commentContents = commentList.querySelectorAll('.comment-contents')[index];
                 const originalContents = commentContents.textContent;
                 commentContents.innerHTML =
-                    `<textarea class="edit-comment-textarea">${originalContents}</textarea>
-                <button class="save-comment-button">저장</button>
-                <button class="cancel-comment-button">취소</button>`;
+                    `<div class ="comment-edit-container flex-container column">
+                        <textarea class="edit-comment-textarea">${originalContents}</textarea>
+                        <div class = "button-container flex-container justify-end">
+                            <button class="save-comment-button">저장</button>
+                            <button class="cancel-comment-button">취소</button>
+                        </div>
+                    </div>
+                `;
 
                 const saveButton = commentContents.querySelector('.save-comment-button');
                 const cancelButton = commentContents.querySelector('.cancel-comment-button');

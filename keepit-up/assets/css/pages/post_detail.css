@@ -114,11 +114,32 @@
 }
 
 .comment-edit-button {
-    margin-right: 10px;
+    margin-right: 6px;
 
 }
 
 .comment-contents {
     margin-left: 24px;
     margin-right: 24px;
+}
+
+.comment-edit-container button {
+    border-radius: 8px;
+    width: 42px;
+    height: 24px;
+    border-width: 1px;
+}
+
+.comment-edit-container .button-container {
+    margin-top: 8px;
+}
+
+.comment-edit-container textarea {
+    padding: 8px;
+    border: none;
+    resize: none; 
+}
+
+.save-comment-button {
+    margin-right: 6px;
 }
