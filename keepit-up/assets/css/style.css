@@ -2,7 +2,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Righteous&display=swap");
 
 @import "reset.css";
-@import "variables.css";
+@import "variable.css";
 
 /* Components */
 @import "components/header.css";
@@ -28,11 +28,12 @@
 
 html {
   /* min-width: 1440px; */
+  background-color: var(--bg-white2);
 }
 
 body {
   font-family: "Noto Sans KR", sans-serif;
-  /* background-color: var(--bg-cream); */
+  background-color: var(--bg-white2);
   /* color: var(--d-gray); */
 }
 /* 
