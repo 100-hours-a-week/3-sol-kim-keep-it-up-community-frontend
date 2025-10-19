@@ -1,17 +1,23 @@
 import { API_BASE } from './config.js';
 
-const postForm = document.querySelector('form.post-form');
+const postForm = document.querySelector('form.post-edit-form');
 const submitButton = document.querySelector('.submit-button');
 const titleInput = postForm.querySelector('input.title');
-const contentsInput = postForm.querySelector('textarea.contents');
+const contentsTextArea = postForm.querySelector('textarea');
 const helperText = document.querySelector('span.helper-text');
 const writerId = sessionStorage.getItem('userId');
+
 function updateButtonState() {
     const allFilled =
         titleInput.value.trim() !== '' &&
-        contentsInput.value.trim() !== '';
+        contentsTextArea.value.trim() !== '';
 
     submitButton.disabled = !allFilled;
+}
+
+function autosize(textarea) {
+    textarea.style.height = 'auto';
+    textarea.style.height = `${textarea.scrollHeight}px`;
 }
 
 titleInput.addEventListener('input', () => {
@@ -23,7 +29,8 @@ titleInput.addEventListener('input', () => {
     updateButtonState();
 });
 
-contentsInput.addEventListener('input', () => {
+contentsTextArea.addEventListener('input', () => {
+    autosize(contentsTextArea);
     updateButtonState();
 });
 
@@ -41,6 +48,7 @@ if (postId) {
     console.log(response_json);
     postForm.querySelector('input.title').value = response_json.data.title;
     postForm.querySelector('textarea.contents').value = response_json.data.contents;
+    autosize(contentsTextArea);
 } 
 
 
