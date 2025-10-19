@@ -9,6 +9,12 @@ const commentList = commentsSection.querySelector('.comments-list');
 const postEditButton = postSection.querySelector('.post-edit-button');
 const postDeleteButton = postSection.querySelector('.post-delete-button');
 
+const postId = new URLSearchParams(window.location.search).get('postId');
+console.log('postId:', postId);
+
+const userId = sessionStorage.getItem('userId');
+console.log('userId:', userId);
+
 /*
     Event Listeners
 */
@@ -82,7 +88,41 @@ async function fetchComments() {
     console.log(response_json);
     return response_json.data;
 }
+/*
+    댓글 작성 API
+*/
 
+commentForm.addEventListener('submit', async (e) => {
+    try {
+        console.log('button clicked');
+        e.preventDefault();
+        const formData = new FormData(commentForm);
+        const contents = formData.get('contents'); // 인풋 필드가 name="contents"가 있어야 한다.
+        console.log('content:', contents);
+        const writerId = userId;
+
+        const response = await fetch(`${API_BASE}/posts/${postId}/comments`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ writerId, contents, postId }),
+        });
+        const data = await response.json();
+        if (!response.ok) {
+            console.error(data);
+            throw new Error(`댓글 작성에 실패했습니다.`);
+        } else {
+            alert('댓글이 작성되었습니다.');
+            commentForm.reset();
+            const comments = await fetchComments();
+            renderCommentsHTML(comments);
+            addEvenListenerToEditButtons();
+            addEvenListenerToDeleteButtons();
+        }
+    } catch (error) {
+        console.error(error);
+        alert(error.message);
+    }
+});
 /*
     functions
 */
@@ -117,11 +157,12 @@ function renderPost(post) {
     }
 } 
 
-function renderComments(comments) {
+function renderCommentsHTML(comments) {
+    commentList.innerHTML = ''
     comments.forEach(comment => {
         commentList.innerHTML +=
             `
-                <div class = "post-comment" id=${comment.id}">
+                <div class = "comment" id="${comment.id}">
                     <div class = "comment-header flex-container justify-between align-center">
                         <div class = "comment-info flex-container align-center">
                             <img src="${comment.writer.imageUrl}" alt="">
@@ -141,113 +182,131 @@ function renderComments(comments) {
             commentList.querySelector('.comment-edit-button').style.display = 'none';
             commentList.querySelector('.comment-delete-button').style.display = 'none';
         }
+    });
+    
+}
 
-        /*
-            댓글 수정 버튼
-        */
-        const myCommentsEditButtons = commentList.querySelectorAll('.comment-edit-button');
-        myCommentsEditButtons.forEach((editButton, index) => {
-            editButton.addEventListener('click', () => {
-                console.log('수정 버튼 클릭 됨');
-                
-                const commentContents = commentList.querySelectorAll('.comment-contents')[index];
-                const originalContents = commentContents.textContent;
+/*
+    댓글 수정 버튼
+*/
+function addEvenListenerToEditButtons() {
+    const myCommentsEditButtons = commentList.querySelectorAll('.comment-edit-button');
+    myCommentsEditButtons.forEach((editButton, index) => {
+        editButton.addEventListener('click', (e) => {
+            console.log('수정 버튼 클릭 됨');
+            const commentManageContainer = e.target.closest('.comment-manage');
+            const deleteButton = commentManageContainer.querySelector('.comment-delete-button');
+            deleteButton.style.display = 'none';
+            e.target.style.display = 'none';
 
-                commentContents.innerHTML =
-                    `<div class ="comment-edit-container flex-container column">
-                        <textarea class="edit-comment-textarea">${originalContents}</textarea>
-                        <div class = "button-container flex-container justify-end">
-                            <button class="save-comment-button">저장</button>
-                            <button class="cancel-comment-button">취소</button>
-                        </div>
+
+            const commentContents = commentList.querySelectorAll('.comment-contents')[index];
+            const originalContents = commentContents.textContent;
+
+            commentContents.innerHTML =
+                `<div class ="comment-edit-container flex-container column">
+                    <textarea class="edit-comment-textarea">${originalContents}</textarea>
+                    <div class = "button-container flex-container justify-end">
+                        <button class="save-comment-button">저장</button>
+                        <button class="cancel-comment-button">취소</button>
                     </div>
-                `;
+                </div>
+            `;
 
-                const saveButton = commentContents.querySelector('.save-comment-button');
-                const cancelButton = commentContents.querySelector('.cancel-comment-button');
-                const editTextarea = commentContents.querySelector('.edit-comment-textarea');
+            const commentEditContainer = commentContents.querySelector('.comment-edit-container');
+            const saveButton = commentEditContainer.querySelector('.save-comment-button');
+            const cancelButton = commentEditContainer.querySelector('.cancel-comment-button');
+            const editTextarea = commentEditContainer.querySelector('.edit-comment-textarea');
 
 
-                autosize(editTextarea);
-                editTextarea.addEventListener('input', () => autosize(editTextarea));
-                
-                saveButton.addEventListener('click', async () => {
-                    try {
-                        const updatedContents = editTextarea.value;
-                        const response = await fetch(`${API_BASE}/posts/${postId}/comments/${comment.id}`, {
-                            method: 'PATCH',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ contents: updatedContents }),
-                        });
-                        const data = await response.json();
-                        if (!response.ok) {
-                            console.error(data);
-                            throw new Error(`댓글 수정에 실패했습니다.`);
-                        } else {
-                            alert('댓글이 수정되었습니다.');
-                            commentList.innerHTML = '';
-                            const comments = await fetchComments();
-                            renderComments(comments);
-                        }
-                    } catch (error) {
-                        console.error(error);
-                        alert(error.message);
-                    }
-                });
+            autosize(editTextarea);
+            editTextarea.addEventListener('input', () => autosize(editTextarea));
             
-                cancelButton.addEventListener('click', () => {
-                    commentContents.textContent = originalContents;
-                });
-            });
-        });
-        /*
-            댓글 삭제 버튼
-       */
-        const myCommentsDeleteButtons = commentList.querySelectorAll('.comment-delete-button');
-        myCommentsDeleteButtons.forEach((deleteButton, index) => {
-            deleteButton.addEventListener('click', async () => {
-                console.log('삭제 버튼 클릭 됨');
-
-                if (!confirm('정말로 댓글을 삭제하시겠습니까?')) return;
-
+            /*
+                댓글 수정 후 저장 버튼
+            */
+            saveButton.addEventListener('click', async (e) => {
                 try {
-                    const response = await fetch(`${API_BASE}/posts/${postId}/comments/${comment.id}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            // 'Authorization': `Bearer ${sessionStorage.getItem('token')}`
-                        },
+                    const updatedContents = editTextarea.value;
+                    const commentId = e.target.closest('.comment').id;
+                    const response = await fetch(`${API_BASE}/posts/${postId}/comments/${commentId}`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ contents: updatedContents }),
                     });
                     const data = await response.json();
-                    if (response.ok) {
-                        alert('댓글이 삭제되었습니다.');
-                        commentList.innerHTML = '';
-                        const comments = await fetchComments();
-                        renderComments(comments);
-                    } else {
+                    if (!response.ok) {
                         console.error(data);
-                        throw new Error(`댓글 삭제에 실패했습니다.`);
+                        throw new Error(`댓글 수정에 실패했습니다.`);
+                    } else {
+                        alert('댓글이 수정되었습니다.');
+                        const comments = await fetchComments();
+                        renderCommentsHTML(comments);
+                        addEvenListenerToEditButtons();
+                        addEvenListenerToDeleteButtons();
                     }
                 } catch (error) {
                     console.error(error);
                     alert(error.message);
                 }
             });
+            
+            /*
+                댓글 수정 취소 버튼
+            */
+            cancelButton.addEventListener('click', () => {
+                commentContents.textContent = originalContents;
+                deleteButton.style.display = '';
+                e.target.style.display = '';
+            });
         });
-        
     });
-    
 }
 
+/*
+    댓글 삭제 버튼
+*/
+function addEvenListenerToDeleteButtons() {
+    const myCommentsDeleteButtons = commentList.querySelectorAll('.comment-delete-button');
+    myCommentsDeleteButtons.forEach((deleteButton, index) => {
+        deleteButton.addEventListener('click', async (e) => {
+            console.log('삭제 버튼 클릭 됨');
+
+            if (!confirm('정말로 댓글을 삭제하시겠습니까?')) return;
+
+            try {
+                const commentId = e.target.closest('.comment').id;
+                const response = await fetch(`${API_BASE}/posts/${postId}/comments/${commentId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        // 'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+                    },
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    alert('댓글이 삭제되었습니다.');
+                    commentList.innerHTML = '';
+                    const comments = await fetchComments();
+                    renderCommentsHTML(comments);
+                    addEvenListenerToEditButtons();
+                    addEvenListenerToDeleteButtons();
+                } else {
+                    console.error(data);
+                    throw new Error(`댓글 삭제에 실패했습니다.`);
+                }
+            } catch (error) {
+                console.error(error);
+                alert(error.message);
+            }
+        });
+    });
+}
 
 /*
     Main Logic
 */
-const postId = new URLSearchParams(window.location.search).get('postId');
-console.log('postId:', postId);
 
-const userId = sessionStorage.getItem('userId');
-console.log('userId:', userId);
 
 const response = await fetch(`${API_BASE}/posts/${postId}/viewcount`, {
     method: 'PATCH',    
@@ -263,5 +322,7 @@ fetchPost().then(post => {
 
 fetchComments().then(comments => {
     console.log('comments:', comments);
-    renderComments(comments);
+    renderCommentsHTML(comments);
+    addEvenListenerToEditButtons();
+    addEvenListenerToDeleteButtons();
 });

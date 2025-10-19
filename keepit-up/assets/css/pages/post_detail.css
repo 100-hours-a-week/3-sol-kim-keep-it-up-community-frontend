@@ -61,31 +61,28 @@
     flex: 1 1 auto;
 }
 
-.post-detail-section .comment-submit-button {
-    margin-top: 10px;
-}
-
 .post-detail-section .comment-form > hr {
     margin: 0px;
 }
 
 .post-detail-section .comment-submit-button {
+    margin-top: 10px;
     width: 138px;
     height: 39px;
     border-radius: 16px;
     border: none;
 }
 
-.post-detail-section .post-comment {
+.post-detail-section .comment {
     width: 580px;
     margin-top: 24px;
     margin-bottom: 12px;
 }
-.post-detail-section .post-comment > img {
+.post-detail-section .comment > img {
     width: 36px;
     height: 36px;
     background-color: #D9D9D9;
-    border-radius: 18px;
+    border-radius: 50%;
 }
 
 .comment-header {
@@ -94,7 +91,7 @@
     margin-right: 24px;
 }
 
-.post-comment img {
+.comment img {
     width: 36px;
     height: 36px;
     background-color: #D9D9D9;
