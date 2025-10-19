@@ -33,6 +33,10 @@ postEditButton.addEventListener('click', () => {
 postDeleteButton.addEventListener('click', async () => {
     try {
         const postId = new URLSearchParams(window.location.search).get('postId');
+        console.log('postId in deleteButtonEventLister', postId);
+        
+        if (!confirm('정말로 댓글을 삭제하시겠습니까?')) return;
+
         const response = await fetch(`${API_BASE}/posts/${postId}`, {
             method: 'DELETE',
             headers: {
