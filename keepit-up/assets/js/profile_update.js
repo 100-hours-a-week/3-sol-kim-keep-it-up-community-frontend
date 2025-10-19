@@ -59,7 +59,7 @@ export default async function profileUpdateInit() {
             } else {
                 alert('회원정보가 수정되었습니다.');
                 // sessionStorage.setItem('nickname', nickname);
-                location.href = '/posts/index.html';
+                location.href = '/posts/post_list.html';
             }
         } catch (error) {
             alert(error.message);

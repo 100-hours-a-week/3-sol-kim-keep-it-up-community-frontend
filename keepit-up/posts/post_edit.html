@@ -41,49 +41,31 @@
         </div>
     </header>
     <main>
-
-<div class="flex-container justify-center align-center column">
-    <h3> 회원가입</h3>
-    <form class="inputImg" method="post" enctype="multipart/form-data"> <!-- 이미지 파일 데이터에 알맞는 enctype 설정 -->
-        <div class=""> 
-            <img id="output" src="/assets/images/default_profile.png" alt="profile_img">
+        <div class="flex-container justify-center align-center column">
+                <h3> 게시글 작성</h3>
+            <div class = "flex-container column">
+                <form class="post-form" action="" method="post">
+                    <div class = "flex-container column">
+                        <b>제목*</b>
+                        <input type="text" class="title" name = "title" placeholder="제목을 입력하세요">
+                    </div>
+                    <hr/>
+                    <div class = "flex-container column">
+                        <b>내용*</b>
+                        <textarea class="contents" name = "contents" placeholder="내용을 입력하세요"></textarea>
+                    </div>
+                </form>
+                <hr/>
+                <span class = "helper-text">*helper text</span>
+                <form class="inputImg" method="post" enctype="multipart/form-data"> <!-- 이미지 파일 데이터에 알맞는 enctype 설정 -->
+                    <div class=""> 
+                        <img id="output" src="/assets/images/default_profile.png" alt="profile_img">
+                    </div>
+                    <input type="file" accept="" onchange="">
+                </form>
+                <button class = "submit-button" disabled type="submit">등록하기</button>
+            </div>
         </div>
-        <input type="file" accept="" onchange="">
-    </form>
-    <div class = "flex-container column">
-        <form class="signup_form" action="" method="post">
-            <div class = "flex-container column">
-                <b>이메일*</b>
-                <input type="text" class="email" name = "email" placeholder="이메일을 입력하세요">
-                <p class = "helper-text email"></p>
-            </div>
-            
-            <div class = "flex-container column">
-                <b>비밀번호*</b>
-                <!--get을 쓰려면 name을 써야 한다. -->
-                <input type="password" class="password" name = "password" placeholder="비밀번호를 입력하세요">
-                <p class = "helper-text password"></p>
-            </div>
-
-            <div class = "flex-container column">
-                <b>비밀번호 확인*</b>
-                <input type="password" class="password-verification" name = "password-verification" placeholder="비밀번호를 한 번 더 입력하세요">
-                <p class = "helper-text password-verification"></p>
-            </div>
-            
-            <div class = "flex-container column">
-                <b>닉네임*</b>
-                <input type="text" class="nickname" name = "nickname" placeholder="닉네임을 입력하세요">
-                <p class = "helper-text nickname"></p>
-            </div>
-
-            <button class = "authBtn" disabled type="submit">회원가입</button>
-        </form>
-        <a class="" href="/auth/signin.html">로그인하러 가기</a>
-    </div>
-    
-</div>
-        
     </main>
     <footer>
         <div class="container">
@@ -100,7 +82,7 @@
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/ionicons@4.5.10-0/dist/ionicons.js"></script>
-    <script type="module" src="/assets/js/signup.js"></script>
+    <script type="module" src="/assets/js/post_edit.js"></script>
     <script type="module" src="/assets/js/header.js"></script>
 </body>
 </html>

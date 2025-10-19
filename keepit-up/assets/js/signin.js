@@ -70,7 +70,7 @@ export default function signInInit() {
                         alert('로그인되었습니다.');
                   }
             
-                  location.href = '/posts/index.html';
+                  location.href = '/posts/post_list.html';
             } catch (err) {
                   alert('회원가입 실패: ' + err.message);
             } finally {
