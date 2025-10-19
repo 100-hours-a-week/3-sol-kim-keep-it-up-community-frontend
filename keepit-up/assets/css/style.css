@@ -18,6 +18,7 @@
 
 /* Pages */
 /* @import "pages/main.css"; */
+@import "pages/post_edit.css";
 @import "pages/post_list.css";
 @import "pages/post_detail.css";
 @import "pages/auth.css";

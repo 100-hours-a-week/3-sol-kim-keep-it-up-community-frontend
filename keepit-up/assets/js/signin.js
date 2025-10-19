@@ -72,7 +72,7 @@ export default function signInInit() {
             
                   location.href = '/posts/post_list.html';
             } catch (err) {
-                  alert('회원가입 실패: ' + err.message);
+                  alert('로그인 실패: ' + err.message);
             } finally {
                   btn.disabled = false;
             }

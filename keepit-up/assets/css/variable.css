@@ -1,10 +1,18 @@
 :root {
   --bg-white: #F4F5F7;
+  --bg-white2: #f5f5f5;
   --l-gray: #e6ebef;
   --m-gray: #8d98a6;
   --d-gray: #424b55;
   --bg-cream: #e0cfbd;
-  --blue: #447495;
+  --blue: #0147a5;
+  /* #3b5c8a; */
+  /* #0675b6; */
+  --sky-blue: #d0e2f2;
+   /* #c0d1dc; */
+  /* #468deb; */
+
+  /* #447495; */
 
   /* --space-20: 20px;
   --space-40: 40px; */
