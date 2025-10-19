@@ -10,6 +10,9 @@ export default function passwordUpdateInit() {
     const passwordInput = passwordUpdateForm.querySelector('input.password');
     const passwordConfirmInput = passwordUpdateForm.querySelector('input.password-verification');
 
+    /*
+        유효성 검사 통과 시 버튼 활성화
+    */
     function updateButtonState() {
         const allFilled =
             passwordInput.value.trim() !== '' &&
@@ -22,6 +25,9 @@ export default function passwordUpdateInit() {
         btn.disabled = !(allFilled && noErrors);
     }
 
+    /*
+        비밀번호 유효성 검사
+    */
     passwordInput.addEventListener('input', () => {
         const password = passwordInput.value;
         if (password.length < 8 || 
@@ -37,6 +43,9 @@ export default function passwordUpdateInit() {
         updateButtonState();
     });
 
+    /*
+        비밀번호 일치 여부 확인
+    */
     passwordConfirmInput.addEventListener('input', () => {
         const password = passwordInput.value;
         const passwordConfirm = passwordConfirmInput.value;
@@ -49,6 +58,9 @@ export default function passwordUpdateInit() {
         updateButtonState();
     }); 
 
+    /*
+        비밀번호 변경 API 연결
+    */
     passwordUpdateForm.addEventListener('submit', async (e) => {
         try {
             console.log('button clicked');

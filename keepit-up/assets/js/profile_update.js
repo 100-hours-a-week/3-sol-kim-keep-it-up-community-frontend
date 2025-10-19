@@ -24,6 +24,12 @@ export default async function profileUpdateInit() {
     email.textContent = response_json.data.email;
     nicknameInput.value = response_json.data.nickname;
 
+    /*
+        EVENT LISTENERS
+    */
+    /*
+        닉네임 수정 유효성 검사
+    */
     nicknameInput.addEventListener('input', () => {
         const nickname = nicknameInput.value;
         if (nickname == undefined || nickname.trim() === '') {
@@ -36,6 +42,9 @@ export default async function profileUpdateInit() {
         }
     });
 
+    /*
+        회원정보 수정 API
+    */
     updateButton.addEventListener('click', async (e) => {
         try {
             console.log('button clicked');

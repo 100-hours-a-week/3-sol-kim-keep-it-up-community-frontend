@@ -33,6 +33,9 @@ export default function signUpInit() {
 
       [emailInput, passwordInput, passwordConfirmInput, nicknameInput].forEach(inputElement => inputElement.addEventListener('input', updateButtonState));
 
+      /*
+        이메일 형식 유효성 검사
+      */
       emailInput.addEventListener('input', () => {
             const email = emailInput.value;
             if (email == undefined || email.trim() === '') {
@@ -44,6 +47,9 @@ export default function signUpInit() {
             }
       });
 
+      /*
+        비밀번호 유효성 검사
+      */
       passwordInput.addEventListener('input', () => {
             const password = passwordInput.value;
             if (password.length < 8 ||
@@ -58,6 +64,9 @@ export default function signUpInit() {
             }
       });
 
+      /*
+        비밀번호 확인
+      */
       passwordConfirmInput.addEventListener('input', () => {
             const passwordInput = form.querySelector('input.password').value;
             const passwordConfirmInput = form.querySelector('input.password-verification').value;
@@ -68,6 +77,9 @@ export default function signUpInit() {
             }
       });
 
+      /*
+       닉네임 유효성 검사
+      */
       nicknameInput.addEventListener('input', () => {
             const nickname = nicknameInput.value;
             if (nickname == undefined || nickname.trim() === '') {
@@ -81,6 +93,9 @@ export default function signUpInit() {
             }
       });
 
+      /*
+        회원가입 API
+      */
       form.addEventListener('submit', async (e) => {
             try {
                   console.log('button clicked');

@@ -38,6 +38,9 @@ export default function signInInit() {
 
       [emailInput, passwordInput].forEach(e => e.addEventListener('input', updateButtonState));
 
+      /*
+            로그인 API 
+      */
       form.addEventListener('submit', async (e) => {
             try {
                   console.log('button clicked');

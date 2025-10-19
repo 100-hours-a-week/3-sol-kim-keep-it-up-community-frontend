@@ -7,6 +7,9 @@ const contentsTextArea = postForm.querySelector('textarea');
 const helperText = document.querySelector('span.helper-text');
 const writerId = sessionStorage.getItem('userId');
 
+/*
+    FUNCTIONS
+*/
 function updateButtonState() {
     const allFilled =
         titleInput.value.trim() !== '' &&
@@ -20,6 +23,13 @@ function autosize(textarea) {
     textarea.style.height = `${textarea.scrollHeight}px`;
 }
 
+/*
+    EVENT LISTENERS
+*/
+
+/*
+    제목 작성
+*/
 titleInput.addEventListener('input', () => {
     if (titleInput.value.length > 26) { 
         helperText.textContent = '제목은 26자 이내로 작성해주세요.';
@@ -29,11 +39,17 @@ titleInput.addEventListener('input', () => {
     updateButtonState();
 });
 
+/*
+    내용 작성
+*/
 contentsTextArea.addEventListener('input', () => {
     autosize(contentsTextArea);
     updateButtonState();
 });
 
+/*
+    게시물 수정 초기 화면
+*/
 const postId = new URLSearchParams(window.location.search).get('postId');
 
 if (postId) {
@@ -51,7 +67,9 @@ if (postId) {
     autosize(contentsTextArea);
 } 
 
-
+/*
+    게시글 작성, 수정 API 
+*/
 submitButton.addEventListener('click', async (e) => {
     try {
         console.log('button clicked');

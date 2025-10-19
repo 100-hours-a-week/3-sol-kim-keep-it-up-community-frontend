@@ -3,10 +3,16 @@ import { API_BASE } from './config.js';
 const postList = document.querySelector('.post-list');
 const postCreateButton = document.querySelector('.post-create-button');
 
+/*
+    EVENT LISTENERS
+*/
 postCreateButton.addEventListener('click', () => {
     window.location.href = '/posts/post_edit.html';
 });
 
+/*
+    게시물 목록 API
+*/
 const response = await fetch(`${API_BASE}/posts`, {
     method: 'GET',
     headers: {
