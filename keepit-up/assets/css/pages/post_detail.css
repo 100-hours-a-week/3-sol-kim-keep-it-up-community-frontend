@@ -10,7 +10,7 @@
 .post-detail-section .post-info > img {
     width: 36px;
     height: 36px;
-    background-color: #D9D9D9;
+    background-color: var(--m-gray);
     border-radius: 50%;
 }
 
@@ -33,7 +33,7 @@
 .post-detail-section .info-box {
     width: 116px;
     height: 77px;
-    background-color: #D9D9D9;
+    background-color: var(--m-gray);
     border-radius: 16px;
     margin: 8px;
 }
@@ -81,7 +81,7 @@
 .post-detail-section .comment > img {
     width: 36px;
     height: 36px;
-    background-color: #D9D9D9;
+    background-color: var(--m-gray);
     border-radius: 50%;
 }
 
@@ -94,7 +94,7 @@
 .comment img {
     width: 36px;
     height: 36px;
-    background-color: #D9D9D9;
+    background-color: var(--m-gray);
     border-radius: 50%;
 }
 

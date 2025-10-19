@@ -2,12 +2,10 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <!-- <base href="/keepit-up/"> -->
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Keepit-Up 킵잇업</title>
-    <!-- / 루트에서 시작하지 않고 상대경로. base로 앞에 <base>를 두어야 한다. keepit-up이 붙는다. -->
     <link rel="shortcut icon" size="16X16" href="assets/css/img/favicon.ico">
     <link rel="stylesheet" type="text/css" href="/assets/css/style.css">
 </head>
@@ -45,7 +43,7 @@
                 <textarea class="contents" name = "contents" placeholder="내용을 입력하세요"></textarea>
                 <hr/>
                 <span class = "helper-text">*helper text</span>
-                <form class="inputImg" method="post" enctype="multipart/form-data"> <!-- 이미지 파일 데이터에 알맞는 enctype 설정 -->
+                <form class="inputImg" method="post" enctype="multipart/form-data">
                     <div class=""> 
                         <img id="output" src="" alt="">
                     </div>
@@ -67,7 +65,6 @@
             </div>
         </div>
     </footer>
-
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/ionicons@4.5.10-0/dist/ionicons.js"></script>
     <script type="module" src="/assets/js/post_edit.js"></script>

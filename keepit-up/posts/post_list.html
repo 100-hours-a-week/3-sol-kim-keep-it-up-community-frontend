@@ -2,7 +2,6 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <!-- <base href="/keepit-up/"> -->
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -31,21 +30,19 @@
             </div>
         </div>
     </header>
-
-<div class="main-container flex-container justify-center align-center column">
-    <h3>
-        오늘의 노력을 기록하고 서로를 응원해요!
-    </h3>
-    
-    <div class = "flex-container column">
-        <div class = "flex-container justify-end">
-            <button class = "post-create-button">게시글 작성</button>
+    <main>
+        <div class="main-container flex-container justify-center align-center column">
+            <h3>
+                오늘의 노력을 기록하고 서로를 응원해요!
+            </h3>
+            <div class = "flex-container column">
+                <div class = "flex-container justify-end">
+                    <button class = "post-create-button">게시글 작성</button>
+                </div>
+                <div class = "post-list">
+                </div>
+            </div>
         </div>
-        <div class = "post-list">
-        </div>
-    </div>
-    </div>
-        
     </main>
     <footer>
         <div class="container">
@@ -58,8 +55,6 @@
             </div>
         </div>
     </footer>
-
-
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/ionicons@4.5.10-0/dist/ionicons.js"></script>
     <script type="module" src="/assets/js/post_list.js"></script>
