@@ -10,13 +10,20 @@ const postEditButton = postSection.querySelector('.post-edit-button');
 const postDeleteButton = postSection.querySelector('.post-delete-button');
 
 /*
- Event Listeners
+    Event Listeners
+*/
+
+/*
+    게시물 수정 버튼
 */
 postEditButton.addEventListener('click', () => {
     const postId = new URLSearchParams(window.location.search).get('postId');
     window.location.href = `/posts/post_edit.html?postId=${postId}`;
 });
 
+/*
+    게시물 삭제 버튼
+*/
 postDeleteButton.addEventListener('click', async () => {
     try {
         const postId = new URLSearchParams(window.location.search).get('postId');
@@ -42,14 +49,11 @@ postDeleteButton.addEventListener('click', async () => {
 });
 
 /*
-    Main Logic
+    API 연결
 */
-const postId = new URLSearchParams(window.location.search).get('postId');
-console.log('postId:', postId);
-
-const userId = sessionStorage.getItem('userId');
-console.log('userId:', userId);
-
+/*
+    게시물 API
+*/
 async function fetchPost() {
     const response = await fetch(`${API_BASE}/posts/${postId}`, {
         method: 'GET',
@@ -63,6 +67,9 @@ async function fetchPost() {
     return response_json.data;
 }
 
+/*
+    댓글 목록 API
+*/
 async function fetchComments() {
     const response = await fetch(`${API_BASE}/posts/${postId}/comments`, {
         method: 'GET',
@@ -74,6 +81,15 @@ async function fetchComments() {
     const response_json = await response.json();
     console.log(response_json);
     return response_json.data;
+}
+
+/*
+    functions
+*/
+
+function autosize(textarea) {
+    textarea.style.height = 'auto';
+    textarea.style.height = `${textarea.scrollHeight}px`;
 }
 
 function renderPost(post) {
@@ -127,14 +143,16 @@ function renderComments(comments) {
         }
 
         /*
-            댓글 수정 이벤트 리스너
+            댓글 수정 버튼
         */
         const myCommentsEditButtons = commentList.querySelectorAll('.comment-edit-button');
         myCommentsEditButtons.forEach((editButton, index) => {
             editButton.addEventListener('click', () => {
                 console.log('수정 버튼 클릭 됨');
+                
                 const commentContents = commentList.querySelectorAll('.comment-contents')[index];
                 const originalContents = commentContents.textContent;
+
                 commentContents.innerHTML =
                     `<div class ="comment-edit-container flex-container column">
                         <textarea class="edit-comment-textarea">${originalContents}</textarea>
@@ -149,6 +167,10 @@ function renderComments(comments) {
                 const cancelButton = commentContents.querySelector('.cancel-comment-button');
                 const editTextarea = commentContents.querySelector('.edit-comment-textarea');
 
+
+                autosize(editTextarea);
+                editTextarea.addEventListener('input', () => autosize(editTextarea));
+                
                 saveButton.addEventListener('click', async () => {
                     try {
                         const updatedContents = editTextarea.value;
@@ -179,7 +201,7 @@ function renderComments(comments) {
             });
         });
         /*
-            댓글 삭제 이벤트 리스너
+            댓글 삭제 버튼
        */
         const myCommentsDeleteButtons = commentList.querySelectorAll('.comment-delete-button');
         myCommentsDeleteButtons.forEach((deleteButton, index) => {
@@ -216,35 +238,16 @@ function renderComments(comments) {
     });
     
 }
-commentForm.addEventListener('submit', async (e) => {
-    try {
-        console.log('button clicked');
-        e.preventDefault();
-        const formData = new FormData(commentForm);
-        const contents = formData.get('contents'); // 인풋 필드가 name="contents"가 있어야 한다.
-        console.log('content:', contents);
-        const writerId = userId;
 
-        const response = await fetch(`${API_BASE}/posts/${postId}/comments`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ writerId, contents, postId }),
-        });
-        const data = await response.json();
-        if (!response.ok) {
-            console.error(data);
-            throw new Error(`댓글 작성에 실패했습니다.`);
-        } else {
-            alert('댓글이 작성되었습니다.');
-            commentForm.reset();
-            const comments = await fetchComments();
-            renderComments(comments);
-        }
-    } catch (error) {
-        console.error(error);
-        alert(error.message);
-    }
-});
+
+/*
+    Main Logic
+*/
+const postId = new URLSearchParams(window.location.search).get('postId');
+console.log('postId:', postId);
+
+const userId = sessionStorage.getItem('userId');
+console.log('userId:', userId);
 
 const response = await fetch(`${API_BASE}/posts/${postId}/viewcount`, {
     method: 'PATCH',    
