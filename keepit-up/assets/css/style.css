@@ -2,7 +2,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Righteous&display=swap");
 
 @import "reset.css";
-@import "variables.css";
+@import "variable.css";
 
 /* Components */
 @import "components/header.css";
@@ -14,10 +14,13 @@
 @import "components/post.css";
 @import "components/comment.css";
 @import "components/autocomplete.css";
+@import "components/form.css";
 
 /* Pages */
 /* @import "pages/main.css"; */
+@import "pages/post_edit.css";
 @import "pages/post_list.css";
+@import "pages/post_detail.css";
 @import "pages/auth.css";
 @import "pages/signup.css";
 @import "pages/signin.css";
@@ -26,13 +29,18 @@
 
 html {
   /* min-width: 1440px; */
+  background-color: var(--bg-white2);
 }
 
 body {
   font-family: "Noto Sans KR", sans-serif;
-  background-color: var(--bg);
-  color: var(--d-gray);
+  background-color: var(--bg-white2);
+  /* color: var(--d-gray); */
 }
+/* 
+.main-container {
+  background-color: var(--bg-cream);
+} */
 
 /* .container {
   width: 1040px;
@@ -47,6 +55,9 @@ body {
 
 /* flex 기본 */
 .flex-container { display: flex; }
+.flex-self {display: inline-flex;}
+
+.grid-container {display: grid;}
 
 /* 메인축 정렬 (justify-content) */
 .justify-start   { justify-content: flex-start; }
@@ -54,6 +65,9 @@ body {
 .justify-end     { justify-content: flex-end; }
 .justify-between { justify-content: space-between; }
 .justify-around  { justify-content: space-around; }
+
+.justify-self-center  { justify-self: center; }
+.justify-self-end     { justify-self: end; }
 
 /* 교차축 정렬 (align-items) */
 .align-start   { align-items: flex-start; }
@@ -66,3 +80,8 @@ body {
 .row    { flex-direction: row; }
 .gap-8  { gap: 8px; }
 .gap-16 { gap: 16px; }
+
+
+a {
+  text-decoration: none;
+}

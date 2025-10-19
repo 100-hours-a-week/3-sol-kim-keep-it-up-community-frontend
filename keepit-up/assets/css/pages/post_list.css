@@ -1,0 +1,47 @@
+
+.post-create-button {
+    width: 138px;
+    height: 40px;
+    border-radius: 24px;
+    border: #447495;
+    /* var(--blue); */
+    margin-bottom: 16px;
+    background-color: #F4F5F7;
+     /* var(--bg-cream); */
+
+}
+.post-card {
+    width: 600px;
+    height: 190px;
+    box-shadow: 0px 2px 3px 0px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+}
+
+.post-card .post-title {
+    font-size: 24px;
+    font-weight: 500;
+    margin-top: 32px;
+    margin-bottom: 32px;
+    margin-left: 28px;
+}
+
+.post-card .post-info {
+    margin-left: 28px;
+    margin-bottom: 12px;
+    margin-right: 28px;
+}
+
+.post-card .writer-info {
+    margin-top: 12px;
+    margin-left: 24px;
+    margin-bottom: 10px;
+}
+
+.post-card .writer-info img {
+    width: 36px;
+    height: 36px;
+    background-color: #D9D9D9;
+    border-radius: 18px;
+    margin-right: 15px;
+}
