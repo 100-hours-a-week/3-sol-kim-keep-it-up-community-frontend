@@ -2,12 +2,10 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <!-- <base href="/keepit-up/"> -->
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Keepit-Up 킵잇업</title>
-    <!-- / 루트에서 시작하지 않고 상대경로. base로 앞에 <base>를 두어야 한다. keepit-up이 붙는다. -->
     <link rel="shortcut icon" size="16X16" href="assets/css/img/favicon.ico">
     <link rel="stylesheet" type="text/css" href="/assets/css/style.css">
 </head>
@@ -15,14 +13,14 @@
     <header class="">
         <div class = "grid-container">
             <div class = "flex-self justify-self-center align-center">
-                <!-- <a href="" class="header_logo"><img src="/assets/images/header_logo.svg" alt="header_logo"></a> -->
+                 <!-- <a href="" class="header_logo"><img src="/assets/images/header_logo.svg" alt="header_logo"></a> -->
                 <a class="site-title" href="/posts/post_list.html">Keepit-up</a>
             </div>
             <div class = "flex-self justify-self-end align-center header-contents">
                 <a class="signup-button" href="/auth/signup.html"><span>회원가입</span></a>
                 <a class="signin-button" href="/auth/signin.html"><span>로그인</span></a>
                 <div class="after-login">
-                    <img class = "dropdown-button"></img> <!-- 추후 이미지 파일로 변경-->
+                    <img class = "dropdown-button"></img>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="/profile/profile_update.html">회원정보 수정</a></li>
                         <li><a class="dropdown-item" href="/profile/password_update.html">비밀번호 수정</a></li>
@@ -33,49 +31,42 @@
         </div>
     </header>
     <main>
-
-<div class="flex-container justify-center align-center column">
-    <h3> 회원가입</h3>
-    <form class="inputImg" method="post" enctype="multipart/form-data"> <!-- 이미지 파일 데이터에 알맞는 enctype 설정 -->
-        <div class=""> 
-            <img id="output" src="/assets/images/default_profile.png" alt="profile_img">
-        </div>
-        <input type="file" accept="" onchange="">
-    </form>
-    <div class = "flex-container column">
-        <form class="signup_form" action="" method="post">
-            <div class = "flex-container column">
-                <b>이메일*</b>
-                <input type="text" class="email" name = "email" placeholder="이메일을 입력하세요">
-                <p class = "helper-text email"></p>
+    <div class="flex-container justify-center align-center column">
+        <h3> 회원가입</h3>
+        <form class="inputImg" method="post" enctype="multipart/form-data">
+            <div class=""> 
+                <img id="output" src="/assets/images/default_profile.png" alt="profile_img">
             </div>
-            
-            <div class = "flex-container column">
-                <b>비밀번호*</b>
-                <!--get을 쓰려면 name을 써야 한다. -->
-                <input type="password" class="password" name = "password" placeholder="비밀번호를 입력하세요">
-                <p class = "helper-text password"></p>
-            </div>
-
-            <div class = "flex-container column">
-                <b>비밀번호 확인*</b>
-                <input type="password" class="password-verification" name = "password-verification" placeholder="비밀번호를 한 번 더 입력하세요">
-                <p class = "helper-text password-verification"></p>
-            </div>
-            
-            <div class = "flex-container column">
-                <b>닉네임*</b>
-                <input type="text" class="nickname" name = "nickname" placeholder="닉네임을 입력하세요">
-                <p class = "helper-text nickname"></p>
-            </div>
-
-            <button class = "authBtn" disabled type="submit">회원가입</button>
+            <input type="file" accept="" onchange="">
         </form>
-        <a class="" href="/auth/signin.html">로그인하러 가기</a>
+        <div class = "flex-container column">
+            <form class="signup_form" action="" method="post">
+                <div class = "flex-container column">
+                    <b>이메일*</b>
+                    <input type="text" class="email" name = "email" placeholder="이메일을 입력하세요">
+                    <p class = "helper-text email"></p>
+                </div>
+                <div class = "flex-container column">
+                    <b>비밀번호*</b>
+                    <!--get을 쓰려면 name을 써야 한다. -->
+                    <input type="password" class="password" name = "password" placeholder="비밀번호를 입력하세요">
+                    <p class = "helper-text password"></p>
+                </div>
+                <div class = "flex-container column">
+                    <b>비밀번호 확인*</b>
+                    <input type="password" class="password-verification" name = "password-verification" placeholder="비밀번호를 한 번 더 입력하세요">
+                    <p class = "helper-text password-verification"></p>
+                </div>
+                <div class = "flex-container column">
+                    <b>닉네임*</b>
+                    <input type="text" class="nickname" name = "nickname" placeholder="닉네임을 입력하세요">
+                    <p class = "helper-text nickname"></p>
+                </div>
+                <button class = "authBtn" disabled type="submit">회원가입</button>
+            </form>
+            <a class="" href="/auth/signin.html">로그인하러 가기</a>
+        </div>
     </div>
-    
-</div>
-        
     </main>
     <footer>
         <div class="container">
@@ -89,7 +80,6 @@
             </div>
         </div>
     </footer>
-
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/ionicons@4.5.10-0/dist/ionicons.js"></script>
     <script type="module" src="/assets/js/signup.js"></script>

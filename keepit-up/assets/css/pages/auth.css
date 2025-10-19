@@ -1,9 +1,9 @@
 
 
 .authBtn {
-    background-color: #7f6aee;
+    background-color: var(--purlple);
 }
 
 .authBtn:disabled {
-    background-color: #aca0eb;
+    background-color: var(--purlple-disabled);
 }

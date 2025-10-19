@@ -22,7 +22,7 @@
                 <a class="signup-button" href="/auth/signup.html"><span>회원가입</span></a>
                 <a class="signin-button" href="/auth/signin.html"><span>로그인</span></a>
                 <div class="after-login">
-                    <img class = "dropdown-button"></img> <!-- 추후 이미지 파일로 변경-->
+                    <img class = "dropdown-button"></img>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="/profile/profile_update.html">회원정보 수정</a></li>
                         <li><a class="dropdown-item" href="/profile/password_update.html">비밀번호 수정</a></li>
@@ -33,35 +33,31 @@
         </div>
     </header>
     <main>
-
-<div class="flex-container justify-center align-center column">
-    <h3> 회원정보 수정</h3>
-    <form class="inputImg" method="post" enctype="multipart/form-data"> <!-- 이미지 파일 데이터에 알맞는 enctype 설정 -->
-        <div class=""> 
-            <img id="output" src="/assets/images/default_profile.png" alt="profile_img">
-        </div>
-        <input type="file" accept="" onchange="">
-    </form>
-    <div class = "flex-container column">
-        <div class = "flex-container column">
-                <b>이메일</b>
-                <p class = "email"></p>
-            </div>
-        <form class="profile_update_form" action="" method="post">
+        <div class="flex-container justify-center align-center column">
+            <h3> 회원정보 수정</h3>
+            <form class="inputImg" method="post" enctype="multipart/form-data">
+                <div class=""> 
+                    <img id="output" src="/assets/images/default_profile.png" alt="profile_img">
+                </div>
+                <input type="file" accept="" onchange="">
+            </form>
             <div class = "flex-container column">
-                <b>닉네임</b>
-                <!--get을 쓰려면 name을 써야 한다. -->
-                <input type="text" class="nickname" name = "nickname" placeholder="닉네임을 입력하세요">
-                <p class = "helper-text nickname"></p>
+                <div class = "flex-container column">
+                        <b>이메일</b>
+                        <p class = "email"></p>
+                    </div>
+                <form class="profile_update_form" action="" method="post">
+                    <div class = "flex-container column">
+                        <b>닉네임</b>
+                        <!--get을 쓰려면 name을 써야 한다. -->
+                        <input type="text" class="nickname" name = "nickname" placeholder="닉네임을 입력하세요">
+                        <p class = "helper-text nickname"></p>
+                    </div>
+                    <button class = "update-button" disabled type="submit">수정하기</button>
+                </form>
+                <span class="deleteAccount">회원탈퇴</span>
             </div>
-
-            <button class = "update-button" disabled type="submit">수정하기</button>
-        </form>
-        <span class="deleteAccount">회원탈퇴</span>
-    </div>
-    
-</div>
-        
+        </div>
     </main>
     <footer>
         <div class="container">
