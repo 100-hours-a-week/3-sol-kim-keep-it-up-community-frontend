@@ -1,7 +1,7 @@
 import { API_BASE } from './config.js';
 
 export default function passwordUpdateInit() {
-    const passwordUpdateForm = document.querySelector('form.password_update_form');
+    const passwordUpdateForm = document.querySelector('form.password-update-form');
     const btn = passwordUpdateForm.querySelector('button.update-button');
 
     const passwordHelperText = passwordUpdateForm.querySelector('.helper-text.password');
