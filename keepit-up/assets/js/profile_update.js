@@ -7,6 +7,7 @@ export default async function profileUpdateInit() {
     const nicknameHelperText = document.querySelector('.helper-text.nickname');
 
     const updateButton = document.querySelector('.update-button');
+    const withdrawalButton = document.querySelector('.delete-account-button')
 
     const userId = sessionStorage.getItem('userId');
     console.log('userId:', userId);
@@ -75,6 +76,26 @@ export default async function profileUpdateInit() {
             updateButton.disabled = false;
         }
     });
+
+    withdrawalButton.addEventListener('click', async (e) => {
+        try {
+            if (!confirm('회원탈퇴 하시겠습니까?')) return;
+
+            const response = await fetch(`${API_BASE}/users/${userId}`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+            })
+            const data = await response.json();
+            if (response.ok) {
+                alert('탈퇴 처리 되었습니다.');
+                // sessionStorage.setItem('nickname', nickname);
+                location.href = '/posts/post_list.html';
+            } else {
+                console.error(data);
+                throw new Error(`회원 탈퇴 중 오류가 발생해 탈퇴 처리가 되지 않았습니다.`);
+            }
+        } catch (error) {}
+    })
 }
 
 profileUpdateInit();
