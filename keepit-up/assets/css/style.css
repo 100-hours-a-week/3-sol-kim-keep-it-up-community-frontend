@@ -75,6 +75,8 @@ body {
 .align-end     { align-items: flex-end; }
 .align-stretch { align-items: stretch; }
 
+.align-self-center {align-self: center;}
+
 /* 방향/간격 유틸(선택) */
 .column { flex-direction: column; }
 .row    { flex-direction: row; }
