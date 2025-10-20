@@ -4,6 +4,7 @@
     margin-bottom: 14px;
     background-color: var(--blue);
     color: white;
+    border-radius: 8px;
 }
 
 .auth-button:disabled {

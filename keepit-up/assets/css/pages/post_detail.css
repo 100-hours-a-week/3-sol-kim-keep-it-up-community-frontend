@@ -71,6 +71,8 @@
     height: 39px;
     border-radius: 16px;
     border: none;
+    background-color: var(--blue-disabled);
+    color: white;
 }
 
 .post-detail-section .comment {
@@ -107,12 +109,16 @@
     border-radius: 8px;
     width: 42px;
     height: 24px;
-    border-width: 1px;
+    border-width: 2px;
+    border-color: var(--blue-disabled);
+    border-style: solid;
 }
 
 .comment-edit-button {
     margin-right: 6px;
-
+    border-width: 2px;
+    border-color: var(--blue-disabled);
+    border-style: solid;
 }
 
 .comment-contents {
@@ -124,7 +130,9 @@
     border-radius: 8px;
     width: 42px;
     height: 24px;
-    border-width: 1px;
+    border-width: 2px;
+    border-color: var(--blue-disabled);
+    border-style: solid;
 }
 
 .comment-edit-container .button-container {

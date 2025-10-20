@@ -1,16 +1,17 @@
+.main-container h3 {
+    font-size: 16px;
+}
 
 .post-create-button {
     width: 138px;
     height: 40px;
     border-radius: 24px;
-    border-width: 1px;
-    border: #447495;
-    /* var(--blue); */
+    border: none;
     margin-bottom: 16px;
-    background-color: #D9D9D9;
-     /* var(--bg-cream); */
-
+    background-color: var(--blue-disabled);
+    color: white;
 }
+
 .post-card {
     width: 600px;
     height: 190px;

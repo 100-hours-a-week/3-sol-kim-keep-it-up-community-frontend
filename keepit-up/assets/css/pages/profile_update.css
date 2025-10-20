@@ -47,6 +47,7 @@
     margin-bottom: 12px;
     background-color: var(--blue);
     color: white;
+    border-radius: 8px;
 }
 
 .profile-update-container .update-button:disabled {
