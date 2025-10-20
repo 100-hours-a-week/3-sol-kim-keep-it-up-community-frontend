@@ -45,6 +45,13 @@
     width: 356px;
     height: 34px;
     margin-bottom: 12px;
+    background-color: var(--blue);
+    color: white;
+}
+
+.profile-update-container .update-button:disabled {
+    background-color: var(--blue-disabled);
+    color: white;
 }
 
 .delete-account-button {

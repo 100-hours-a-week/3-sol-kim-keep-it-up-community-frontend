@@ -2,12 +2,14 @@
     width: 350px;
     height: 30px;
     margin-bottom: 14px;
-    background-color: var(--purlple);
+    background-color: var(--blue);
+    color: white;
 }
 
 .auth-button:disabled {
     width: 350px;
     height: 30px;
     margin-bottom: 14px;
-    background-color: var(--purlple-disabled);
+    background-color: var(--blue-disabled);
+    color: white;
 }

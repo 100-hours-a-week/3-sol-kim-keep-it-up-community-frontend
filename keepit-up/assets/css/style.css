@@ -25,7 +25,7 @@
 @import "pages/signup.css";
 @import "pages/signin.css";
 @import "pages/profile_update.css";
-@import "pages/password_reset.css";
+@import "pages/password_update.css";
 
 html {
   /* min-width: 1440px; */

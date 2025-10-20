@@ -34,4 +34,11 @@
     width: 356px;
     height: 34px;
     margin-top: 20px;
+    background-color: var(--blue);
+    color: white;
+}
+
+.post-edit-container .submit-button:disabled {
+    background-color: var(--blue-disabled);
+    color: white;
 }
