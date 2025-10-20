@@ -34,16 +34,17 @@
         <div class = "post-edit-container flex-container justify-center align-center column">
             <h3> 게시글 작성</h3>
             <form class="post-edit-form flex-container column" action="" method="post">
-                <span>제목*</span>
+                <b>제목*</b>
                 <hr/>
                 <input type="text" class="title" name = "title" placeholder="제목을 입력하세요">
                 <hr/>
-                <span>내용*</span>
+                <b class = "contents-text">내용*</b>
                 <hr/>
                 <textarea class="contents" name = "contents" placeholder="내용을 입력하세요"></textarea>
                 <hr/>
                 <span class = "helper-text">*helper text</span>
                 <form class="inputImg" method="post" enctype="multipart/form-data">
+                    <b class = "contents-text">이미지</b>
                     <div class=""> 
                         <img id="output" src="" alt="">
                     </div>

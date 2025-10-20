@@ -1,16 +1,37 @@
+.post-edit-container h3 {
+    font-weight: 700;
+    font-size: 24px;
+}
+
 .post-edit-form {
     width: 570px;
 }
 
+.post-edit-form b {
+    font-weight: 700;
+}
+
 .post-edit-form input {
+    height: 40px;
+    padding-left: 10px;
     border: none;
 }
 .post-edit-form hr {
-  width: 100%;
+    width: 100%;
+}
+
+.post-edit-form .contents-text {
+    margin-top: 25px;
 }
 
 .post-edit-form textarea {
     border: none;
     min-height: 280px;
     resize: none; 
+}
+
+.post-edit-container .submit-button{
+    width: 356px;
+    height: 34px;
+    margin-top: 20px;
 }
