@@ -13,15 +13,11 @@
     height: 26px;
     padding-left: 10px;
     margin-bottom: 6px;
+    border-radius: 4px;
+    border-width: 1px;
 }
 
 .signup-container .helper-text {
-    margin-bottom: 14px;
-}
-
-.signup-button {
-    width: 350px;
-    height: 30px;
     margin-bottom: 14px;
 }
 

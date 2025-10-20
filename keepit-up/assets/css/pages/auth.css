@@ -1,9 +1,13 @@
-
-
-.authBtn {
+.auth-button {
+    width: 350px;
+    height: 30px;
+    margin-bottom: 14px;
     background-color: var(--purlple);
 }
 
-.authBtn:disabled {
+.auth-button:disabled {
+    width: 350px;
+    height: 30px;
+    margin-bottom: 14px;
     background-color: var(--purlple-disabled);
 }
