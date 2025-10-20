@@ -33,30 +33,28 @@
         </div>
     </header>
     <main>
-        <div class="flex-container justify-center align-center column">
+        <div class="profile-update-container flex-container justify-center align-center column">
             <h3> 회원정보 수정</h3>
-            <form class="inputImg" method="post" enctype="multipart/form-data">
-                <div class=""> 
-                    <img id="output" src="/assets/images/default_profile.png" alt="profile_img">
-                </div>
-                <input type="file" accept="" onchange="">
+            <form class="profile-image-form flex-container justify-center column" method="post" enctype="multipart/form-data">
+                <span class = "profile-image-text">프로필 사진 *</span>
+                <input class ="profile-image-input flex-self align-self-center" type="file" accept="" onchange="">
             </form>
             <div class = "flex-container column">
                 <div class = "flex-container column">
-                        <b>이메일</b>
+                        <b class = "email-text">이메일</b>
                         <p class = "email"></p>
-                    </div>
+                </div>
                 <form class="profile_update_form" action="" method="post">
                     <div class = "flex-container column">
                         <b>닉네임</b>
                         <!--get을 쓰려면 name을 써야 한다. -->
                         <input type="text" class="nickname" name = "nickname" placeholder="닉네임을 입력하세요">
-                        <p class = "helper-text nickname"></p>
+                        <p class = "helper-text nickname">*helper-text</p>
                     </div>
                     <button class = "update-button" disabled type="submit">수정하기</button>
                 </form>
-                <span class="deleteAccount">회원탈퇴</span>
             </div>
+            <span class="delete-account-button">회원탈퇴</span>
         </div>
     </main>
     <footer>
