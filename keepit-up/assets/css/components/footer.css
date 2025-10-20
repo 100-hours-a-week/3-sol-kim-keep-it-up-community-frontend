@@ -1,0 +1,14 @@
+footer {
+    position : absolute;
+    bottom : 0;
+}
+
+footer .footer-about {
+    margin-left : 20px;
+    margin-bottom: 40px;
+}
+
+footer h2, h3, h4{
+    margin-bottom: 8px;
+    font-size: 12px;
+} 
