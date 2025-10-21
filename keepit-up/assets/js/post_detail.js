@@ -149,6 +149,7 @@ async function fetchComments() {
 */
 
 commentForm.addEventListener('submit', async (e) => {
+    e.preventDefault(); 
     if (userId) {
         try {
             console.log('button clicked');
