@@ -6,6 +6,8 @@ const commentsSection = postDetailSection.querySelector('.comments-section');
 const commentForm = commentsSection.querySelector('form.comment-form');
 const commentList = commentsSection.querySelector('.comments-list');
 
+const postLikeButton = postSection.querySelector('.likes-count-container');
+
 const postEditButton = postSection.querySelector('.post-edit-button');
 const postDeleteButton = postSection.querySelector('.post-delete-button');
 
@@ -18,6 +20,49 @@ console.log('userId:', userId);
 /*
     Event Listeners
 */
+
+/*
+    게시물 좋아요
+*/
+
+postLikeButton.addEventListener('click', async () => {
+    console.log('like clicked');
+    const isLiked = postLikeButton.style.backgroundColor === `var(--blue-disabled)`;
+    const likeCountText = postLikeButton.querySelector('.post-likes-count');
+    if (isLiked) {
+        const response = await fetch(`${API_BASE}/posts/${postId}/likes`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId })
+        })
+        const json_data = await response.json();
+        if (response.ok) {
+            postLikeButton.style.backgroundColor = `var(--m-gray)`;
+            const prevCount = likeCountText.textContent;
+            likeCountText.textContent = String(parseInt(prevCount) - 1);
+
+        } else {
+            console.error(json_data);
+            throw new Error(`좋아요 취소 중 오류가 발생했습니다.`);
+        }
+
+    } else {
+        const response = await fetch(`${API_BASE}/posts/${postId}/likes`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId })
+        })
+        const json_data = await response.json();
+        if (response.ok) {
+            postLikeButton.style.backgroundColor = `var(--blue-disabled)`;
+            const prevCount = likeCountText.textContent;
+            likeCountText.textContent = String(parseInt(prevCount) + 1);
+        } else {
+            console.error(json_data);
+            throw new Error(`좋아요 등록 중 오류가 발생했습니다.`);
+        }
+    }
+});
 
 /*
     게시물 수정 버튼
@@ -119,8 +164,8 @@ commentForm.addEventListener('submit', async (e) => {
             commentForm.reset();
             const comments = await fetchComments();
             renderCommentsHTML(comments);
-            addEvenListenerToEditButtons();
-            addEvenListenerToDeleteButtons();
+            addEvenListenerToCommentEditButtons();
+            addEvenListenerToCommentDeleteButtons();
         }
     } catch (error) {
         console.error(error);
@@ -200,7 +245,7 @@ function renderCommentsHTML(comments) {
 /*
     댓글 수정 버튼
 */
-function addEvenListenerToEditButtons() {
+function addEvenListenerToCommentEditButtons() {
     const myCommentsEditButtons = commentList.querySelectorAll('.comment-edit-button');
     myCommentsEditButtons.forEach((editButton, index) => {
         editButton.addEventListener('click', (e) => {
@@ -252,8 +297,8 @@ function addEvenListenerToEditButtons() {
                         alert('댓글이 수정되었습니다.');
                         const comments = await fetchComments();
                         renderCommentsHTML(comments);
-                        addEvenListenerToEditButtons();
-                        addEvenListenerToDeleteButtons();
+                        addEvenListenerToCommentEditButtons();
+                        addEvenListenerToCommentDeleteButtons();
                     }
                 } catch (error) {
                     console.error(error);
@@ -276,7 +321,7 @@ function addEvenListenerToEditButtons() {
 /*
     댓글 삭제 버튼
 */
-function addEvenListenerToDeleteButtons() {
+function addEvenListenerToCommentDeleteButtons() {
     const myCommentsDeleteButtons = commentList.querySelectorAll('.comment-delete-button');
     myCommentsDeleteButtons.forEach((deleteButton, index) => {
         deleteButton.addEventListener('click', async (e) => {
@@ -299,8 +344,8 @@ function addEvenListenerToDeleteButtons() {
                     commentList.innerHTML = '';
                     const comments = await fetchComments();
                     renderCommentsHTML(comments);
-                    addEvenListenerToEditButtons();
-                    addEvenListenerToDeleteButtons();
+                    addEvenListenerToCommentEditButtons();
+                    addEvenListenerToCommentDeleteButtons();
                 } else {
                     console.error(data);
                     throw new Error(`댓글 삭제에 실패했습니다.`);
@@ -318,12 +363,24 @@ function addEvenListenerToDeleteButtons() {
 */
 
 
-const response = await fetch(`${API_BASE}/posts/${postId}/viewcount`, {
+const views_response = await fetch(`${API_BASE}/posts/${postId}/viewcount`, {
     method: 'PATCH',    
     headers: { 'Content-Type': 'application/json' },
 })
-const response_json = await response.json();
-console.log(response_json);
+const views_response_json = await views_response.json();
+console.log('viewcount api', views_response_json);
+
+const is_liked_response = await fetch(`${API_BASE}/posts/${postId}/likes/${userId}`, {
+    method: 'GET',    
+    headers: { 'Content-Type': 'application/json' },
+});
+const is_liked_response_json = await is_liked_response.json();
+console.log('is liked api', is_liked_response_json.data.liked);
+
+if (is_liked_response_json.data.liked == true) {
+    postLikeButton.style.backgroundColor = `var(--blue-disabled)`;
+}
+
 
 fetchPost().then(post => {
     console.log('post:', post);
@@ -333,6 +390,6 @@ fetchPost().then(post => {
 fetchComments().then(comments => {
     console.log('comments:', comments);
     renderCommentsHTML(comments);
-    addEvenListenerToEditButtons();
-    addEvenListenerToDeleteButtons();
+    addEvenListenerToCommentEditButtons();
+    addEvenListenerToCommentDeleteButtons();
 });
