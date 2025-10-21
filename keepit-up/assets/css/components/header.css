@@ -11,7 +11,7 @@ header {
     font-size: 24px;
 }
 
-.after-login {
+.after-login-menu {
     position: relative;
 }
 
@@ -33,7 +33,7 @@ header {
     margin-bottom: 16px;
 }
 
-.after-login img {
+.after-login-menu img {
     width: 36px;
     height: 36px;
     border-radius: 24px;

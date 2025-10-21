@@ -27,41 +27,48 @@ console.log('userId:', userId);
 
 postLikeButton.addEventListener('click', async () => {
     console.log('like clicked');
-    const isLiked = postLikeButton.style.backgroundColor === `var(--blue-disabled)`;
-    const likeCountText = postLikeButton.querySelector('.post-likes-count');
-    if (isLiked) {
-        const response = await fetch(`${API_BASE}/posts/${postId}/likes`, {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId })
-        })
-        const json_data = await response.json();
-        if (response.ok) {
-            postLikeButton.style.backgroundColor = `var(--m-gray)`;
-            const prevCount = likeCountText.textContent;
-            likeCountText.textContent = String(parseInt(prevCount) - 1);
+    const userId = sessionStorage.getItem('userId');
 
-        } else {
-            console.error(json_data);
-            throw new Error(`좋아요 취소 중 오류가 발생했습니다.`);
-        }
-
+    if (!userId) {
+        alert("로그인이 필요한 서비스입니다.");
     } else {
-        const response = await fetch(`${API_BASE}/posts/${postId}/likes`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId })
-        })
-        const json_data = await response.json();
-        if (response.ok) {
-            postLikeButton.style.backgroundColor = `var(--blue-disabled)`;
-            const prevCount = likeCountText.textContent;
-            likeCountText.textContent = String(parseInt(prevCount) + 1);
+        const isLiked = postLikeButton.style.backgroundColor === `var(--blue-disabled)`;
+        const likeCountText = postLikeButton.querySelector('.post-likes-count');
+        if (isLiked) {
+            const response = await fetch(`${API_BASE}/posts/${postId}/likes`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId })
+            })
+            const json_data = await response.json();
+            if (response.ok) {
+                postLikeButton.style.backgroundColor = `var(--m-gray)`;
+                const prevCount = likeCountText.textContent;
+                likeCountText.textContent = String(parseInt(prevCount) - 1);
+
+            } else {
+                console.error(json_data);
+                throw new Error(`좋아요 취소 중 오류가 발생했습니다.`);
+            }
+
         } else {
-            console.error(json_data);
-            throw new Error(`좋아요 등록 중 오류가 발생했습니다.`);
+            const response = await fetch(`${API_BASE}/posts/${postId}/likes`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId })
+            })
+            const json_data = await response.json();
+            if (response.ok) {
+                postLikeButton.style.backgroundColor = `var(--blue-disabled)`;
+                const prevCount = likeCountText.textContent;
+                likeCountText.textContent = String(parseInt(prevCount) + 1);
+            } else {
+                console.error(json_data);
+                throw new Error(`좋아요 등록 중 오류가 발생했습니다.`);
+            }
         }
     }
+    
 });
 
 /*
@@ -142,34 +149,38 @@ async function fetchComments() {
 */
 
 commentForm.addEventListener('submit', async (e) => {
-    try {
-        console.log('button clicked');
-        e.preventDefault();
-        const formData = new FormData(commentForm);
-        const contents = formData.get('contents'); // 인풋 필드가 name="contents"가 있어야 한다.
-        console.log('content:', contents);
-        const writerId = userId;
+    if (userId) {
+        try {
+            console.log('button clicked');
+            e.preventDefault();
+            const formData = new FormData(commentForm);
+            const contents = formData.get('contents'); // 인풋 필드가 name="contents"가 있어야 한다.
+            console.log('content:', contents);
+            const writerId = userId;
 
-        const response = await fetch(`${API_BASE}/posts/${postId}/comments`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ writerId, contents, postId }),
-        });
-        const data = await response.json();
-        if (!response.ok) {
-            console.error(data);
-            throw new Error(`댓글 작성에 실패했습니다.`);
-        } else {
-            alert('댓글이 작성되었습니다.');
-            commentForm.reset();
-            const comments = await fetchComments();
-            renderCommentsHTML(comments);
-            addEvenListenerToCommentEditButtons();
-            addEvenListenerToCommentDeleteButtons();
+            const response = await fetch(`${API_BASE}/posts/${postId}/comments`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ writerId, contents, postId }),
+            });
+            const data = await response.json();
+            if (!response.ok) {
+                console.error(data);
+                throw new Error(`댓글 작성에 실패했습니다.`);
+            } else {
+                alert('댓글이 작성되었습니다.');
+                commentForm.reset();
+                const comments = await fetchComments();
+                renderCommentsHTML(comments);
+                addEvenListenerToCommentEditButtons();
+                addEvenListenerToCommentDeleteButtons();
+            }
+        } catch (error) {
+            console.error(error);
+            alert(error.message);
         }
-    } catch (error) {
-        console.error(error);
-        alert(error.message);
+    } else {
+        alert("로그인이 필요한 서비스입니다.");
     }
 });
 /*
@@ -370,16 +381,20 @@ const views_response = await fetch(`${API_BASE}/posts/${postId}/viewcount`, {
 const views_response_json = await views_response.json();
 console.log('viewcount api', views_response_json);
 
-const is_liked_response = await fetch(`${API_BASE}/posts/${postId}/likes/${userId}`, {
-    method: 'GET',    
-    headers: { 'Content-Type': 'application/json' },
-});
-const is_liked_response_json = await is_liked_response.json();
-console.log('is liked api', is_liked_response_json.data.liked);
+if (userId) {
+    const is_liked_response = await fetch(`${API_BASE}/posts/${postId}/likes/${userId}`, {
+        method: 'GET',    
+        headers: { 'Content-Type': 'application/json' },
+    });
+    const is_liked_response_json = await is_liked_response.json();
+    console.log('is liked api', is_liked_response_json.data.liked);
 
-if (is_liked_response_json.data.liked == true) {
-    postLikeButton.style.backgroundColor = `var(--blue-disabled)`;
+    if (is_liked_response_json.data.liked == true) {
+        postLikeButton.style.backgroundColor = `var(--blue-disabled)`;
+    }
 }
+
+
 
 
 fetchPost().then(post => {

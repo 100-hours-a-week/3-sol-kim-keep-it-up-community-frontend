@@ -16,14 +16,16 @@
                 <a class="site-title" href="/posts/post_list.html">Keepit-up</a>
             </div>
             <div class = "flex-self justify-self-end align-center header-contents">
-                <a class="signup-button" href="/auth/signup.html"><span>회원가입</span></a>
-                <a class="signin-button" href="/auth/signin.html"><span>로그인</span></a>
-                <div class="after-login">
-                    <img class = "dropdown-button"></img> <!-- 추후 이미지 파일로 변경-->
+                <div class = "before-login-menu">
+                    <a class="signup-button" href="/auth/signup.html"><span>회원가입</span></a>
+                    <a class="signin-button" href="/auth/signin.html"><span>로그인</span></a>
+                </div>
+                <div class="after-login-menu">
+                    <img class = "dropdown-button"></img>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="/profile/profile_update.html">회원정보 수정</a></li>
                         <li><a class="dropdown-item" href="/profile/password_update.html">비밀번호 수정</a></li>
-                        <li><span class="dropdown-item" href="#">로그아웃</span></li>
+                        <li><span class="dropdown-item logout-button">로그아웃</span></li>
                     </ul>
                 </div>
             </div>
@@ -31,21 +33,16 @@
     </header>
     <main>
 
-        
     </main>
     <footer>
-        <div class="container">
-            <div class="footer__about">
-                <img src="/static/css/img/footer_logo.png" alt="footer_logo">
-                <h2>About</h2>
-                <h3>Keepit-up : 킵잇업</h3>
-                <h4>Contact : keepit-up@gmail.com</h4>
-                <h4>&copy;Keepit-up. All rights reserved.</h4>
-            </div>
+        <div class="container footer-about">
+            <!-- <img src="/static/css/img/footer_logo.png" alt="footer_logo"> -->
+            <h2>About</h2>
+            <h3>Keepit-up : 킵잇업</h3>
+            <h4>Contact : keepit-up@gmail.com</h4>
+            <h4>&copy;Keepit-up. All rights reserved.</h4>
         </div>
     </footer>
-
-
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/ionicons@4.5.10-0/dist/ionicons.js"></script>
 </body>

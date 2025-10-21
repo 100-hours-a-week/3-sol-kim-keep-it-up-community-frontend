@@ -7,7 +7,12 @@ const postCreateButton = document.querySelector('.post-create-button');
     EVENT LISTENERS
 */
 postCreateButton.addEventListener('click', () => {
-    window.location.href = '/posts/post_edit.html';
+    const userId = sessionStorage.getItem('userId');
+    if (userId) {
+        window.location.href = '/posts/post_edit.html';
+    } else {
+        alert("로그인이 필요한 서비스입니다.");
+    }
 });
 
 /*
