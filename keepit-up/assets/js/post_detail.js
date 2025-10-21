@@ -35,7 +35,7 @@ postDeleteButton.addEventListener('click', async () => {
         const postId = new URLSearchParams(window.location.search).get('postId');
         console.log('postId in deleteButtonEventLister', postId);
         
-        if (!confirm('정말로 댓글을 삭제하시겠습니까?')) return;
+        if (!confirm('정말로 글을 삭제하시겠습니까?')) return;
 
         const response = await fetch(`${API_BASE}/posts/${postId}`, {
             method: 'DELETE',
@@ -164,7 +164,7 @@ function renderPost(post) {
 function renderCommentsHTML(comments) {
     commentList.innerHTML = ''
     comments.forEach(comment => {
-        commentList.innerHTML +=
+        commentList.innerHTML += comment.writer.id === parseInt(userId) ?
             `
                 <div class = "comment" id="${comment.id}">
                     <div class = "comment-header flex-container justify-between align-center">
@@ -179,13 +179,20 @@ function renderCommentsHTML(comments) {
                         </div>
                     </div>
                     <p class = "comment-contents">${comment.contents}</p>
+                </div>`
+                
+            :
+            `
+                <div class = "comment" id="${comment.id}">
+                    <div class = "comment-header flex-container justify-between align-center">
+                        <div class = "comment-info flex-container align-center">
+                            <img src="${comment.writer.imageUrl}" alt="">
+                            <span class = "comment-author">${comment.writer.nickname}</span>
+                            <span class = "comment-date">${comment.createdAt}</span>
+                        </div>
+                    </div>
+                    <p class = "comment-contents">${comment.contents}</p>
                 </div>`;
-        
-        // 댓글 작성자일 때만 수정, 삭제 버튼 보이도록. 
-        if (comment.writer.id !== parseInt(userId)) {
-            commentList.querySelector('.comment-edit-button').style.display = 'none';
-            commentList.querySelector('.comment-delete-button').style.display = 'none';
-        }
     });
     
 }
@@ -202,7 +209,6 @@ function addEvenListenerToEditButtons() {
             const deleteButton = commentManageContainer.querySelector('.comment-delete-button');
             deleteButton.style.display = 'none';
             e.target.style.display = 'none';
-
 
             const commentContents = commentList.querySelectorAll('.comment-contents')[index];
             const originalContents = commentContents.textContent;

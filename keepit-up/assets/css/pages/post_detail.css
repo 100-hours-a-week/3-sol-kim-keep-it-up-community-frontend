@@ -18,7 +18,9 @@
     width: 50px;
     height: 27px;
     border-radius: 10px;
-    border-width: 1.5px;
+    border-width: 2px;
+    border-color: var(--blue-disabled);
+    border-style: solid;
 }
 
 .post-detail-section .post-author {
