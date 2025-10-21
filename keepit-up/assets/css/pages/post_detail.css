@@ -61,6 +61,7 @@
     margin-top: 24px;
     width: 100%;
     flex: 1 1 auto;
+    resize: none;
 }
 
 .post-detail-section .comment-form > hr {
@@ -145,6 +146,7 @@
     padding: 8px;
     border: none;
     resize: none; 
+    border-radius: 12px;
 }
 
 .save-comment-button {
