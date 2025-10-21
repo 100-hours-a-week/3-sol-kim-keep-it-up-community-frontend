@@ -7,10 +7,11 @@ export default async function profileUpdateInit() {
     const nicknameHelperText = document.querySelector('.helper-text.nickname');
 
     const updateButton = document.querySelector('.update-button');
-    const withdrawalButton = document.querySelector('.delete-account-button')
 
     const userId = sessionStorage.getItem('userId');
     console.log('userId:', userId);
+
+    const withdrawalModal = document.querySelector('.withdrawal-modal');
     
     // 사용자 정보 가져오기
     const response = await fetch(`${API_BASE}/users/${userId}`, {
@@ -77,25 +78,43 @@ export default async function profileUpdateInit() {
         }
     });
 
-    withdrawalButton.addEventListener('click', async (e) => {
-        try {
-            if (!confirm('회원탈퇴 하시겠습니까?')) return;
+    const withdrawalButton = document.querySelector('.delete-account-button');
+    withdrawalButton.style.display = 'none';
 
-            const response = await fetch(`${API_BASE}/users/${userId}`, {
-                method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
-            })
-            const data = await response.json();
-            if (response.ok) {
-                alert('탈퇴 처리 되었습니다.');
-                // sessionStorage.setItem('nickname', nickname);
-                location.href = '/posts/post_list.html';
-            } else {
-                console.error(data);
-                throw new Error(`회원 탈퇴 중 오류가 발생해 탈퇴 처리가 되지 않았습니다.`);
-            }
-        } catch (error) {}
+    withdrawalButton.addEventListener('click', async (e) => {
+        withdrawalModal.style.display = 'block';
     })
+
+    const cancelButton = withdrawalModal.querySelector('.modal-cancel-button');
+    const confirmButton = withdrawalModal.querySelector('.modal-confirm-button');
+
+    console.log('cancelButton', cancelButton);
+    console.log('confirmButton', confirmButton);
+    
+    cancelButton.addEventListener('click', () => {
+        console.log("cancel button clicked");
+        withdrawalModal.style.display = 'none';
+    });
+
+    confirmButton.addEventListener('click', async () => {
+        console.log("confirm button clicked");
+        const response = await fetch(`${API_BASE}/users/${userId}`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+        })
+        const data = await response.json();
+        if (response.ok) {
+            alert('탈퇴 처리 되었습니다.');
+            // sessionStorage.setItem('nickname', nickname);
+            sessionStorage.removeItem('userId');
+            withdrawalModal.style.display = 'none';
+            location.href = '/posts/post_list.html';
+        } else {
+            console.error(data);
+            throw new Error(`회원 탈퇴 중 오류가 발생해 탈퇴 처리가 되지 않았습니다.`);
+        }
+    });
+    
 }
 
 profileUpdateInit();

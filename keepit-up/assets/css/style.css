@@ -8,12 +8,11 @@
 @import "components/header.css";
 @import "components/footer.css";
 @import "components/button.css";
-@import "components/detail.css";
+@import "components/modal.css";
 @import "components/post_list.css";
 @import "components/post_form.css";
 @import "components/post.css";
 @import "components/comment.css";
-@import "components/autocomplete.css";
 @import "components/form.css";
 
 /* Pages */

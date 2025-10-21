@@ -1,0 +1,40 @@
+.modal {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display:none;
+    width: 408px;
+    height: 242px;
+    border-radius: 12px;
+    background-color: white;
+}
+
+.modal h1 {
+    font-size: 24px;
+    font-weight: 700;
+    margin-top: 18px;
+    margin-bottom: 24px;
+}
+
+.modal p {
+    font-size: 20px;
+    font-weight: 400;
+    margin-bottom: 24px;
+}
+
+.modal button {
+    width: 128px;
+    height: 44px;
+    border-radius: 12px;
+    border: none;
+    color: white;
+}
+
+.modal-cancel-button {
+    background-color: var(--blue);
+}
+
+.modal-confirm-button {
+    background-color: var(--blue-disabled);
+}
