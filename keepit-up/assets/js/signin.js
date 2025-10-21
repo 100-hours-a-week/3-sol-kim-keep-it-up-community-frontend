@@ -7,20 +7,21 @@ export default function signInInit() {
 
       const emailInput = form.querySelector('input.email'); // input에서 클래스 이름이 email인 요소 선택 
       const passwordInput = form.querySelector('input.password');
-      const helperText = form.querySelector('.helper-text');
+      const emailHelperText = form.querySelector('.email-container .helper-text');
+      const passwordHelperText = form.querySelector('.password-container .helper-text');
 
       function updateButtonState() {
             const password = passwordInput.value;
             const email = emailInput.value;
 
             if (email == undefined || email.trim() === '') {
-                  helperText.textContent = '이메일을 입력해주세요.';
+                  emailHelperText.textContent = '이메일을 입력해주세요.';
                   btn.disabled = true;
             } else if (!/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(email)) {
-                  helperText.textContent = '올바른 이메일 주소 형식을 입력해주세요. (예: example@example.com)';
+                  emailHelperText.textContent = '올바른 이메일 주소 형식을 입력해주세요. (예: example@example.com)';
                   btn.disabled = true;
             } else if (password == undefined || password.trim() === '') {
-                  helperText.textContent = '비밀번호를 입력해주세요.';
+                  passwordHelperText.textContent = '비밀번호를 입력해주세요.';
                   btn.disabled = true;
             } else if (password.length < 8 ||
                   password.length > 20 ||
@@ -28,10 +29,11 @@ export default function signInInit() {
                   !/[A-Z]/.test(password) ||
                   !/[0-9]/.test(password) ||
                   !/[`~!@#$%^&*()-_=+]/.test(password)) {
-                  helperText.textContent = '비밀번호는 8자 이상 20자 이하이며, 대문자, 소문자, 숫자, 특수문자를 각각 최소 1개 포함해야 합니다.';
+                  passwordHelperText.textContent = '비밀번호는 8자 이상 20자 이하이며, 대문자, 소문자, 숫자, 특수문자를 각각 최소 1개 포함해야 합니다.';
                   btn.disabled = true;
             } else {
-                  helperText.textContent = '';
+                  emailHelperText.textContent = '';
+                  passwordHelperText.textContent = '';
                   btn.disabled = false;
             }
       };
