@@ -79,9 +79,9 @@ export default async function profileUpdateInit() {
     });
 
     const withdrawalButton = document.querySelector('.delete-account-button');
-    withdrawalButton.style.display = 'none';
 
     withdrawalButton.addEventListener('click', async (e) => {
+        console.log("withdrawal button clicked");
         withdrawalModal.style.display = 'block';
     })
 

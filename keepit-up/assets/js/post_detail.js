@@ -87,23 +87,34 @@ postDeleteButton.addEventListener('click', async () => {
         const postId = new URLSearchParams(window.location.search).get('postId');
         console.log('postId in deleteButtonEventLister', postId);
         
-        if (!confirm('정말로 글을 삭제하시겠습니까?')) return;
+        const postModal = document.querySelector('.post-modal');
+        postModal.style.display = 'block';
 
-        const response = await fetch(`${API_BASE}/posts/${postId}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-                // 'Authorization': `Bearer ${sessionStorage.getItem('token')}`
-            },
-        });
-        const data = await response.json();
-        if (response.ok) {
-            alert('게시글이 삭제되었습니다.');
-            window.location.href = '/posts/post_list.html';
-        } else {
-            console.error(data);
-            throw new Error(`게시글 삭제에 실패했습니다.`);
-        }
+        const cancelButton = postModal.querySelector('.modal-cancel-button');
+        cancelButton.addEventListener('click', () => {
+            console.log("cancel button clicked");
+            postModal.style.display = 'none';
+        })
+
+        const confirmButton = postModal.querySelector('.modal-confirm-button');
+        confirmButton.addEventListener('click', async () => {
+            console.log("confirm button clicked");
+            const response = await fetch(`${API_BASE}/posts/${postId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    // 'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+                },
+            });
+            const data = await response.json();
+            if (response.ok) {
+                alert('게시글이 삭제되었습니다.');
+                window.location.href = '/posts/post_list.html';
+            } else {
+                console.error(data);
+                throw new Error(`게시글 삭제에 실패했습니다.`);
+            }
+        })
     } catch (error) {
         console.error(error);
         alert(error.message);
@@ -337,31 +348,46 @@ function addEvenListenerToCommentDeleteButtons() {
     const myCommentsDeleteButtons = commentList.querySelectorAll('.comment-delete-button');
     myCommentsDeleteButtons.forEach((deleteButton, index) => {
         deleteButton.addEventListener('click', async (e) => {
-            console.log('삭제 버튼 클릭 됨');
-
-            if (!confirm('정말로 댓글을 삭제하시겠습니까?')) return;
 
             try {
-                const commentId = e.target.closest('.comment').id;
-                const response = await fetch(`${API_BASE}/posts/${postId}/comments/${commentId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        // 'Authorization': `Bearer ${sessionStorage.getItem('token')}`
-                    },
-                });
-                const data = await response.json();
-                if (response.ok) {
-                    alert('댓글이 삭제되었습니다.');
-                    commentList.innerHTML = '';
-                    const comments = await fetchComments();
-                    renderCommentsHTML(comments);
-                    addEvenListenerToCommentEditButtons();
-                    addEvenListenerToCommentDeleteButtons();
-                } else {
-                    console.error(data);
-                    throw new Error(`댓글 삭제에 실패했습니다.`);
-                }
+                const commentModal = document.querySelector('.comment-modal');
+                commentModal.style.display = 'block';
+
+                const cancelButton = commentModal.querySelector('.modal-cancel-button');
+                cancelButton.addEventListener('click', () => {
+                    console.log("cancel button clicked");
+                    commentModal.style.display = 'none';
+                })
+
+                const confirmButton = commentModal.querySelector('.modal-confirm-button');
+                confirmButton.addEventListener('click', async () => {
+                    try {
+                        const commentId = e.target.closest('.comment').id;
+                        const response = await fetch(`${API_BASE}/posts/${postId}/comments/${commentId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                // 'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+                            },
+                        });
+                        const data = await response.json();
+                        if (response.ok) {
+                            alert('댓글이 삭제되었습니다.');
+                            commentModal.style.display = 'none';
+                            commentList.innerHTML = '';
+                            const comments = await fetchComments();
+                            renderCommentsHTML(comments);
+                            addEvenListenerToCommentEditButtons();
+                            addEvenListenerToCommentDeleteButtons();
+                        } else {
+                            console.error(data);
+                            throw new Error(`댓글 삭제에 실패했습니다.`);
+                        }
+                    } catch (error) {
+                        console.error(error);
+                        alert(error.message);
+                    }
+                })
             } catch (error) {
                 console.error(error);
                 alert(error.message);
