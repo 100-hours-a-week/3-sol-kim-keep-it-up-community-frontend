@@ -23,17 +23,17 @@ let cursorId = null;
 let isLoading = false; 
 let hasNext = true;
 async function fetchPostList() {
-    // 호출 후 마무리가 되기까지는 추가 호출 막기
+    // 호출이 마무리가 되기까지는 추가 호출 막기
     if (isLoading) return; 
+    // 더 이상 불러올 포스트가 없으면 그만 불러오기
     if (!hasNext) return;
     isLoading = true; 
     
     const size = 5;
-
     let response = null;
-    // if (cursorId == undefined) return;
 
     try {
+        // 첫 호출
         if (cursorId == null) {
             response = await fetch(`${API_BASE}/posts?size=${size}`, {
                 method: 'GET',
@@ -42,8 +42,8 @@ async function fetchPostList() {
                     // 'Authorization': `Bearer ${sessionStorage.getItem('token')}`
                 },
             });
-            // isLoading = true; 
         } else {
+            // 두 번째 슬라이스 이상
             response = await fetch(`${API_BASE}/posts?cursorId=${cursorId}&size=${size}`, {
                 method: 'GET',
                 headers: {
@@ -51,20 +51,20 @@ async function fetchPostList() {
                     // 'Authorization': `Bearer ${sessionStorage.getItem('token')}`
                 },
             });
-            // isLoading = true; 
         }
 
         const response_json = await response.json();
         console.log(response_json);
+
         const response_size = response_json.data.content.length;
         console.log("response_size", response_size);
+
         const cursor = response_json.data.content[response_size - 1];
         hasNext = !response_json.data.pageable.last;
         console.log("cursor", cursor);
         console.log('hasNext', hasNext);
 
         cursorId = cursor.id;
-        console.log("cursor.id", cursor.id)
 
         response_json.data.content.forEach(post => {
             postList.innerHTML += `
@@ -95,13 +95,18 @@ async function fetchPostList() {
     }
 }
 
+/*
+    화면 끝단까지 스크롤 시 게시글 추가 로딩
+*/
 window.onscroll = function(e) {
     if((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
         fetchPostList();
     }
 };
 
-
+/*
+    게시물 상세보기
+*/
 const post = document.querySelectorAll('.post-card');
 post.forEach(p => {
     p.addEventListener('click', () => {
