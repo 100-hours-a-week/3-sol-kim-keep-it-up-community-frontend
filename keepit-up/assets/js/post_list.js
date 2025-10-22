@@ -21,11 +21,13 @@ postCreateButton.addEventListener('click', () => {
 
 let cursorId = null;
 let isLoading = false; 
-
+let hasNext = true;
 async function fetchPostList() {
     // 호출 후 마무리가 되기까지는 추가 호출 막기
-    if (isLoading) return;       
+    if (isLoading) return; 
+    if (!hasNext) return;
     isLoading = true; 
+    
     const size = 5;
 
     let response = null;
@@ -57,7 +59,7 @@ async function fetchPostList() {
         const response_size = response_json.data.content.length;
         console.log("response_size", response_size);
         const cursor = response_json.data.content[response_size - 1];
-        const hasNext = !response_json.data.pageable.last;
+        hasNext = !response_json.data.pageable.last;
         console.log("cursor", cursor);
         console.log('hasNext', hasNext);
 
