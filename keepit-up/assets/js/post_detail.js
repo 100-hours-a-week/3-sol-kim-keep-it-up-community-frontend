@@ -278,7 +278,9 @@ function addEvenListenerToCommentEditButtons() {
             deleteButton.style.display = 'none';
             e.target.style.display = 'none';
 
-            const commentContents = commentList.querySelectorAll('.comment-contents')[index];
+            const comment = e.target.closest('.comment');
+            const commentContents = comment.querySelector('.comment-contents');
+            console.log('commentContents',commentContents);
             const originalContents = commentContents.textContent;
 
             commentContents.innerHTML =
