@@ -26,6 +26,9 @@
     height: 150px;
     border-radius: 50%;
     background-color: var(--m-gray);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 .signup_form {
