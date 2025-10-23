@@ -43,6 +43,8 @@ export default function signUpInit() {
       const fileInput = document.querySelector("input[type=file]");
 
       fileInput.addEventListener("change", previewFile);
+      const DEFAULT_IMAGE_PATH = '/assets/images/default_profile_image.png'
+      fileInput.style.backgroundImage = `url("${DEFAULT_IMAGE_PATH}")`;
 
       function previewFile() {
             const file = fileInput.files[0];
