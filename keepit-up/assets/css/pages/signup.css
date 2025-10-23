@@ -29,7 +29,13 @@
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
+    color: transparent; 
 }
+
+.signup-container input::file-selector-button {
+    display: none;
+}
+
 
 .signup_form {
     width: 392px;
