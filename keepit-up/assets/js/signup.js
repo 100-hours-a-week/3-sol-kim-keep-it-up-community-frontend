@@ -15,6 +15,11 @@ export default function signUpInit() {
       const passwordConfirmInput = form.querySelector('input.password-verification');
       const nicknameInput = form.querySelector('input.nickname');
 
+      const imageSelector = form.querySelector('input.img-input');
+      const imageBox = form.querySelector('img');
+      const messageDisplay = document.getElementById("message");
+      const fileContentDisplay = document.getElementById("file-content");
+
       function updateButtonState() {
             const allFilled =
                   emailInput.value.trim() !== '' &&
@@ -32,6 +37,39 @@ export default function signUpInit() {
       }
 
       [emailInput, passwordInput, passwordConfirmInput, nicknameInput].forEach(inputElement => inputElement.addEventListener('input', updateButtonState));
+
+      const preview = form.querySelector("img");
+      console.log('preview', preview);
+      const fileInput = document.querySelector("input[type=file]");
+
+      fileInput.addEventListener("change", previewFile);
+
+      function previewFile() {
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+
+            reader.addEventListener("load", () => {
+                  console.log("reader event listener loading");
+                  // convert image file to base64 string
+                  // preview.alt = "image loaded"
+                  // preview.src = reader.result;
+                  // fileInput.style.backgroundImage = reader.result;
+                  const dataUrl = reader.result;
+                  fileInput.style.backgroundImage = `url('${dataUrl}')`;
+            });
+
+            if (file) {
+                  reader.readAsDataURL(file);
+            }
+      }
+ 
+      // const imageOutput = form.querySelector('input.img-output');
+      // imageSelector.addEventListener('input', (e) => {
+      //       const files = e.currentTarget.files;
+      //       e.target.style.backgroundImage = files[0];
+      //       const imgElement = imageOutput.createElement('img');
+      //       imgElement.style.backgroundImage = files[0];
+      // });
 
       /*
         이메일 형식 유효성 검사
