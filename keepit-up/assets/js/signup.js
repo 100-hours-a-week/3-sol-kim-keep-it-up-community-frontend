@@ -46,8 +46,9 @@ export default function signUpInit() {
       const DEFAULT_IMAGE_PATH = '/assets/images/default_profile_image.png'
       fileInput.style.backgroundImage = `url("${DEFAULT_IMAGE_PATH}")`;
 
+      let file;
       function previewFile() {
-            const file = fileInput.files[0];
+            file = fileInput.files[0];
             const reader = new FileReader();
 
             reader.addEventListener("load", () => {
@@ -152,6 +153,7 @@ export default function signUpInit() {
                         body: JSON.stringify({ email, password, nickname })
                   });
 
+
                   if (response.status === 409) {
                         const errorData = await response.json();
                         console.error(errorData);
@@ -166,6 +168,21 @@ export default function signUpInit() {
                         console.error(errorData);
                         throw new Error(`회원가입에 실패했습니다`);
                   } else {
+                        const data = await response.json();
+                        console.log(data);
+                        if (file) {
+                              const userId = response.data.data.userId;
+                              const image_response = await fetch(`${API_BASE}/images/profiles`, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: { file, userId }
+                              });
+
+                              if (!image_response.ok) {
+                                    alert("프로필 사진 업로드 중 에러가 발생했습니다. 회원 정보 수정 페이지에서 다시 업로드 해주세요.");
+                              }
+                        }
+
                         alert('회원가입되었습니다. 로그인 페이지로 이동합니다.');
                         location.href = '/auth/signin.html';
                   }
