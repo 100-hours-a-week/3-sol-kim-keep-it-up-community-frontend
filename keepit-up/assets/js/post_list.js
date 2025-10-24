@@ -3,6 +3,8 @@ import { API_BASE } from './config.js';
 const postList = document.querySelector('.post-list');
 const postCreateButton = document.querySelector('.post-create-button');
 
+const DEFAULT_IMAGE_PATH = '/assets/images/default_profile_image.png'
+
 /*
     EVENT LISTENERS
 */
@@ -22,6 +24,7 @@ postCreateButton.addEventListener('click', () => {
 let cursorId = null;
 let isLoading = false; 
 let hasNext = true;
+
 async function fetchPostList() {
     // 호출이 마무리가 되기까지는 추가 호출 막기
     if (isLoading) return; 
@@ -66,7 +69,23 @@ async function fetchPostList() {
 
         cursorId = cursor.id;
 
-        response_json.data.content.forEach(post => {
+        response_json.data.content.forEach(async post => {
+            const image_response = await fetch(`${API_BASE}/images/profiles/${post.writer.id}`, {
+                method: 'GET'
+            })
+
+            const image_response_json = await image_response.json();
+            console.log('image_response_json', image_response_json);
+
+            let url = DEFAULT_IMAGE_PATH;
+            if (image_response_json.data) {
+                url = image_response_json.data.url;
+                url = url.startsWith('/') ?
+                `${API_BASE}${url}` : `${API_BASE}/${url}`;
+            } 
+
+            console.log('url', url);
+            
             postList.innerHTML += `
             <div class = "post-card">
                 <div class = "flex-container column" id = "${post.id}">
@@ -82,7 +101,7 @@ async function fetchPostList() {
                 </div>
                 <hr/>
                 <div class = "writer-info flex-container justify-start align-center">
-                    <img src="${post.writer.imageUrl}" />
+                    <img src="${url}" />
                     <h3>${post.writer.nickname}</h3>
                 </div>
             </div>
@@ -94,6 +113,7 @@ async function fetchPostList() {
         isLoading = false;
     }
 }
+fetchPostList();
 
 /*
     화면 끝단까지 스크롤 시 게시글 추가 로딩
@@ -104,15 +124,17 @@ window.onscroll = function(e) {
     }
 };
 
+
+
 /*
     게시물 상세보기
 */
-const post = document.querySelectorAll('.post-card');
-post.forEach(p => {
-    p.addEventListener('click', () => {
+
+const posts = document.querySelectorAll('.post-card');
+posts.forEach(post => {
+    post.addEventListener('click', () => {
+        console.log("post clicked");
         const postId = p.querySelector('div').id;
         window.location.href = `/posts/post_detail.html?postId=${postId}`;
     });
 });
-
-fetchPostList();
