@@ -9,6 +9,8 @@ const imagePreview = document.querySelector('.post-selected-image-preview');
 const helperText = document.querySelector('span.helper-text');
 const writerId = sessionStorage.getItem('userId');
 
+let fileUpdated = false;
+
 /*
     FUNCTIONS
 */
@@ -51,22 +53,25 @@ contentsTextArea.addEventListener('input', () => {
 
 let file;
 imageInput.addEventListener("change", () => {
-        console.log("new image is selected");
-        file = imageInput.files[0];
-        const reader = new FileReader();
+    console.log("new image is selected");
+    fileUpdated = true;
+    submitButton.disabled = false;
 
-        reader.addEventListener("load", () => {
-            console.log("reader loaded a file");
-            const dataUrl = reader.result;
-            imagePreview.src = dataUrl;
-        });
+    file = imageInput.files[0];
+    const reader = new FileReader();
 
-        // reading the contents of the file  
-        if (file) {
-            console.log("image is read");
-            reader.readAsDataURL(file);
-        }
-    })
+    reader.addEventListener("load", () => {
+        console.log("reader loaded a file");
+        const dataUrl = reader.result;
+        imagePreview.src = dataUrl;
+    });
+
+    // reading the contents of the file  
+    if (file) {
+        console.log("image is read");
+        reader.readAsDataURL(file);
+    }
+})
 
 /*
     게시물 수정 초기 화면
@@ -109,6 +114,22 @@ submitButton.addEventListener('click', async (e) => {
                 body: JSON.stringify({ title, contents, writerId }),
             });
 
+            response_json = await response.json();
+
+            if (fileUpdated) {
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('postId', postId);
+                const image_response = await fetch(`${API_BASE}/images/posts/${postId}`, {
+                    method: 'PUT',
+                    body: formData
+                })
+
+                if (!image_response.ok) {
+                    alert("이미지 업로드 중 오류가 발생했습니다. 수정 페이지에서 다시 업로드해주세요.");
+                }
+            }
+
         } else {
             response = await fetch(`${API_BASE}/posts`, {
                 method: 'POST',
@@ -133,7 +154,6 @@ submitButton.addEventListener('click', async (e) => {
                 if (!image_response.ok) {
                     alert('이미지 업로드 중 오류가 발생했습니다. 글 수정에서 다시 업로드해주세요.');
                 }
-
             }
         }
 
