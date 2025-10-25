@@ -93,13 +93,13 @@ async function fetchPostList() {
                 postList.insertAdjacentHTML('beforeend', newPostCard);
             });
 
-            response_json.data.content.forEach(post => {
-                const image_response = fetch(`${API_BASE}/images/profiles/${post.writer.id}`, {
+            response_json.data.content.forEach(async post => {
+                const image_response = await fetch(`${API_BASE}/images/profiles/${post.writer.id}`, {
                     method: 'GET'
                 })
 
                 console.log('image_response', image_response)
-                const image_response_json = image_response.json();
+                const image_response_json = await image_response.json();
                 console.log('image_response_json', image_response_json);
 
                 let url = DEFAULT_IMAGE_PATH;
