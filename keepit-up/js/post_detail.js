@@ -207,7 +207,7 @@ function autosize(textarea) {
 function renderPost(post) {
     const postTitle = postSection.querySelector('.post-title');
     const postAuthor = postSection.querySelector('.post-author');
-    const postAuthorImage = postSection.querySelector('.post-author-image');
+    // const postAuthorImage = postSection.querySelector('.post-author-image');
     const postCreatedAt = postSection.querySelector('.post-created-at');
     const postContent = postSection.querySelector('.post-content');
     const postLikesCount = postSection.querySelector('.post-likes-count');
@@ -229,9 +229,9 @@ function renderPost(post) {
     }
 } 
 
-function renderCommentsHTML(comments) {
+async function renderCommentsHTML(comments) {
     commentList.innerHTML = ''
-    comments.forEach(comment => {
+    comments.forEach(async comment => {
         commentList.innerHTML += comment.writer.id === parseInt(userId) ?
             `
                 <div class = "comment" id="${comment.id}">
@@ -261,8 +261,30 @@ function renderCommentsHTML(comments) {
                     </div>
                     <p class = "comment-contents">${comment.contents}</p>
                 </div>`;
-    });
+        
+        const profile_image_response = await fetch(`${API_BASE}/images/profiles/${comment.writer.id}`, {
+            method: 'GET'
+        })
+
+        const current_comment = document.getElementById(`${comment.id}`);
+        const commentAuthorImage = current_comment.querySelector('img');
+
+        if (profile_image_response.ok) {
+            const profile_image_response_json = await profile_image_response.json();
+            console.log('profile_image_response_json', profile_image_response_json);
+            const url = profile_image_response_json.data.url;
+            const image_url = url.startsWith('/') ?
+                `${API_BASE}${url}` : `${API_BASE}/${url}`;
+            
+            commentAuthorImage.src = image_url;
+        } else if (profile_image_response.status === 204) {
+            const DEFAULT_IMAGE_PATH = '/assets/images/default_profile_image.png'
+            commentAuthorImage.src  = DEFAULT_IMAGE_PATH;
+        } else {
+            // TODO: 에러 처리
+        }
     
+    });
 }
 
 /*
@@ -426,9 +448,29 @@ if (userId) {
 
 
 
-fetchPost().then(post => {
+fetchPost().then(async post => {
     console.log('post:', post);
     renderPost(post);
+    
+    const profile_image_response = await fetch(`${API_BASE}/images/profiles/${post.writer.id}`, {
+        method: 'GET'
+    })
+
+    const postAuthorImage = postSection.querySelector('.post-author-image');
+
+    if (profile_image_response.ok) {
+        const profile_image_response_json = await profile_image_response.json();
+        console.log('profile_image_response_json', profile_image_response_json);
+        const url = profile_image_response_json.data.url;
+        const image_url = url.startsWith('/') ?
+            `${API_BASE}${url}` : `${API_BASE}/${url}`;
+        postAuthorImage.src = image_url;
+    } else if (profile_image_response.status === 204) {
+        const DEFAULT_IMAGE_PATH = '/assets/images/default_profile_image.png'
+        postAuthorImage.src  = DEFAULT_IMAGE_PATH;
+    } else {
+        // TODO: 에러 처리
+    }
 });
 
 fetchComments().then(comments => {

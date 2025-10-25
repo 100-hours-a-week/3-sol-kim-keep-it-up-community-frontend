@@ -119,62 +119,55 @@ export default function signUpInit() {
         회원가입 API
       */
       form.addEventListener('submit', async (e) => {
-            // try {
-                  console.log('button clicked');
-                  e.preventDefault();
-                  btn.disabled = true;
-                  const formData = new FormData(form);
-                  const email = formData.get('email');
-                  const password = formData.get('password');
-                  const nickname = formData.get('nickname');
+            console.log('button clicked');
+            e.preventDefault();
+            btn.disabled = true;
+            const formData = new FormData(form);
+            const email = formData.get('email');
+            const password = formData.get('password');
+            const nickname = formData.get('nickname');
 
-                  const response = await fetch(`${API_BASE}/users`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email, password, nickname })
-                  });
+            const response = await fetch(`${API_BASE}/users`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ email, password, nickname })
+            });
 
 
-                  if (response.status === 409) {
-                        const errorData = await response.json();
-                        console.error(errorData);
-                  
-                        if (errorData.message.includes('Email')) {
-                              emailHelperText.textContent = '이미 사용 중인 이메일입니다.';
-                        } else if (errorData.message.includes('Nickname')) {
-                              nicknameHelperText.textContent = '이미 사용 중인 닉네임입니다.';
-                        }
-                  } else if (!response.ok) {
-                        const errorData = await response.json();
-                        console.error(errorData);
-                        throw new Error(`회원가입에 실패했습니다`);
-                  } else {
-                        const response_json = await response.json();
-                        console.log(response_json.data);
-                        if (file) {
-                              const userId = response_json.data.id;
-                              const formData = new FormData;
-                              formData.append('file', file);
-                              formData.append('userId', userId);
-                              const image_response = await fetch(`${API_BASE}/images/profiles`, {
-                                    method: 'POST',
-                                    body: formData
-                              });
-
-                              if (!image_response.ok) {
-                                    alert("프로필 사진 업로드 중 에러가 발생했습니다. 회원 정보 수정 페이지에서 다시 업로드 해주세요.");
-                              }
-                        }
-
-                        alert('회원가입되었습니다. 로그인 페이지로 이동합니다.');
-                        location.href = '/auth/signin.html';
-                  }
+            if (response.status === 409) {
+                  const errorData = await response.json();
+                  console.error(errorData);
             
-            // } catch (err) {
-            //       alert('회원가입 실패: ' + err.message + err.location);
-            // } finally {
-            //       btn.disabled = false;
-            // }
+                  if (errorData.message.includes('Email')) {
+                        emailHelperText.textContent = '이미 사용 중인 이메일입니다.';
+                  } else if (errorData.message.includes('Nickname')) {
+                        nicknameHelperText.textContent = '이미 사용 중인 닉네임입니다.';
+                  }
+            } else if (!response.ok) {
+                  const errorData = await response.json();
+                  console.error(errorData);
+                  throw new Error(`회원가입에 실패했습니다`);
+            } else {
+                  const response_json = await response.json();
+                  console.log(response_json.data);
+                  if (file) {
+                        const userId = response_json.data.id;
+                        const formData = new FormData;
+                        formData.append('file', file);
+                        formData.append('userId', userId);
+                        const image_response = await fetch(`${API_BASE}/images/profiles`, {
+                              method: 'POST',
+                              body: formData
+                        });
+
+                        if (!image_response.ok) {
+                              alert("프로필 사진 업로드 중 에러가 발생했습니다. 회원 정보 수정 페이지에서 다시 업로드 해주세요.");
+                        }
+                  }
+
+                  alert('회원가입되었습니다. 로그인 페이지로 이동합니다.');
+                  location.href = '/auth/signin.html';
+            }
       });
 }
 

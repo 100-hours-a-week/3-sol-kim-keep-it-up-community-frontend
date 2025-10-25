@@ -35,20 +35,20 @@ export default async function profileUpdateInit() {
         method: 'GET'
     });
 
+    console.log('profile_image_response ', profile_image_response )
     const DEFAULT_IMAGE_PATH = '/assets/images/default_profile_image.png'
-    const profile_image_response_json = await profile_image_response.json();
-    console.log('profile_image_response_json', profile_image_response_json);
 
-    if (profile_image_response_json.data) {
+    if (profile_image_response.status == 204) {
+        profileImageInput.style.backgroundImage = `url("${DEFAULT_IMAGE_PATH}")`;
+    } else {
+        const profile_image_response_json = await profile_image_response.json();
         const url = profile_image_response_json.data.url;
         console.log('url', url);
         const image_url = url.startsWith('/') ?
             `${API_BASE}${url}` : `${API_BASE}/${url}`;
         profileImageInput.style.backgroundImage = `url("${image_url}")`;
-    } else {
-        profileImageInput.style.backgroundImage = `url("${DEFAULT_IMAGE_PATH}")`;
     }
-    
+
     let file;
     // 사진 선택하면 선택한 사진으로 변경 
     profileImageInput.addEventListener("change", () => {

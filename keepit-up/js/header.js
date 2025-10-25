@@ -49,20 +49,31 @@ export default async function headerInit() {
         location.href = '/auth/signin.html';
     });
 
-    const response = await fetch(`${API_BASE}/images/profiles/${userId}`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' }
-    })
+    if (userId) {
+        console.log('userID', userId);
+        const response = await fetch(`${API_BASE}/images/profiles/${userId}`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        })
 
-    const response_json = await response.json();
-    console.log('response json', response_json);
-    const image_url = response_json.data.url;
-    console.log('image_url', image_url);
-    const imageUrl = image_url.startsWith('/')
-    ? `${API_BASE}${image_url}`
-    : `${API_BASE}/${image_url}`;
-    // dropdownButton.style.backgroundImage = `url('${imageUrl}')`;
-    dropdownButton.src = `${imageUrl}`;
+        if (response.status === 204) {
+            const DEFAULT_IMAGE_PATH = '/assets/images/default_profile_image.png'
+            dropdownButton.src = DEFAULT_IMAGE_PATH;
+        } else if (!response.ok) {
+            const errorData = await response.json();
+            console.error(errorData);
+        } else {
+            const response_json = await response.json();
+            console.log('response json', response_json);
+
+            const image_url = response_json.data.url;
+            console.log('image_url', image_url);
+            const imageUrl = image_url.startsWith('/')
+            ? `${API_BASE}${image_url}`
+            : `${API_BASE}/${image_url}`;
+            dropdownButton.src = `${imageUrl}`;
+        }
+    }
 }
 
 headerInit();
