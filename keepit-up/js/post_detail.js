@@ -235,7 +235,8 @@ async function renderPost(post) {
         method: 'GET'
     })
 
-    if (post_image_response.ok) {
+    if (post_image_response.ok && post_image_response.status != 204) {
+        
         const post_image_response_json = await post_image_response.json();
         const postImage = document.querySelector('.post-image');
         const url = post_image_response_json.data.url;
