@@ -45,12 +45,12 @@
                 <textarea class="contents" name = "contents" placeholder="내용을 입력하세요"></textarea>
                 <hr/>
                 <span class = "helper-text">*helper text</span>
-                <form class="inputImg" method="post" enctype="multipart/form-data">
+                <form class="post-image-form" method="post" enctype="multipart/form-data">
                     <b class = "contents-text">이미지</b>
                     <div class=""> 
-                        <img id="output" src="" alt="">
+                        <img class = "post-selected-image-preview" id="output" src="" alt="">
                     </div>
-                    <input type="file" accept="" onchange="">
+                    <input class = "post-image-input" type="file" accept="" onchange="">
                 </form>
                 <button class = "submit-button" disabled type="submit">등록하기</button>
             </form>
