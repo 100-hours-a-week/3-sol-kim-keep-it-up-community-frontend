@@ -69,25 +69,8 @@ async function fetchPostList() {
             console.log('hasNext', hasNext);
             cursorId = cursor.id;
 
-            response_json.data.content.forEach(async post => {
-                const image_response = await fetch(`${API_BASE}/images/profiles/${post.writer.id}`, {
-                    method: 'GET'
-                })
-
-                console.log('image_response', image_response)
-                const image_response_json = await image_response.json();
-                console.log('image_response_json', image_response_json);
-
-                let url = DEFAULT_IMAGE_PATH;
-                if (image_response_json.data) {
-                    url = image_response_json.data.url;
-                    url = url.startsWith('/') ?
-                    `${API_BASE}${url}` : `${API_BASE}/${url}`;
-                } 
-
-                console.log('url', url);
-                
-                postList.innerHTML += `
+            response_json.data.content.forEach(post => {
+                const newPostCard = `
                 <div class = "post-card" id = "${post.id}">
                     <div class = "flex-container column" >
                         <h2 class = "post-title"><b>${post.title}</b></h2>
@@ -102,18 +85,34 @@ async function fetchPostList() {
                     </div>
                     <hr/>
                     <div class = "writer-info flex-container justify-start align-center">
-                        <img src="${url}" />
+                        <img src="" />
                         <h3>${post.writer.nickname}</h3>
                     </div>
                 </div>
-            `;
-                
+                `;  
+                postList.insertAdjacentHTML('beforeend', newPostCard);
+            });
+
+            response_json.data.content.forEach(post => {
+                const image_response = fetch(`${API_BASE}/images/profiles/${post.writer.id}`, {
+                    method: 'GET'
+                })
+
+                console.log('image_response', image_response)
+                const image_response_json = image_response.json();
+                console.log('image_response_json', image_response_json);
+
+                let url = DEFAULT_IMAGE_PATH;
+                if (image_response_json.data) {
+                    url = image_response_json.data.url;
+                    url = url.startsWith('/') ?
+                        `${API_BASE}${url}` : `${API_BASE}/${url}`;
+                }
+
+                console.log('url', url);
                 const postCard = document.getElementById(`${post.id}`);
-                postCard.addEventListener('click', () => {
-                    console.log("post clicked");
-                    // const postId = p.querySelector('div').id;
-                    window.location.href = `/posts/post_detail.html?postId=${post.id}`;
-                });
+                const postCardImage = postCard.querySelector('img');
+                postCardImage.src = url;
             });
         }
         
@@ -128,20 +127,14 @@ async function fetchPostList() {
     게시물 상세보기
 */
 
-// function addClickEventListener() {
-//     const posts = document.querySelectorAll('.post-card');
-//     posts.forEach(post => {
-//         post.addEventListener('click', () => {
-//             console.log("post clicked");
-//             const postId = p.querySelector('div').id;
-//             window.location.href = `/posts/post_detail.html?postId=${postId}`;
-//         });
-//     });
-// }
-
+postList.addEventListener('click', (e) => {
+    const card = e.target.closest('.post-card');
+    if (!card) return;
+    const postId = card.id;
+    window.location.href = `/posts/post_detail.html?postId=${postId}`;
+});
 
 fetchPostList();
-// addClickEventListener();
 
 /*
     화면 끝단까지 스크롤 시 게시글 추가 로딩
@@ -149,7 +142,6 @@ fetchPostList();
 window.onscroll = function(e) {
     if((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
         fetchPostList();
-        // addClickEventListener();
     }
 };
 
