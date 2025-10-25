@@ -9,6 +9,14 @@
     height: 148px;
     background-color: var(--m-gray);
     border-radius: 50%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    color: transparent;
+}
+
+.profile-image-input::file-selector-button {
+    display: none;
 }
 
 .profile-image-text {
