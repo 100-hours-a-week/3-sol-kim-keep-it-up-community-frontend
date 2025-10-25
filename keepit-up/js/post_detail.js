@@ -269,17 +269,17 @@ async function renderCommentsHTML(comments) {
         const current_comment = document.getElementById(`${comment.id}`);
         const commentAuthorImage = current_comment.querySelector('img');
 
-        if (profile_image_response.ok) {
+        if (profile_image_response.status === 204) {
+            const DEFAULT_IMAGE_PATH = '/assets/images/default_profile_image.png'
+            commentAuthorImage.src  = DEFAULT_IMAGE_PATH;
+        } else if (profile_image_response.ok) {
             const profile_image_response_json = await profile_image_response.json();
-            console.log('profile_image_response_json', profile_image_response_json);
+            console.log('profile_image_response_json',comment.id, profile_image_response_json);
             const url = profile_image_response_json.data.url;
             const image_url = url.startsWith('/') ?
                 `${API_BASE}${url}` : `${API_BASE}/${url}`;
             
             commentAuthorImage.src = image_url;
-        } else if (profile_image_response.status === 204) {
-            const DEFAULT_IMAGE_PATH = '/assets/images/default_profile_image.png'
-            commentAuthorImage.src  = DEFAULT_IMAGE_PATH;
         } else {
             // TODO: 에러 처리
         }
