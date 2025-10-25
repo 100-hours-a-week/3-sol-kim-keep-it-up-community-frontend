@@ -15,11 +15,6 @@ export default function signUpInit() {
       const passwordConfirmInput = form.querySelector('input.password-verification');
       const nicknameInput = form.querySelector('input.nickname');
 
-      const imageSelector = form.querySelector('input.img-input');
-      const imageBox = form.querySelector('img');
-      const messageDisplay = document.getElementById("message");
-      const fileContentDisplay = document.getElementById("file-content");
-
       function updateButtonState() {
             const allFilled =
                   emailInput.value.trim() !== '' &&
@@ -38,8 +33,6 @@ export default function signUpInit() {
 
       [emailInput, passwordInput, passwordConfirmInput, nicknameInput].forEach(inputElement => inputElement.addEventListener('input', updateButtonState));
 
-      const preview = form.querySelector("img");
-      console.log('preview', preview);
       const fileInput = document.querySelector("input[type=file]");
 
       fileInput.addEventListener("change", previewFile);
@@ -53,10 +46,6 @@ export default function signUpInit() {
 
             reader.addEventListener("load", () => {
                   console.log("reader event listener loading");
-                  // convert image file to base64 string
-                  // preview.alt = "image loaded"
-                  // preview.src = reader.result;
-                  // fileInput.style.backgroundImage = reader.result;
                   const dataUrl = reader.result;
                   fileInput.style.backgroundImage = `url('${dataUrl}')`;
             });
@@ -65,14 +54,6 @@ export default function signUpInit() {
                   reader.readAsDataURL(file);
             }
       }
- 
-      // const imageOutput = form.querySelector('input.img-output');
-      // imageSelector.addEventListener('input', (e) => {
-      //       const files = e.currentTarget.files;
-      //       e.target.style.backgroundImage = files[0];
-      //       const imgElement = imageOutput.createElement('img');
-      //       imgElement.style.backgroundImage = files[0];
-      // });
 
       /*
         이메일 형식 유효성 검사
@@ -138,7 +119,7 @@ export default function signUpInit() {
         회원가입 API
       */
       form.addEventListener('submit', async (e) => {
-            try {
+            // try {
                   console.log('button clicked');
                   e.preventDefault();
                   btn.disabled = true;
@@ -168,14 +149,16 @@ export default function signUpInit() {
                         console.error(errorData);
                         throw new Error(`회원가입에 실패했습니다`);
                   } else {
-                        const data = await response.json();
-                        console.log(data);
+                        const response_json = await response.json();
+                        console.log(response_json.data);
                         if (file) {
-                              const userId = response.data.data.userId;
+                              const userId = response_json.data.id;
+                              const formData = new FormData;
+                              formData.append('file', file);
+                              formData.append('userId', userId);
                               const image_response = await fetch(`${API_BASE}/images/profiles`, {
                                     method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: { file, userId }
+                                    body: formData
                               });
 
                               if (!image_response.ok) {
@@ -187,11 +170,11 @@ export default function signUpInit() {
                         location.href = '/auth/signin.html';
                   }
             
-            } catch (err) {
-                  alert('회원가입 실패: ' + err.message);
-            } finally {
-                  btn.disabled = false;
-            }
+            // } catch (err) {
+            //       alert('회원가입 실패: ' + err.message + err.location);
+            // } finally {
+            //       btn.disabled = false;
+            // }
       });
 }
 
