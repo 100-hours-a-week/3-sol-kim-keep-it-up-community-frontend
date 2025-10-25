@@ -204,7 +204,7 @@ function autosize(textarea) {
     textarea.style.height = `${textarea.scrollHeight}px`;
 }
 
-function renderPost(post) {
+async function renderPost(post) {
     const postTitle = postSection.querySelector('.post-title');
     const postAuthor = postSection.querySelector('.post-author');
     // const postAuthorImage = postSection.querySelector('.post-author-image');
@@ -226,6 +226,24 @@ function renderPost(post) {
     if (post.writer.id !== parseInt(userId)) {
         postSection.querySelector('.post-edit-button').style.display = 'none';
         postSection.querySelector('.post-delete-button').style.display = 'none';
+    }
+
+    /*
+        게시글 이미지
+    */
+    const post_image_response = await fetch(`${API_BASE}/images/posts/${postId}`, {
+        method: 'GET'
+    })
+
+    if (post_image_response.ok) {
+        const post_image_response_json = await post_image_response.json();
+        const postImage = document.querySelector('.post-image');
+        const url = post_image_response_json.data.url;
+        console.log('post image url', url);
+        const image_url = url.startsWith('/') ?
+            `${API_BASE}${url}` : `${API_BASE}/${url}`;
+        
+        postImage.src = image_url;
     }
 } 
 
@@ -262,6 +280,9 @@ async function renderCommentsHTML(comments) {
                     <p class = "comment-contents">${comment.contents}</p>
                 </div>`;
         
+        /*
+            작성자 프로필 이미지 
+        */
         const profile_image_response = await fetch(`${API_BASE}/images/profiles/${comment.writer.id}`, {
             method: 'GET'
         })

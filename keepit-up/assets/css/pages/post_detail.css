@@ -40,6 +40,11 @@
     margin: 8px;
 }
 
+.post-image {
+    max-width: 590px;
+    max-height: 500px;
+}
+
 .post-detail-section .post-content {
     margin-top: 24px;
     margin-bottom: 24px;
