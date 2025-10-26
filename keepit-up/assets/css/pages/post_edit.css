@@ -1,6 +1,7 @@
 .post-edit-container h3 {
     font-weight: 700;
     font-size: 24px;
+    margin-bottom: 20px;
 }
 
 .post-edit-form {
@@ -13,7 +14,6 @@
 
 .post-edit-form input {
     height: 40px;
-    padding-left: 10px;
     border: none;
     border-radius: 6px;
 }
@@ -31,6 +31,20 @@
     resize: none; 
     padding: 10px;
     border-radius: 6px;
+}
+
+.post-edit-container .post-image-input::file-selector-button {
+    width: 100px;
+    height: 30px;
+    background-color: var(--l-gray);
+    border-color: var(--blue-disabled);
+    border-radius: 10px;
+    border-style: solid;
+    margin-right: 15px;
+}
+
+.post-edit-container .post-image-input {
+    padding-left: 10px;
 }
 
 .post-selected-image-preview {
