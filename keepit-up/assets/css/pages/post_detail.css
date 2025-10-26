@@ -60,13 +60,14 @@
 .post-detail-section .post-content {
     margin-top: 24px;
     margin-bottom: 24px;
+    white-space: pre;
 }
 
-.post-detail-section hr {
+.post-detail-section .post-comment-divider {
     margin-top: 15px;
-
     width: 100%;
 }
+
 .post-detail-section .comments-section {
     width: 595px;
 }

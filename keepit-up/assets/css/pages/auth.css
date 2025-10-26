@@ -5,6 +5,7 @@
     background-color: var(--blue);
     color: white;
     border-radius: 8px;
+    margin-top: 16px;
 }
 
 .auth-button:disabled {

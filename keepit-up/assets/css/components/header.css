@@ -1,7 +1,7 @@
 header {
     width: 100%;
     grid-template-columns: 1fr auto 1fr; /* 좌 1fr / 가운데 콘텐츠 auto / 우 1fr */
-    padding-top: 24px;
+    padding-top: 48px;
     padding-bottom: 24px;
 }
 
@@ -33,21 +33,30 @@ header {
     margin-bottom: 16px;
 }
 
+.dropdown-menu li a{
+    color: black;
+}
+
 .after-login-menu img {
     width: 36px;
     height: 36px;
-    border-radius: 24px;
+    border-radius: 50%;
     background-color: var(--m-gray);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 .header-contents {
-    margin-right: 24px;
+    margin-right: 48px;
 }
 
 .header-contents .signup-button {
     margin-right: 10px;
+    color: black;
 }
 
 .header-contents .signin-button {
     margin-right: 10px;
+    color: black;
 }

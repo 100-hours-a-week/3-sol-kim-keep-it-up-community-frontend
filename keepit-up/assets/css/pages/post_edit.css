@@ -16,6 +16,7 @@
     height: 40px;
     border: none;
     border-radius: 6px;
+    padding-left: 10px;
 }
 .post-edit-form hr {
     width: 100%;
