@@ -50,5 +50,7 @@
     color: black;
 }
 
-.signup-container 
-
+dialog {
+    width: 650px;
+    height: 600px;
+}

@@ -68,12 +68,31 @@
                 <input type="text" class="nickname" name = "nickname" placeholder="닉네임을 입력하세요">
                 <p class = "helper-text nickname">* helper-text</p>
             </div>
+            <div class="agreements flex-container column">
+                <label class="flex-container align-center">
+                    <input type="checkbox" id="agreeTerms" required>
+                    <span>[필수] 이용약관 동의</span>
+                    <span href="" data-open="terms">자세히 보기</span>
+                </label>
+                <label class="flex-container align-center">
+                    <input type="checkbox" id="agreePrivacy" required>
+                    <span>[필수] 개인정보처리방침 동의</span>
+                    <span href="" data-open="privacy">자세히 보기</span>
+                </label>
+            </div>
             <div class = "flex-container justify-center">
                 <button class = "auth-button" disabled type="submit">회원가입</button>
             </div>
         </form>
         <a class="" href="/auth/signin.html">로그인하러 가기</a>
     </div>
+    <dialog id="legal-modal" class="legal-modal">
+        <div class="modal-header"><h2 id="legal-title">문서</h2></div>
+        <div id="legal-content" class="modal-content">
+
+        </div>
+        <div class="modal-footer"><button id="legal-close" type="button">닫기</button></div>
+    </dialog>
     </main>
    <footer>
         <div class="container footer-about">

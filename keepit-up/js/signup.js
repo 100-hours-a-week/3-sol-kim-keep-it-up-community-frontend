@@ -15,6 +15,16 @@ export default function signUpInit() {
       const passwordConfirmInput = form.querySelector('input.password-verification');
       const nicknameInput = form.querySelector('input.nickname');
 
+      const termsCheckbox = document.getElementById('agreeTerms');
+      const privacyCheckbox = document.getElementById('agreePrivacy');
+
+      const legalModal = document.getElementById('legal-modal');
+      const legalModalTitle = document.getElementById('legal-title');
+      const legalModalContent = document.getElementById('legal-content');
+      const legalFrame  = document.getElementById('legal-frame');
+      const legalModalCloseButton = document.getElementById('legal-close');
+      const legalLinks = document.querySelectorAll('span[data-open]');
+
       /*
       FUNCTIONS
       */
@@ -44,9 +54,17 @@ export default function signUpInit() {
                   passwordHelperText.textContent.trim() === '' &&
                   passwordConfirmHelperText.textContent.trim() === '' &&
                   nicknameHelperText.textContent.trim() === '';
+            
+            const agreed = termsCheckbox.checked && privacyCheckbox.checked;
 
-            btn.disabled = !(allFilled && noErrors);
+            btn.disabled = !(allFilled && noErrors && agreed);
       }
+
+      /*
+      EVENT LISTENERS
+      */
+      termsCheckbox.addEventListener('change', updateButtonState);
+      privacyCheckbox.addEventListener('change', updateButtonState);
 
       [emailInput, passwordInput, passwordConfirmInput, nicknameInput].forEach(inputElement => inputElement.addEventListener('input', updateButtonState));
 
@@ -55,6 +73,36 @@ export default function signUpInit() {
       fileInput.addEventListener("change", previewFile);
       const DEFAULT_IMAGE_PATH = '/assets/images/default_profile_image.png'
       fileInput.style.backgroundImage = `url("${DEFAULT_IMAGE_PATH}")`;
+
+      legalLinks.forEach(a => {
+            a.addEventListener('click', () => {
+                  const type = a.dataset.open;
+                  openLegal(type);
+            });
+      });
+
+      /*
+      FUNCTIONS
+      */     
+      
+      async function openLegal(type) {
+            legalModalTitle.textContent = type === 'terms' ? '이용약관' : '개인정보처리방침';
+
+            const response = await fetch(`${API_BASE}/legal/${type}`, {
+                  method: 'GET'
+            })
+            const html = await response.text();
+
+            const newDiv = document.createElement('div');
+            newDiv.innerHTML = html;
+            const body = newDiv.querySelector('main');
+            legalModalContent.innerHTML = body.innerHTML; // 본문만 주입
+
+            legalModal.showModal();
+            legalModalCloseButton.addEventListener('click', () => {
+                  legalModal.close();
+            })
+      }
 
       let file;
       function previewFile() {
@@ -71,6 +119,8 @@ export default function signUpInit() {
                   reader.readAsDataURL(file);
             }
       }
+
+
 
       /*
         이메일 형식 유효성 검사
