@@ -15,6 +15,23 @@ export default function signUpInit() {
       const passwordConfirmInput = form.querySelector('input.password-verification');
       const nicknameInput = form.querySelector('input.nickname');
 
+      /*
+      FUNCTIONS
+      */
+      function showAlertModal(content, next_page = null) {
+            const commentAlertModal = document.querySelector('.comment-alert-modal');
+            const alertContent = commentAlertModal.querySelector('p');
+            alertContent.textContent = content;
+            commentAlertModal.style.display = 'block';
+            const modalConfirmButton = commentAlertModal.querySelector('.modal-confirm-button');
+            modalConfirmButton.addEventListener('click', () => {
+                  commentAlertModal.style.display = 'none';
+                  if (next_page) {
+                        window.location.href = next_page;
+                  }
+            })
+      }
+
       function updateButtonState() {
             const allFilled =
                   emailInput.value.trim() !== '' &&
@@ -146,7 +163,7 @@ export default function signUpInit() {
             } else if (!response.ok) {
                   const errorData = await response.json();
                   console.error(errorData);
-                  throw new Error(`회원가입에 실패했습니다`);
+                  showAlertModal('회원가입에 실패했습니다.');
             } else {
                   const response_json = await response.json();
                   console.log(response_json.data);
@@ -161,12 +178,11 @@ export default function signUpInit() {
                         });
 
                         if (!image_response.ok) {
-                              alert("프로필 사진 업로드 중 에러가 발생했습니다. 회원 정보 수정 페이지에서 다시 업로드 해주세요.");
+                              showAlertModal('프로필 사진 업로드 중 에러가 발생했습니다. 회원 정보 수정 페이지에서 다시 업로드 해주세요.');
                         }
                   }
-
-                  alert('회원가입되었습니다. 로그인 페이지로 이동합니다.');
-                  location.href = '/auth/signin.html';
+                  showAlertModal(`     회원가입되었습니다. 
+로그인 페이지로 이동합니다.`, '/auth/signin.html');
             }
       });
 }

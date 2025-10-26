@@ -11,6 +11,8 @@ const postLikeButton = postSection.querySelector('.likes-count-container');
 const postEditButton = postSection.querySelector('.post-edit-button');
 const postDeleteButton = postSection.querySelector('.post-delete-button');
 
+const DEFAULT_IMAGE_PATH = '/assets/images/default_profile_image.png'
+
 const postId = new URLSearchParams(window.location.search).get('postId');
 console.log('postId:', postId);
 
@@ -30,7 +32,7 @@ postLikeButton.addEventListener('click', async () => {
     const userId = sessionStorage.getItem('userId');
 
     if (!userId) {
-        alert("로그인이 필요한 서비스입니다.");
+        showAlertModal('로그인이 필요한 서비스입니다.');
     } else {
         const isLiked = postLikeButton.style.backgroundColor === `var(--blue-disabled)`;
         const likeCountText = postLikeButton.querySelector('.post-likes-count');
@@ -45,12 +47,10 @@ postLikeButton.addEventListener('click', async () => {
                 postLikeButton.style.backgroundColor = `var(--m-gray)`;
                 const prevCount = likeCountText.textContent;
                 likeCountText.textContent = String(parseInt(prevCount) - 1);
-
             } else {
                 console.error(json_data);
-                throw new Error(`좋아요 취소 중 오류가 발생했습니다.`);
+                showAlertModal('좋아요 취소 중 오류가 발생했습니다.');
             }
-
         } else {
             const response = await fetch(`${API_BASE}/posts/${postId}/likes`, {
                 method: 'POST',
@@ -64,11 +64,10 @@ postLikeButton.addEventListener('click', async () => {
                 likeCountText.textContent = String(parseInt(prevCount) + 1);
             } else {
                 console.error(json_data);
-                throw new Error(`좋아요 등록 중 오류가 발생했습니다.`);
+                showAlertModal('좋아요 등록 중 오류가 발생했습니다.');
             }
         }
     }
-    
 });
 
 /*
@@ -108,11 +107,10 @@ postDeleteButton.addEventListener('click', async () => {
             });
             const data = await response.json();
             if (response.ok) {
-                alert('게시글이 삭제되었습니다.');
-                window.location.href = '/posts/post_list.html';
+                showAlertModal('게시글이 삭제되었습니다.', '/posts/post_list.html');
             } else {
                 console.error(data);
-                throw new Error(`게시글 삭제에 실패했습니다.`);
+                showAlertModal('게시글 삭제에 실패했습니다.');
             }
         })
     } catch (error) {
@@ -158,7 +156,6 @@ async function fetchComments() {
 /*
     댓글 작성 API
 */
-
 commentForm.addEventListener('submit', async (e) => {
     e.preventDefault(); 
     if (userId) {
@@ -178,9 +175,9 @@ commentForm.addEventListener('submit', async (e) => {
             const data = await response.json();
             if (!response.ok) {
                 console.error(data);
-                throw new Error(`댓글 작성에 실패했습니다.`);
+                showAlertModal('댓글 작성에 실패했습니다.');
             } else {
-                alert('댓글이 작성되었습니다.');
+                showAlertModal('댓글이 작성되었습니다.');
                 commentForm.reset();
                 const comments = await fetchComments();
                 renderCommentsHTML(comments);
@@ -192,12 +189,27 @@ commentForm.addEventListener('submit', async (e) => {
             alert(error.message);
         }
     } else {
-        alert("로그인이 필요한 서비스입니다.");
+        showAlertModal('로그인이 필요한 서비스입니다.', '/auth/signin.html');
     }
 });
+
 /*
     functions
 */
+
+function showAlertModal(content, next_page = null) {
+    const commentAlertModal = document.querySelector('.comment-alert-modal');
+    const alertContent = commentAlertModal.querySelector('p');
+    alertContent.textContent = content;
+    commentAlertModal.style.display = 'block';
+    const modalConfirmButton = commentAlertModal.querySelector('.modal-confirm-button');
+    modalConfirmButton.addEventListener('click', () => {
+        commentAlertModal.style.display = 'none';
+        if (next_page) {
+            window.location.href = next_page;
+        }
+    })
+}
 
 function autosize(textarea) {
     textarea.style.height = 'auto';
@@ -290,11 +302,9 @@ async function renderCommentsHTML(comments) {
 
         const current_comment = document.getElementById(`${comment.id}`);
         const commentAuthorImage = current_comment.querySelector('img');
-
-        if (profile_image_response.status === 204) {
-            const DEFAULT_IMAGE_PATH = '/assets/images/default_profile_image.png'
-            commentAuthorImage.src  = DEFAULT_IMAGE_PATH;
-        } else if (profile_image_response.ok) {
+        commentAuthorImage.src = DEFAULT_IMAGE_PATH;
+        
+        if (profile_image_response.ok && profile_image_response != 204) {
             const profile_image_response_json = await profile_image_response.json();
             console.log('profile_image_response_json',comment.id, profile_image_response_json);
             const url = profile_image_response_json.data.url;
@@ -361,9 +371,9 @@ function addEvenListenerToCommentEditButtons() {
                     const data = await response.json();
                     if (!response.ok) {
                         console.error(data);
-                        throw new Error(`댓글 수정에 실패했습니다.`);
+                        showAlertModal('댓글 수정에 실패했습니다.');
                     } else {
-                        alert('댓글이 수정되었습니다.');
+                        showAlertModal('댓글이 수정되었습니다.');
                         const comments = await fetchComments();
                         renderCommentsHTML(comments);
                         addEvenListenerToCommentEditButtons();
@@ -418,8 +428,8 @@ function addEvenListenerToCommentDeleteButtons() {
                         });
                         const data = await response.json();
                         if (response.ok) {
-                            alert('댓글이 삭제되었습니다.');
                             commentModal.style.display = 'none';
+                            showAlertModal('댓글이 삭제되었습니다.');
                             commentList.innerHTML = '';
                             const comments = await fetchComments();
                             renderCommentsHTML(comments);
@@ -427,7 +437,7 @@ function addEvenListenerToCommentDeleteButtons() {
                             addEvenListenerToCommentDeleteButtons();
                         } else {
                             console.error(data);
-                            throw new Error(`댓글 삭제에 실패했습니다.`);
+                            showAlertModal('댓글 삭제에 실패했습니다.');
                         }
                     } catch (error) {
                         console.error(error);
@@ -467,9 +477,6 @@ if (userId) {
     }
 }
 
-
-
-
 fetchPost().then(async post => {
     console.log('post:', post);
     renderPost(post);
@@ -480,7 +487,7 @@ fetchPost().then(async post => {
 
     const postAuthorImage = postSection.querySelector('.post-author-image');
 
-    if (profile_image_response.ok) {
+    if (profile_image_response.ok && profile_image_response.status != 204) {
         const profile_image_response_json = await profile_image_response.json();
         console.log('profile_image_response_json', profile_image_response_json);
         const url = profile_image_response_json.data.url;

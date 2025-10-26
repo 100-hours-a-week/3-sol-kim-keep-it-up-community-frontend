@@ -21,6 +21,21 @@ export default async function headerInit() {
         beforeLoginMenu.style.display = 'none';
     }
 
+    function showAlertModal(content, next_page = null) {
+        const commentAlertModal = document.querySelector('.comment-alert-modal');
+        const alertContent = commentAlertModal.querySelector('p');
+        alertContent.textContent = content;
+        commentAlertModal.style.display = 'block';
+        const modalConfirmButton = commentAlertModal.querySelector('.modal-confirm-button');
+        modalConfirmButton.addEventListener('click', () => {
+            commentAlertModal.style.display = 'none';
+            if (next_page) {
+                window.location.href = next_page;
+            }
+        })
+    }
+
+
     /*
         드롭다운 메뉴
         - 회원정보 수정
@@ -45,8 +60,7 @@ export default async function headerInit() {
     logoutButton.addEventListener('click', () => {
         console.log("logout button clicked");
         sessionStorage.removeItem('userId');
-        alert('로그아웃 되었습니다.');
-        location.href = '/auth/signin.html';
+        showAlertModal('로그아웃 되었습니다.', '/auth/signin.html');
     });
 
     if (userId) {

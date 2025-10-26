@@ -33,6 +33,12 @@
         </div>
     </header>
     <main>
+        <div class = "comment-alert-modal modal alert-modal">
+            <div class = "flex-self column justify-center align-center modal-content">
+                <p class = "modal-description"></p>
+                <button class = "modal-confirm-button">확인</button>
+            </div>
+        </div>
         <div class = "post-edit-container flex-container justify-center align-center column">
             <h3> 게시글 작성</h3>
             <form class="post-edit-form flex-container column" action="" method="post">
@@ -44,7 +50,7 @@
                 <hr/>
                 <textarea class="contents" name = "contents" placeholder="내용을 입력하세요"></textarea>
                 <hr/>
-                <span class = "helper-text">*helper text</span>
+                <span class = "helper-text" >*helper text</span>
                 <form class="post-image-form" method="post" enctype="multipart/form-data">
                     <b class = "contents-text">이미지</b>
                     <div class=""> 

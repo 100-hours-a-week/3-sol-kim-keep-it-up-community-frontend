@@ -13,9 +13,27 @@ postCreateButton.addEventListener('click', () => {
     if (userId) {
         window.location.href = '/posts/post_edit.html';
     } else {
-        alert("로그인이 필요한 서비스입니다.");
+        showAlertModal("로그인이 필요한 서비스입니다.", '/auth/signin.html');
     }
 });
+
+/*
+FUNCTIONS
+*/
+    function showAlertModal(content, next_page = null) {
+        const commentAlertModal = document.querySelector('.comment-alert-modal');
+        const alertContent = commentAlertModal.querySelector('p');
+        alertContent.textContent = content;
+        commentAlertModal.style.display = 'block';
+        const modalConfirmButton = commentAlertModal.querySelector('.modal-confirm-button');
+        modalConfirmButton.addEventListener('click', () => {
+                console.log("clicked in signin");
+                commentAlertModal.style.display = 'none';
+                if (next_page) {
+                    window.location.href = next_page;
+                }
+        })
+    }
 
 /*
     게시물 목록 API
@@ -73,21 +91,25 @@ async function fetchPostList() {
                 const newPostCard = `
                 <div class = "post-card" id = "${post.id}">
                     <div class = "flex-container column" >
+                    <div class = "writer-info flex-container justify-between align-center">
+                        <div class = "flex-container align-center">
+                            <img src="" />
+                            <h3 class "post-author">${post.writer.nickname}</h3>
+                        </div>
+                        <span class ="post-created-at">${post.createdAt}</span>
+                    </div>
                         <h2 class = "post-title"><b>${post.title}</b></h2>
-                        <div class = "post-info flex-container justify-between">
+                        
+                    </div>
+                    <hr/>
+                    <div class = "post-info flex-container justify-between">
                             <div>
                                 <span>좋아요</span> <span>${post.likesCount}</span>
                                 <span>댓글</span> <span>${post.commentsCount}</span>
                                 <span>조회수</span> <span>${post.viewsCount}</span>
                             </div>
-                            <span>${post.createdAt}</span>
+                            
                         </div>
-                    </div>
-                    <hr/>
-                    <div class = "writer-info flex-container justify-start align-center">
-                        <img src="" />
-                        <h3>${post.writer.nickname}</h3>
-                    </div>
                 </div>
                 `;  
                 postList.insertAdjacentHTML('beforeend', newPostCard);
@@ -99,16 +121,19 @@ async function fetchPostList() {
                 })
 
                 console.log('image_response', image_response)
-                const image_response_json = await image_response.json();
-                console.log('image_response_json', image_response_json);
-
                 let url = DEFAULT_IMAGE_PATH;
-                if (image_response_json.data) {
-                    url = image_response_json.data.url;
-                    url = url.startsWith('/') ?
-                        `${API_BASE}${url}` : `${API_BASE}/${url}`;
-                }
 
+                if (image_response.status != 204) {
+                    const image_response_json = await image_response.json();
+                    console.log('image_response_json', image_response_json);
+                    
+                    if (image_response_json.data) {
+                        url = image_response_json.data.url;
+                        url = url.startsWith('/') ?
+                            `${API_BASE}${url}` : `${API_BASE}/${url}`;
+                    }
+                }
+                
                 console.log('url', url);
                 const postCard = document.getElementById(`${post.id}`);
                 const postCardImage = postCard.querySelector('img');

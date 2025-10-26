@@ -9,6 +9,24 @@ export default function signInInit() {
       const passwordInput = form.querySelector('input.password');
       const helperText = form.querySelector('.helper-text');
 
+      /*
+      FUNCTIONS
+      */
+      function showAlertModal(content, next_page = null) {
+            const commentAlertModal = document.querySelector('.comment-alert-modal');
+            const alertContent = commentAlertModal.querySelector('p');
+            alertContent.textContent = content;
+            commentAlertModal.style.display = 'block';
+            const modalConfirmButton = commentAlertModal.querySelector('.modal-confirm-button');
+            modalConfirmButton.addEventListener('click', () => {
+                  console.log("clicked in signin");
+                  commentAlertModal.style.display = 'none';
+                  if (next_page) {
+                        window.location.href = next_page;
+                  }
+            })
+      }
+
       function updateButtonState() {
             const password = passwordInput.value;
             const email = emailInput.value;
@@ -58,10 +76,10 @@ export default function signInInit() {
                   const response_json = await response.json();
                   if (response.status == 401) {
                         console.error(response_json);
-                        throw new Error(`아이디 또는 비밀번호를 확인해주세요.`);
+                        showAlertModal('아이디 또는 비밀번호를 확인해주세요.');
                   } else if (!response.ok) {
                         console.error(response_json);
-                        throw new Error(`로그인에 실패했습니다.`);
+                        showAlertModal('로그인에 실패했습니다.');
                   } else {
                         console.log('response_json:', response_json);
                         // sessionStorage.setItem('token', data.token);
@@ -69,13 +87,10 @@ export default function signInInit() {
                         // sessionStorage.setItem('email', email);
                         console.log('userId:', response_json.data.id);
                         sessionStorage.setItem('userId', response_json.data.id);
-                  
-                        alert('로그인되었습니다.');
+                        showAlertModal('로그인되었습니다.', '/posts/post_list.html');
                   }
-            
-                  location.href = '/posts/post_list.html';
             } catch (err) {
-                  alert('로그인 실패: ' + err.message);
+                  showAlertModal('로그인 중 오류가 발생했습니다.');
             } finally {
                   btn.disabled = false;
             }

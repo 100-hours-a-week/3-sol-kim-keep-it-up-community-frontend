@@ -11,6 +11,24 @@ export default function passwordUpdateInit() {
     const passwordConfirmInput = passwordUpdateForm.querySelector('input.password-verification');
 
     /*
+    FUNCTIONS
+    */
+    function showAlertModal(content, next_page = null) {
+        const commentAlertModal = document.querySelector('.comment-alert-modal');
+        const alertContent = commentAlertModal.querySelector('p');
+        alertContent.textContent = content;
+        commentAlertModal.style.display = 'block';
+        const modalConfirmButton = commentAlertModal.querySelector('.modal-confirm-button');
+        modalConfirmButton.addEventListener('click', () => {
+                console.log("clicked in signin");
+                commentAlertModal.style.display = 'none';
+                if (next_page) {
+                    window.location.href = next_page;
+                }
+        })
+    }
+
+    /*
         유효성 검사 통과 시 버튼 활성화
     */
     function updateButtonState() {
@@ -80,11 +98,11 @@ export default function passwordUpdateInit() {
             const data = await response.json();
             if (!response.ok) {
                 console.error(data);
-                throw new Error(`비밀번호 수정에 실패했습니다.`);
+                showAlertModal("비밀번호 수정에 실패했습니다.");
             } else {
-                alert('비밀번호가 수정되었습니다. 다시 로그인해주세요.');
+                showAlertModal(`비밀번호가 수정되었습니다. 
+다시 로그인해주세요.`, '/auth/signin.html');
                 sessionStorage.clear();
-                window.location.href = '/auth/signin.html';
             }
         } catch (error) {
             alert(error.message);

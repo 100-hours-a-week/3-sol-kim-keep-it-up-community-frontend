@@ -27,6 +27,20 @@ function autosize(textarea) {
     textarea.style.height = `${textarea.scrollHeight}px`;
 }
 
+function showAlertModal(content, next_page = null) {
+    const commentAlertModal = document.querySelector('.comment-alert-modal');
+    const alertContent = commentAlertModal.querySelector('p');
+    alertContent.textContent = content;
+    commentAlertModal.style.display = 'block';
+    const modalConfirmButton = commentAlertModal.querySelector('.modal-confirm-button');
+    modalConfirmButton.addEventListener('click', () => {
+        commentAlertModal.style.display = 'none';
+        if (next_page) {
+            window.location.href = next_page;
+        }
+    })
+}
+
 /*
     EVENT LISTENERS
 */
@@ -97,7 +111,7 @@ if (postId) {
     게시글 작성, 수정 API 
 */
 submitButton.addEventListener('click', async (e) => {
-    try {
+    // try {
         console.log('button clicked');
         e.preventDefault();
         submitButton.disabled = true;
@@ -126,7 +140,7 @@ submitButton.addEventListener('click', async (e) => {
                 })
 
                 if (!image_response.ok) {
-                    alert("이미지 업로드 중 오류가 발생했습니다. 수정 페이지에서 다시 업로드해주세요.");
+                    showAlertModal('이미지 업로드 중 오류가 발생했습니다. 수정 페이지에서 다시 업로드해주세요.');
                 }
             }
 
@@ -152,7 +166,7 @@ submitButton.addEventListener('click', async (e) => {
 
                 // const image_response_json = await image_response.json();
                 if (!image_response.ok) {
-                    alert('이미지 업로드 중 오류가 발생했습니다. 글 수정에서 다시 업로드해주세요.');
+                    showAlertModal('이미지 업로드 중 오류가 발생했습니다. 글 수정에서 다시 업로드해주세요.');
                 }
             }
         }
@@ -160,17 +174,17 @@ submitButton.addEventListener('click', async (e) => {
         const data = response_json;
         if (response.status == 400) {
             console.error(data);
-            throw new Error(`모든 항목을 입력해주세요.`);
+            showAlertModal(`모든 항목을 입력해주세요.`);
         } else if (response.ok) {
-            alert(postId ? '게시글이 수정되었습니다.' : '게시글이 작성되었습니다.');
-            window.location.href = `/posts/post_detail.html?postId=${data.data.id}`;
+            const message = postId ? '게시글이 수정되었습니다.' : '게시글이 작성되었습니다.';
+            showAlertModal(message, `/posts/post_detail.html?postId=${data.data.id}`);
         } else {
             console.error(data);
-            throw new Error(`게시글 작성에 실패했습니다.`);
+            showAlertModal(`게시글 작성에 실패했습니다.`);
         }
-    } catch (error) {
-        console.error(error);
-        alert(error.message);
-        submitButton.disabled = false;
-    }
+    // } catch (error) {
+    //     console.error(error);
+    //     alert(error.message);
+    //     submitButton.disabled = false;
+    // }
 });
