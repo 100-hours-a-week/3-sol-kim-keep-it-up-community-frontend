@@ -1,7 +1,7 @@
 .profile-update-container h3 {
     font-size: 20px;
     font-weight: 700;
-    margin-bottom: 12px;
+    margin-bottom: 20px;
 }
 
 .profile-update-container .profile-image-input {
@@ -31,6 +31,7 @@
 
 .profile-update-container b {
     font-weight: 700;
+    margin-top: 20px;
 }
 
 .email-text {
@@ -48,6 +49,11 @@
 .profile_update_form input {
     padding-left: 10px;
     height: 34px;
+    border-radius: 10px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border-style: solid;
+    border-color: var(--m-gray);
 }
 .profile-update-container .update-button {
     width: 356px;
@@ -56,6 +62,7 @@
     background-color: var(--blue);
     color: white;
     border-radius: 8px;
+    margin-top: 20px;
 }
 
 .profile-update-container .update-button:disabled {
