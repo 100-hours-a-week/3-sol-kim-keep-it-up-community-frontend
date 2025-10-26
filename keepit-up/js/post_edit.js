@@ -105,86 +105,92 @@ if (postId) {
     postForm.querySelector('input.title').value = response_json.data.title;
     postForm.querySelector('textarea.contents').value = response_json.data.contents;
     autosize(contentsTextArea);
+
+    const image_response = await fetch(`${API_BASE}/images/posts/${postId}`, {
+        method: 'GET'
+    })
+    if (image_response.ok && image_response.status != 204) {
+        const image_response_json = await image_response.json();
+        const url = image_response_json.data.url;
+        const imagePrev = document.querySelector('.post-selected-image-preview');
+        const image_url = url.startsWith('/') ?
+            `${API_BASE}${url}` : `${API_BASE}/${url}`;
+        imagePrev.src = image_url;
+    }
 } 
 
 /*
     게시글 작성, 수정 API 
 */
 submitButton.addEventListener('click', async (e) => {
-    // try {
-        console.log('button clicked');
-        e.preventDefault();
-        submitButton.disabled = true;
-        const formData = new FormData(postForm);
-        const title = formData.get('title');
-        const contents = formData.get('contents');
+    console.log('button clicked');
+    e.preventDefault();
+    submitButton.disabled = true;
+    const formData = new FormData(postForm);
+    const title = formData.get('title');
+    const contents = formData.get('contents');
 
-        let response;
-        let response_json;
-        if (postId) {
-            response = await fetch(`${API_BASE}/posts/${postId}`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title, contents, writerId }),
-            });
+    let response;
+    let response_json;
+    if (postId) {
+        response = await fetch(`${API_BASE}/posts/${postId}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title, contents, writerId }),
+        });
 
-            response_json = await response.json();
+        response_json = await response.json();
 
-            if (fileUpdated) {
-                const formData = new FormData();
-                formData.append('file', file);
-                formData.append('postId', postId);
-                const image_response = await fetch(`${API_BASE}/images/posts/${postId}`, {
-                    method: 'PUT',
-                    body: formData
-                })
+        if (fileUpdated) {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('postId', postId);
+            const image_response = await fetch(`${API_BASE}/images/posts/${postId}`, {
+                method: 'PUT',
+                body: formData
+            })
 
-                if (!image_response.ok) {
-                    showAlertModal('이미지 업로드 중 오류가 발생했습니다. 수정 페이지에서 다시 업로드해주세요.');
-                }
+            if (!image_response.ok) {
+                showAlertModal('이미지 업로드 중 오류가 발생했습니다. 수정 페이지에서 다시 업로드해주세요.');
             }
+        }
 
-        } else {
-            response = await fetch(`${API_BASE}/posts`, {
+    } else {
+        response = await fetch(`${API_BASE}/posts`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title, contents, writerId }),
+        });
+
+        response_json = await response.json();
+        const postId = response_json.data.id;
+
+        if (file) {
+            console.log('file', file, 'postId', postId);
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('postId', postId);
+            const image_response = await fetch(`${API_BASE}/images/posts`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title, contents, writerId }),
-            });
+                body: formData
+            })
 
-            response_json = await response.json();
-            const postId = response_json.data.id;
-
-            if (file) {
-                console.log('file', file, 'postId', postId);
-                const formData = new FormData();
-                formData.append('file', file);
-                formData.append('postId', postId);
-                const image_response = await fetch(`${API_BASE}/images/posts`, {
-                    method: 'POST',
-                    body: formData
-                })
-
-                // const image_response_json = await image_response.json();
-                if (!image_response.ok) {
-                    showAlertModal('이미지 업로드 중 오류가 발생했습니다. 글 수정에서 다시 업로드해주세요.');
-                }
+            // const image_response_json = await image_response.json();
+            if (!image_response.ok) {
+                showAlertModal('이미지 업로드 중 오류가 발생했습니다. 글 수정에서 다시 업로드해주세요.');
             }
         }
+    }
 
-        const data = response_json;
-        if (response.status == 400) {
-            console.error(data);
-            showAlertModal(`모든 항목을 입력해주세요.`);
-        } else if (response.ok) {
-            const message = postId ? '게시글이 수정되었습니다.' : '게시글이 작성되었습니다.';
-            showAlertModal(message, `/posts/post_detail.html?postId=${data.data.id}`);
-        } else {
-            console.error(data);
-            showAlertModal(`게시글 작성에 실패했습니다.`);
-        }
-    // } catch (error) {
-    //     console.error(error);
-    //     alert(error.message);
-    //     submitButton.disabled = false;
-    // }
+    const data = response_json;
+    if (response.status == 400) {
+        console.error(data);
+        showAlertModal(`모든 항목을 입력해주세요.`);
+    } else if (response.ok) {
+        const message = postId ? '게시글이 수정되었습니다.' : '게시글이 작성되었습니다.';
+        showAlertModal(message, `/posts/post_detail.html?postId=${data.data.id}`);
+    } else {
+        console.error(data);
+        showAlertModal(`게시글 작성에 실패했습니다.`);
+    }
 });
