@@ -88,12 +88,22 @@ async function fetchPostList() {
             cursorId = cursor.id;
 
             response_json.data.content.forEach(post => {
+
+                const image_profile_url = post.writer.profileImageUrl;
+                let writer_profile_url = null;
+                if (image_profile_url ) {
+                    writer_profile_url = image_profile_url .startsWith('/') ?
+                    `${API_BASE}${image_profile_url}` : `${API_BASE}/${image_profile_url}`;
+                } else {
+                    writer_profile_url = DEFAULT_IMAGE_PATH;
+                }
+
                 const newPostCard = `
                 <div class = "post-card" id = "${post.id}">
                     <div class = "flex-container column" >
                     <div class = "writer-info flex-container justify-between align-center">
                         <div class = "flex-container align-center">
-                            <img src="" />
+                            <img src="${writer_profile_url}" />
                             <h3 class "post-author">${post.writer.nickname}</h3>
                         </div>
                         <span class ="post-created-at">${post.createdAt}</span>
@@ -113,31 +123,6 @@ async function fetchPostList() {
                 </div>
                 `;  
                 postList.insertAdjacentHTML('beforeend', newPostCard);
-            });
-
-            response_json.data.content.forEach(async post => {
-                const image_response = await fetch(`${API_BASE}/images/profiles/${post.writer.id}`, {
-                    method: 'GET'
-                })
-
-                console.log('image_response', image_response)
-                let url = DEFAULT_IMAGE_PATH;
-
-                if (image_response.status != 204) {
-                    const image_response_json = await image_response.json();
-                    console.log('image_response_json', image_response_json);
-                    
-                    if (image_response_json.data) {
-                        url = image_response_json.data.url;
-                        url = url.startsWith('/') ?
-                            `${API_BASE}${url}` : `${API_BASE}/${url}`;
-                    }
-                }
-                
-                console.log('url', url);
-                const postCard = document.getElementById(`${post.id}`);
-                const postCardImage = postCard.querySelector('img');
-                postCardImage.src = url;
             });
         }
         
@@ -169,6 +154,3 @@ window.onscroll = function(e) {
         fetchPostList();
     }
 };
-
-
-
