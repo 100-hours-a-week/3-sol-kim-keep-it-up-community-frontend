@@ -45,26 +45,15 @@ export default async function profileUpdateInit() {
     email.textContent = response_json.data.email;
     nicknameInput.value = response_json.data.nickname;
 
-    /*
-        프로필 이미지 불러오기
-    */
-    const profile_image_response = await fetch(`${API_BASE}/images/profiles/${userId}`, {
-        method: 'GET'
-    });
-
-    console.log('profile_image_response ', profile_image_response )
-    const DEFAULT_IMAGE_PATH = '/assets/images/default_profile_image.png'
-
-    if (profile_image_response.status == 204) {
-        profileImageInput.style.backgroundImage = `url("${DEFAULT_IMAGE_PATH}")`;
+    const url = response_json.data.profileImageUrl;
+    let profile_image_url = null;
+    if (url) {
+        profile_image_url = url.startsWith('/') ?
+        `${API_BASE}${url}` : `${API_BASE}/${url}`;
     } else {
-        const profile_image_response_json = await profile_image_response.json();
-        const url = profile_image_response_json.data.url;
-        console.log('url', url);
-        const image_url = url.startsWith('/') ?
-            `${API_BASE}${url}` : `${API_BASE}/${url}`;
-        profileImageInput.style.backgroundImage = `url("${image_url}")`;
+        profile_image_url = DEFAULT_IMAGE_PATH;
     }
+    profileImageInput.style.backgroundImage = `url("${profile_image_url}")`;
 
     let file;
     // 사진 선택하면 선택한 사진으로 변경 
