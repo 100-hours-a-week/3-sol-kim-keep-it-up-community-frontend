@@ -221,6 +221,8 @@ async function renderPost(post) {
     const postAuthor = postSection.querySelector('.post-author');
     const postAuthorImage = postSection.querySelector('.post-author-image');
     const postCreatedAt = postSection.querySelector('.post-created-at');
+
+    const postImage = postSection.querySelector('.post-image');
     const postContent = postSection.querySelector('.post-content');
     const postLikesCount = postSection.querySelector('.post-likes-count');
     const postViewsCount = postSection.querySelector('.post-views-count');
@@ -240,6 +242,14 @@ async function renderPost(post) {
     
     postAuthorImage.src = writer_profile_url;
     postCreatedAt.textContent = post.createdAt;
+
+    const url = post.imageUrl;
+    let image_url = null;
+    if (url) {
+        image_url = url.startsWith('/') ? `${API_BASE}${url}` : `${API_BASE}/${url}`;
+    }
+
+    postImage.src = image_url;
     postContent.textContent = post.contents;
     postLikesCount.textContent = post.likesCount;
     postViewsCount.textContent = post.viewsCount;
@@ -248,25 +258,6 @@ async function renderPost(post) {
     if (post.writer.id !== parseInt(userId)) {
         postSection.querySelector('.post-edit-button').style.display = 'none';
         postSection.querySelector('.post-delete-button').style.display = 'none';
-    }
-
-    /*
-        게시글 이미지
-    */
-    const post_image_response = await fetch(`${API_BASE}/images/posts/${postId}`, {
-        method: 'GET'
-    })
-
-    if (post_image_response.ok && post_image_response.status != 204) {
-        
-        const post_image_response_json = await post_image_response.json();
-        const postImage = document.querySelector('.post-image');
-        const url = post_image_response_json.data.url;
-        console.log('post image url', url);
-        const image_url = url.startsWith('/') ?
-            `${API_BASE}${url}` : `${API_BASE}/${url}`;
-        
-        postImage.src = image_url;
     }
 } 
 

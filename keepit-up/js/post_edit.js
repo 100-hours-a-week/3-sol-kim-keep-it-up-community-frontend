@@ -106,15 +106,10 @@ if (postId) {
     postForm.querySelector('textarea.contents').value = response_json.data.contents;
     autosize(contentsTextArea);
 
-    const image_response = await fetch(`${API_BASE}/images/posts/${postId}`, {
-        method: 'GET'
-    })
-    if (image_response.ok && image_response.status != 204) {
-        const image_response_json = await image_response.json();
-        const url = image_response_json.data.url;
-        const imagePrev = document.querySelector('.post-selected-image-preview');
-        const image_url = url.startsWith('/') ?
-            `${API_BASE}${url}` : `${API_BASE}/${url}`;
+    const imagePrev = document.querySelector('.post-selected-image-preview');
+    const url = response_json.data.imageUrl;
+    if (url) {
+        const image_url = url.startsWith('/') ? `${API_BASE}${url}` : `${API_BASE}/${url}`;
         imagePrev.src = image_url;
     }
 } 
