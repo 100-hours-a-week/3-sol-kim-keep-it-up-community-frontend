@@ -219,7 +219,7 @@ function autosize(textarea) {
 async function renderPost(post) {
     const postTitle = postSection.querySelector('.post-title');
     const postAuthor = postSection.querySelector('.post-author');
-    // const postAuthorImage = postSection.querySelector('.post-author-image');
+    const postAuthorImage = postSection.querySelector('.post-author-image');
     const postCreatedAt = postSection.querySelector('.post-created-at');
     const postContent = postSection.querySelector('.post-content');
     const postLikesCount = postSection.querySelector('.post-likes-count');
@@ -228,7 +228,17 @@ async function renderPost(post) {
 
     postTitle.textContent = post.title;
     postAuthor.textContent = post.writer.nickname;
-    // postAuthorImage.src = post.writer.imageUrl;
+
+    const image_profile_url = post.writer.profileImageUrl;
+    let writer_profile_url = null;
+    if (image_profile_url ) {
+        writer_profile_url = image_profile_url .startsWith('/') ?
+        `${API_BASE}${image_profile_url}` : `${API_BASE}/${image_profile_url}`;
+    } else {
+        writer_profile_url = DEFAULT_IMAGE_PATH;
+    }
+    
+    postAuthorImage.src = writer_profile_url;
     postCreatedAt.textContent = post.createdAt;
     postContent.textContent = post.contents;
     postLikesCount.textContent = post.likesCount;
@@ -263,12 +273,22 @@ async function renderPost(post) {
 async function renderCommentsHTML(comments) {
     commentList.innerHTML = ''
     comments.forEach(async comment => {
+
+        const image_profile_url = comment.writer.profileImageUrl;
+        let writer_profile_url = null;
+        if (image_profile_url ) {
+            writer_profile_url = image_profile_url .startsWith('/') ?
+            `${API_BASE}${image_profile_url}` : `${API_BASE}/${image_profile_url}`;
+        } else {
+            writer_profile_url = DEFAULT_IMAGE_PATH;
+        }
+        
         commentList.innerHTML += comment.writer.id === parseInt(userId) ?
             `
                 <div class = "comment" id="${comment.id}">
                     <div class = "comment-header flex-container justify-between align-center">
                         <div class = "comment-info flex-container align-center">
-                            <img src="${comment.writer.imageUrl}" alt="">
+                            <img src="${writer_profile_url}" alt="">
                             <span class = "comment-author">${comment.writer.nickname}</span>
                             <span class = "comment-date">${comment.createdAt}</span>
                         </div>
@@ -292,30 +312,6 @@ async function renderCommentsHTML(comments) {
                     </div>
                     <p class = "comment-contents">${comment.contents}</p>
                 </div>`;
-        
-        /*
-            작성자 프로필 이미지 
-        */
-        const profile_image_response = await fetch(`${API_BASE}/images/profiles/${comment.writer.id}`, {
-            method: 'GET'
-        })
-
-        const current_comment = document.getElementById(`${comment.id}`);
-        const commentAuthorImage = current_comment.querySelector('img');
-        commentAuthorImage.src = DEFAULT_IMAGE_PATH;
-        
-        if (profile_image_response.ok && profile_image_response != 204) {
-            const profile_image_response_json = await profile_image_response.json();
-            console.log('profile_image_response_json',comment.id, profile_image_response_json);
-            const url = profile_image_response_json.data.url;
-            const image_url = url.startsWith('/') ?
-                `${API_BASE}${url}` : `${API_BASE}/${url}`;
-            
-            commentAuthorImage.src = image_url;
-        } else {
-            // TODO: 에러 처리
-        }
-    
     });
 }
 
@@ -480,26 +476,6 @@ if (userId) {
 fetchPost().then(async post => {
     console.log('post:', post);
     renderPost(post);
-    
-    const profile_image_response = await fetch(`${API_BASE}/images/profiles/${post.writer.id}`, {
-        method: 'GET'
-    })
-
-    const postAuthorImage = postSection.querySelector('.post-author-image');
-
-    if (profile_image_response.ok && profile_image_response.status != 204) {
-        const profile_image_response_json = await profile_image_response.json();
-        console.log('profile_image_response_json', profile_image_response_json);
-        const url = profile_image_response_json.data.url;
-        const image_url = url.startsWith('/') ?
-            `${API_BASE}${url}` : `${API_BASE}/${url}`;
-        postAuthorImage.src = image_url;
-    } else if (profile_image_response.status === 204) {
-        const DEFAULT_IMAGE_PATH = '/assets/images/default_profile_image.png'
-        postAuthorImage.src  = DEFAULT_IMAGE_PATH;
-    } else {
-        // TODO: 에러 처리
-    }
 });
 
 fetchComments().then(comments => {
