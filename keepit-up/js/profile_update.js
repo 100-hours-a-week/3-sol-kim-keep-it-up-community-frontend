@@ -10,9 +10,9 @@ export default async function profileUpdateInit() {
     console.log('userId:', userId);
 
     const withdrawalModal = document.querySelector('.withdrawal-modal');
-    
-    let bothModified = false;
-    
+
+    const DEFAULT_IMAGE_PATH = '/assets/images/default_profile_image.png'
+
     /*
     FUNCTIONS
     */
