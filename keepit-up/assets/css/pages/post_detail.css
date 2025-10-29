@@ -60,7 +60,7 @@
 .post-detail-section .post-content {
     margin-top: 24px;
     margin-bottom: 24px;
-    white-space: pre;
+    white-space: pre-line;
 }
 
 .post-detail-section .post-comment-divider {
