@@ -33,12 +33,13 @@ export default async function profileUpdateInit() {
     /*
         프로필 이미지 외 사용자 정보 가져오기
      */
-    const response = await fetch(`${API_BASE}/users/${userId}`, {
+    const response = await fetch(`${API_BASE}/users`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
             // 'Authorization': `Bearer ${sessionStorage.getItem('token')}`
         },
+        credentials: 'include',
     });
     const response_json = await response.json();
     console.log(response_json);
@@ -107,10 +108,11 @@ export default async function profileUpdateInit() {
             const nickname = nicknameInput.value;
             formData.append('nickname', nickname);
 
-            const response = await fetch(`${API_BASE}/users/${userId}`, {
+            const response = await fetch(`${API_BASE}/users`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ nickname }),
+                credentials: 'include',
             });
 
             const data = await response.json();
@@ -126,11 +128,12 @@ export default async function profileUpdateInit() {
                     const formData = new FormData();
                     formData.append('file', file);              // File 객체 그대로
                     formData.append('userId', String(userId)); 
+
                     const image_response = await fetch(`${API_BASE}/images/profiles`, {
                         method: 'PUT',
-                        body: formData
+                        body: formData,
+                        credentials: 'include'
                     });
-
 
                     if (!image_response.ok) {
                         console.log(image_response);
@@ -169,10 +172,12 @@ export default async function profileUpdateInit() {
 
     confirmButton.addEventListener('click', async () => {
         console.log("confirm button clicked");
-        const response = await fetch(`${API_BASE}/users/${userId}`, {
+        const response = await fetch(`${API_BASE}/users`, {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
         })
+
         const data = await response.json();
         if (response.ok) {
             // sessionStorage.setItem('nickname', nickname);

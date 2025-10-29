@@ -67,10 +67,11 @@ export default function signInInit() {
                   const formData = new FormData(form);
                   const email = formData.get('email');
                   const password = formData.get('password');
-                  const response = await fetch(`${API_BASE}/users/signin`, {
+                  const response = await fetch(`${API_BASE}/users/signIn`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ email, password }),
+                        credentials: 'include',
                   });
 
                   const response_json = await response.json();

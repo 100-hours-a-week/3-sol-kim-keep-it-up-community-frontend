@@ -127,22 +127,30 @@ submitButton.addEventListener('click', async (e) => {
 
     let response;
     let response_json;
+
+    /*
+    게시글 수정
+    */
     if (postId) {
         response = await fetch(`${API_BASE}/posts/${postId}`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ title, contents, writerId }),
+            body: JSON.stringify({ title, contents }),
+            credentials: 'include',
         });
 
         response_json = await response.json();
-
+        /*
+        게시글 이미지 수정
+        */
         if (fileUpdated) {
             const formData = new FormData();
             formData.append('file', file);
             formData.append('postId', postId);
             const image_response = await fetch(`${API_BASE}/images/posts/${postId}`, {
                 method: 'PUT',
-                body: formData
+                body: formData,
+                credentials: 'include'
             })
 
             if (!image_response.ok) {
@@ -151,23 +159,31 @@ submitButton.addEventListener('click', async (e) => {
         }
 
     } else {
+        /*
+        게시글 작성
+        */
         response = await fetch(`${API_BASE}/posts`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ title, contents, writerId }),
+            credentials: 'include',
         });
 
         response_json = await response.json();
         const postId = response_json.data.id;
 
         if (file) {
+            /*
+            게시글 이미지 등록
+            */
             console.log('file', file, 'postId', postId);
             const formData = new FormData();
             formData.append('file', file);
             formData.append('postId', postId);
             const image_response = await fetch(`${API_BASE}/images/posts`, {
                 method: 'POST',
-                body: formData
+                body: formData,
+                credentials: 'include'
             })
 
             // const image_response_json = await image_response.json();

@@ -57,17 +57,29 @@ export default async function headerInit() {
 
     const logoutButton = header.querySelector('.logout-button');
     console.log('logoutbutton',logoutButton)
-    logoutButton.addEventListener('click', () => {
+    logoutButton.addEventListener('click', async () => {
         console.log("logout button clicked");
         sessionStorage.removeItem('userId');
-        showAlertModal('로그아웃 되었습니다.', '/auth/signin.html');
+
+        const response = await fetch(`${API_BASE}/users/signOut`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+        })
+
+        if (response.ok) {
+            showAlertModal('로그아웃 되었습니다.', '/auth/signin.html');
+        } else {
+            console.log(response.data.message);
+        }
     });
 
     if (userId) {
         console.log('userID', userId);
-        const response = await fetch(`${API_BASE}/images/profiles/${userId}`, {
+        const response = await fetch(`${API_BASE}/images/profiles`, {
             method: 'GET',
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include'
         })
 
         if (response.status === 204) {

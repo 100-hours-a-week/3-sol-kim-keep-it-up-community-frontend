@@ -89,10 +89,11 @@ export default function passwordUpdateInit() {
 
             const userId = sessionStorage.getItem('userId');
 
-            const response = await fetch(`${API_BASE}/users/${userId}/password`, {
+            const response = await fetch(`${API_BASE}/users/password`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ password }),
+                credentials: 'include'
             });
 
             const data = await response.json();

@@ -40,7 +40,8 @@ postLikeButton.addEventListener('click', async () => {
             const response = await fetch(`${API_BASE}/posts/${postId}/likes`, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId })
+                body: JSON.stringify({ userId }),
+                credentials: 'include', 
             })
             const json_data = await response.json();
             if (response.ok) {
@@ -55,7 +56,8 @@ postLikeButton.addEventListener('click', async () => {
             const response = await fetch(`${API_BASE}/posts/${postId}/likes`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId })
+                body: JSON.stringify({ userId }),
+                credentials: 'include', 
             })
             const json_data = await response.json();
             if (response.ok) {
@@ -102,8 +104,9 @@ postDeleteButton.addEventListener('click', async () => {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
-                    // 'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+                    // 'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
                 },
+                credentials: 'include',
             });
             const data = await response.json();
             if (response.ok) {
@@ -171,6 +174,7 @@ commentForm.addEventListener('submit', async (e) => {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ writerId, contents, postId }),
+                credentials: 'include', 
             });
             const data = await response.json();
             if (!response.ok) {
@@ -354,6 +358,7 @@ function addEvenListenerToCommentEditButtons() {
                         method: 'PATCH',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ contents: updatedContents }),
+                        credentials: 'include', 
                     });
                     const data = await response.json();
                     if (!response.ok) {
@@ -412,6 +417,7 @@ function addEvenListenerToCommentDeleteButtons() {
                                 'Content-Type': 'application/json',
                                 // 'Authorization': `Bearer ${sessionStorage.getItem('token')}`
                             },
+                            credentials: 'include', 
                         });
                         const data = await response.json();
                         if (response.ok) {
@@ -452,11 +458,14 @@ const views_response_json = await views_response.json();
 console.log('viewcount api', views_response_json);
 
 if (userId) {
-    const is_liked_response = await fetch(`${API_BASE}/posts/${postId}/likes/${userId}`, {
+    const is_liked_response = await fetch(`${API_BASE}/posts/${postId}/likes`, {
         method: 'GET',    
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include', 
     });
+
     const is_liked_response_json = await is_liked_response.json();
+    console.log('is_liked_response_json', is_liked_response_json);
     console.log('is liked api', is_liked_response_json.data.liked);
 
     if (is_liked_response_json.data.liked == true) {
