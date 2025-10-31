@@ -1,0 +1,184 @@
+.post-detail-section {
+    width: 595px;
+}
+
+.post-detail-section .post-title {
+    margin-bottom: 24px;
+    font-size: 24px;
+    font-weight: 500;
+}
+
+.post-detail-section .post-info  {
+    margin-bottom: 10px;
+}
+.post-detail-section .post-info > img {
+    width: 36px;
+    height: 36px;
+    background-color: var(--m-gray);
+    border-radius: 50%;
+}
+
+.post-detail-section .post-author {
+    font-size: 15px;
+    font-weight: 600;
+    margin-left: 10px;
+    margin-right: 8px;
+}
+
+.post-detail-section .post-created-at {
+    font-size: 14px;
+    color: var(--d-gray);
+}
+
+.post-detail-section .post-manage > button {
+    width: 50px;
+    height: 27px;
+    border-radius: 10px;
+    border-width: 2px;
+    border-color: var(--blue-disabled);
+    border-style: solid;
+}
+
+.post-detail-section .info-box {
+    width: 112px;
+    height: 74px;
+    background-color: var(--m-gray);
+    border-radius: 16px;
+    margin: 8px;
+    font-size: 14px;
+}
+
+.post-detail-section .info-value {
+    margin-bottom: 6px;
+}
+
+.post-image {
+    max-width: 590px;
+    max-height: 500px;
+}
+
+.post-detail-section .post-content {
+    margin-top: 24px;
+    margin-bottom: 24px;
+    white-space: pre-line;
+}
+
+.post-detail-section .post-comment-divider {
+    margin-top: 15px;
+    width: 100%;
+}
+
+.post-detail-section .comments-section {
+    width: 595px;
+}
+
+.post-detail-section .comment-form {
+    min-height: 205px;
+    background-color: white;
+    border-radius: 12px;
+    padding: 10px;
+}
+
+.post-detail-section .comment-textarea {
+    border: none;
+    margin-top: 24px;
+    padding-left: 10px;
+    padding-right: 10px;
+    flex: 1 1 auto;
+    resize: none;
+}
+
+.post-detail-section .comment-form > hr {
+    margin: 0px;
+}
+
+.post-detail-section .comment-submit-button {
+    margin-top: 10px;
+    width: 138px;
+    height: 39px;
+    border-radius: 16px;
+    border: none;
+    background-color: var(--blue-disabled);
+    color: white;
+}
+
+.post-detail-section .comment {
+    width: 580px;
+    margin-top: 24px;
+    margin-bottom: 12px;
+}
+.post-detail-section .comment > img {
+    width: 36px;
+    height: 36px;
+    background-color: var(--m-gray);
+    border-radius: 50%;
+}
+
+.comment-header {
+    margin-left: 24px;
+    margin-bottom: 18px;
+    margin-right: 24px;
+}
+
+.comment img {
+    width: 36px;
+    height: 36px;
+    background-color: var(--m-gray);
+    border-radius: 50%;
+}
+
+.comment-author {
+    margin-left: 10px;
+    margin-right: 8px;
+    font-weight: 600;
+}
+
+.comment-date {
+    font-size: 14px;
+    color: var(--d-gray);
+}
+
+.comment-manage button {
+    border-radius: 8px;
+    width: 42px;
+    height: 24px;
+    border-width: 2px;
+    border-color: var(--blue-disabled);
+    border-style: solid;
+}
+
+.comment-edit-button {
+    margin-right: 6px;
+    border-width: 2px;
+    border-color: var(--blue-disabled);
+    border-style: solid;
+}
+
+.comment-contents {
+    margin-left: 24px;
+    margin-right: 24px;
+}
+
+.comment-edit-container button {
+    border-radius: 8px;
+    width: 42px;
+    height: 24px;
+    border-width: 2px;
+    border-color: var(--blue-disabled);
+    border-style: solid;
+}
+
+.comment-edit-container .button-container {
+    margin-top: 8px;
+}
+
+.comment-edit-container textarea {
+    padding: 8px;
+    border: none;
+    resize: none; 
+    border-radius: 12px;
+}
+
+.save-comment-button {
+    margin-right: 6px;
+}

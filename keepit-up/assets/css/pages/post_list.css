@@ -1,0 +1,78 @@
+.main-container h3 {
+    font-size: 16px;
+}
+
+.post-create-button {
+    width: 100px;
+    height: 40px;
+    border-radius: 15px;
+    margin-bottom: 16px;
+    background-color: var(--white2);
+    border-color: var(--blue-disabled);
+    border-style: solid;
+    border-width: 2.5px;
+    color: var(--d-gray);
+    font-weight: 500;
+}
+
+.post-card {
+    width: 600px;
+    height: 180px;
+    box-shadow: 0px 4px 5px 0px;
+    color: var(--l-gray);
+    border-radius: 20px;
+    margin-bottom: 10px;
+    background-color: white;
+}
+
+.post-card .writer-info {
+    margin-top: 20px;
+    margin-left: 24px;
+    margin-bottom: 10px;
+    color: var(--d-gray);
+    font-weight: 500;
+}
+
+.post-card .writer-info img {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: var(--m-gray);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    margin-right: 15px;
+}
+
+.post-card .writer-info h3 {
+    margin-bottom: 0px;
+}
+
+.post-card .post-created-at {
+    margin-right: 20px;
+    font-size: 14px;
+    color: var(--d-gray);
+    font-weight: 400;
+}
+
+.post-card .post-title {
+    color: black;
+    font-size: 20px;
+    font-weight: 500;
+    margin-top: 18px;
+    margin-bottom: 24px;
+    margin-left: 28px;
+}
+
+.post-card hr {
+    border: 1;
+}
+
+.post-card .post-info {
+    margin-top: 16px;
+    margin-left: 28px;
+    margin-bottom: 12px;
+    margin-right: 28px;
+    font-size: 14px;
+    color: var(--d-gray);
+}

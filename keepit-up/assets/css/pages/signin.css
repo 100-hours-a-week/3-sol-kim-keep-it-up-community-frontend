@@ -1,0 +1,31 @@
+.signin-container h3 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 14px;
+}
+
+.signin-form {
+    width: 356px;
+}
+
+.signin-container b {
+    font-weight: 500;
+    margin-bottom: 10px;
+    margin-top: 16px;
+}
+
+.signin-container input {
+    margin-top: 4px;
+    padding-left: 10px;
+    margin-bottom: 6px;
+    height: 34px;
+    border-radius: 10px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: var(--m-gray);
+}
+
+.signin-container a {
+    color: black;
+    font-size: 14px;
+}

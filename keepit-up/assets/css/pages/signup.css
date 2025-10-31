@@ -1,0 +1,56 @@
+.signup-container h3 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 14px;
+}
+
+.signup-container b {
+    font-weight: 500;
+    margin-bottom: 10px;
+    margin-top: 16px;
+}
+
+.signup-container input {
+    padding-left: 10px;
+    margin-bottom: 6px;
+    margin-top: 4px;
+    border-width: 1px;
+    height: 34px;
+    border-radius: 10px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: var(--m-gray);
+}
+
+.signup-container .helper-text {
+    margin-bottom: 8px;
+}
+
+.signup-container .img-input{
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background-color: var(--m-gray);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    color: transparent; 
+}
+
+.signup-container input::file-selector-button {
+    display: none;
+}
+
+.signup_form {
+    width: 392px;
+}
+
+.signup-container a {
+    font-size: 14px;
+    color: black;
+}
+
+dialog {
+    width: 650px;
+    height: 600px;
+}

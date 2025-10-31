@@ -1,0 +1,92 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <!-- <base href="/keepit-up/"> -->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keepit-Up 킵잇업</title>
+    <!-- / 루트에서 시작하지 않고 상대경로. base로 앞에 <base>를 두어야 한다. keepit-up이 붙는다. -->
+    <link rel="shortcut icon" size="16X16" href="assets/css/img/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="/assets/css/style.css">
+</head>
+<body>
+    <header class="">
+        <div class = "grid-container">
+            <div class = "flex-self justify-self-center align-center">
+                <!-- <a href="" class="header_logo"><img src="/assets/images/header_logo.svg" alt="header_logo"></a> -->
+                <a class="site-title" href="/posts/post_list.html">Keepit-up</a>
+            </div>
+            <div class = "flex-self justify-self-end align-center header-contents">
+                <div class = "before-login-menu">
+                    <a class="signup-button" href="/auth/signup.html"><span>회원가입</span></a>
+                    <a class="signin-button" href="/auth/signin.html"><span>로그인</span></a>
+                </div>
+                <div class="after-login-menu">
+                    <img class = "dropdown-button"></img>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/profile/profile_update.html">회원정보 수정</a></li>
+                        <li><a class="dropdown-item" href="/profile/password_update.html">비밀번호 수정</a></li>
+                        <li><span class="dropdown-item logout-button">로그아웃</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+    <main>
+        <div class = "comment-alert-modal modal alert-modal">
+            <div class = "flex-self column justify-center align-center modal-content">
+                <p class = "modal-description"></p>
+                <button class = "modal-confirm-button">확인</button>
+            </div>
+        </div>
+        <div class = "withdrawal-modal modal confirming-modal">
+            <div class = "flex-container justify-center align-center column">
+                <h1 class = "modal-title">회원탈퇴 하시겠습니까?</h1>
+                <p class = "modal-description">작성된 게시글과 댓글은 삭제됩니다. </p>
+                <div class = "modal-button-container justify-between align-center">
+                    <button class = "modal-cancel-button">취소</button>
+                    <button class = "modal-confirm-button">확인</button>
+                </div>
+            </div>
+        </div>
+        <div class="profile-update-container flex-container justify-center align-center column">
+            <h3> 회원정보 수정</h3>
+            <form class="profile-image-form flex-container justify-center column" method="post" enctype="multipart/form-data">
+                <span class = "profile-image-text">프로필 사진 *</span>
+                <input class ="profile-image-input flex-self align-self-center" type="file" accept="" onchange="">
+            </form>
+            <div class = "flex-container column">
+                <div class = "flex-container column">
+                        <b class = "email-text">이메일</b>
+                        <p class = "email"></p>
+                </div>
+                <form class="profile_update_form" action="" method="post">
+                    <div class = "flex-container column">
+                        <b>닉네임</b>
+                        <!--get을 쓰려면 name을 써야 한다. -->
+                        <input type="text" class="nickname" name = "nickname" placeholder="닉네임을 입력하세요">
+                        <p class = "helper-text nickname">*helper-text</p>
+                    </div>
+                    <button class = "update-button" disabled type="submit">수정하기</button>
+                </form>
+            </div>
+            <span class="delete-account-button">회원탈퇴</span>
+        </div>
+    </main>
+    <footer>
+        <div class="container footer-about">
+            <!-- <img src="/static/css/img/footer_logo.png" alt="footer_logo"> -->
+            <h2>About</h2>
+            <h3>Keepit-up : 킵잇업</h3>
+            <h4>Contact : keepit-up@gmail.com</h4>
+            <h4>&copy;Keepit-up. All rights reserved.</h4>
+        </div>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/ionicons@4.5.10-0/dist/ionicons.js"></script>
+    <script type="module" src="/js/profile_update.js"></script>
+    <script type="module" src="/js/header.js"></script>
+</body>
+</html>

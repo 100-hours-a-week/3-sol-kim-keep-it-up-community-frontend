@@ -1,0 +1,76 @@
+.profile-update-container h3 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.profile-update-container .profile-image-input {
+    width: 148px;
+    height: 148px;
+    background-color: var(--m-gray);
+    border-radius: 50%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    color: transparent;
+}
+
+.profile-image-input::file-selector-button {
+    display: none;
+}
+
+.profile-image-text {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 22px;
+}
+
+.profile-image-form {
+    width: 356px;
+}
+
+.profile-update-container b {
+    font-weight: 700;
+    margin-top: 20px;
+}
+
+.email-text {
+    margin-bottom: 20px;
+}
+
+.profile-update-container p {
+    margin-bottom: 12px;
+}
+
+.profile_update_form b {
+    margin-bottom: 10px;
+}
+
+.profile_update_form input {
+    padding-left: 10px;
+    height: 34px;
+    border-radius: 10px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border-style: solid;
+    border-color: var(--m-gray);
+}
+
+.profile-update-container .update-button {
+    width: 356px;
+    height: 34px;
+    margin-bottom: 12px;
+    background-color: var(--blue);
+    color: white;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+.profile-update-container .update-button:disabled {
+    background-color: var(--blue-disabled);
+    color: white;
+}
+
+.delete-account-button {
+    font-size: 14px;
+}

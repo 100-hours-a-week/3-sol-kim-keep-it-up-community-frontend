@@ -1,0 +1,17 @@
+.auth-button {
+    width: 350px;
+    height: 30px;
+    margin-bottom: 14px;
+    background-color: var(--blue);
+    color: white;
+    border-radius: 8px;
+    margin-top: 16px;
+}
+
+.auth-button:disabled {
+    width: 350px;
+    height: 30px;
+    margin-bottom: 14px;
+    background-color: var(--blue-disabled);
+    color: white;
+}

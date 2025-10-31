@@ -1,0 +1,111 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keepit-Up 킵잇업</title>
+    <link rel="shortcut icon" size="16X16" href="assets/css/img/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="/assets/css/style.css">
+</head>
+<body>
+    <header class="">
+        <div class = "grid-container">
+            <div class = "flex-self justify-self-center align-center">
+                <!-- <a href="" class="header_logo"><img src="/assets/images/header_logo.svg" alt="header_logo"></a> -->
+                <a class="site-title" href="/posts/post_list.html">Keepit-up</a>
+            </div>
+            <div class = "flex-self justify-self-end align-center header-contents">
+                <div class = "before-login-menu">
+                    <a class="signup-button" href="/auth/signup.html"><span>회원가입</span></a>
+                    <a class="signin-button" href="/auth/signin.html"><span>로그인</span></a>
+                </div>
+                <div class="after-login-menu">
+                    <img class = "dropdown-button"></img>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/profile/profile_update.html">회원정보 수정</a></li>
+                        <li><a class="dropdown-item" href="/profile/password_update.html">비밀번호 수정</a></li>
+                        <li><span class="dropdown-item logout-button">로그아웃</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+    <main>
+    <div class = "comment-alert-modal modal alert-modal">
+        <div class = "flex-self column justify-center align-center modal-content">
+            <p class = "modal-description"></p>
+            <button class = "modal-confirm-button">확인</button>
+        </div>
+    </div>
+    <div class="signup-container flex-container justify-center align-center column">
+        <h3> 회원가입</h3>
+        <form class="signup_form flex-container column" action="" method="post">
+            <b>프로필 사진</b>
+            <span class = "helper-text">* helper-text</span>
+            <div class = "img-input-container flex-container justify-center align-center">
+                <input class ="img-input" type="file" accept=""><!--accept="image/*": 이미지 파일 한 해 허용-->
+            </div>
+            <div class = "flex-container column">
+                <b>이메일*</b>
+                <input type="text" class="email" name = "email" placeholder="이메일을 입력하세요">
+                <p class = "helper-text email">* helper-text</p>
+            </div>
+            <div class = "flex-container column">
+                <b>비밀번호*</b>
+                <!--get을 쓰려면 name을 써야 한다. -->
+                <input type="password" class="password" name = "password" placeholder="비밀번호를 입력하세요">
+                <p class = "helper-text password">* helper-text</p>
+            </div>
+            <div class = "flex-container column">
+                <b>비밀번호 확인*</b>
+                <input type="password" class="password-verification" name = "password-verification" placeholder="비밀번호를 한 번 더 입력하세요">
+                <p class = "helper-text password-verification">* helper-text</p>
+            </div>
+            <div class = "flex-container column">
+                <b>닉네임*</b>
+                <input type="text" class="nickname" name = "nickname" placeholder="닉네임을 입력하세요">
+                <p class = "helper-text nickname">* helper-text</p>
+            </div>
+            <div class="agreements flex-container column">
+                <label class="flex-container align-center">
+                    <input type="checkbox" id="agreeTerms" required>
+                    <span>[필수] 이용약관 동의</span>
+                    <span href="" data-open="terms">자세히 보기</span>
+                </label>
+                <label class="flex-container align-center">
+                    <input type="checkbox" id="agreePrivacy" required>
+                    <span>[필수] 개인정보처리방침 동의</span>
+                    <span href="" data-open="privacy">자세히 보기</span>
+                </label>
+            </div>
+            <div class = "flex-container justify-center">
+                <button class = "auth-button" disabled type="submit">회원가입</button>
+            </div>
+        </form>
+        <a class="" href="/auth/signin.html">로그인하러 가기</a>
+    </div>
+    <dialog id="legal-modal" class="legal-modal">
+        <div class="modal-header"><h2 id="legal-title">문서</h2></div>
+        <div id="legal-content" class="modal-content">
+
+        </div>
+        <div class="modal-footer"><button id="legal-close" type="button">닫기</button></div>
+    </dialog>
+    </main>
+   <footer>
+        <div class="container footer-about">
+            <!-- <img src="/static/css/img/footer_logo.png" alt="footer_logo"> -->
+            <h2>About</h2>
+            <h3>Keepit-up : 킵잇업</h3>
+            <h4>Contact : keepit-up@gmail.com</h4>
+            <h4>&copy;Keepit-up. All rights reserved.</h4>
+        </div>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/ionicons@4.5.10-0/dist/ionicons.js"></script>
+    <script type="module" src="/js/signup.js"></script>
+    <script type="module" src="/js/header.js"></script>
+</body>
+</html>

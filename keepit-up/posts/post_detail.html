@@ -1,0 +1,128 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keepit-Up 킵잇업</title>
+    <link rel="shortcut icon" size="16X16" href="/assets/css/img/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="/assets/css/style.css">
+</head>
+<body>
+    <header class="">
+        <div class = "grid-container">
+            <div class = "flex-self justify-self-center align-center">
+                <!-- <a href="" class="header_logo"><img src="/assets/images/header_logo.svg" alt="header_logo"></a> -->
+                <a class="site-title" href="/posts/post_list.html">Keepit-up</a>
+            </div>
+            <div class = "flex-self justify-self-end align-center header-contents">
+                <div class = "before-login-menu">
+                    <a class="signup-button" href="/auth/signup.html"><span>회원가입</span></a>
+                    <a class="signin-button" href="/auth/signin.html"><span>로그인</span></a>
+                </div>
+                <div class="after-login-menu">
+                    <img class = "dropdown-button"></img>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/profile/profile_update.html">회원정보 수정</a></li>
+                        <li><a class="dropdown-item" href="/profile/password_update.html">비밀번호 수정</a></li>
+                        <li><span class="dropdown-item logout-button">로그아웃</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+    <main>
+        <div class ="post-modal modal confirming-modal">
+            <div class = "flex-container justify-center align-center column confirming-modal">
+                <h1 class = "modal-title">게시글을 삭제하시겠습니까?</h1>
+                <p class = "modal-description">삭제한 내용은 복구할 수 없습니다.</p>
+                <div class = "modal-button-container justify-between align-center">
+                    <button class = "modal-cancel-button">취소</button>
+                    <button class = "modal-confirm-button">확인</button>
+                </div>
+            </div>
+        </div>
+        <div class = "comment-modal modal confirming-modal confirming-modal">
+            <div class = "flex-container justify-center align-center column">
+                <h1 class = "modal-title">댓글을 삭제하시겠습니까?</h1>
+                <p class = "modal-description">삭제한 내용은 복구할 수 없습니다.</p>
+                <div class = "modal-button-container justify-between align-center">
+                    <button class = "modal-cancel-button">취소</button>
+                    <button class = "modal-confirm-button">확인</button>
+                </div>
+            </div>
+        </div>
+
+        <div class = "comment-alert-modal modal alert-modal">
+            <div class = "flex-self column justify-center align-center modal-content">
+                <p class = "modal-description">댓글이 삭제되었습니다.</p>
+                <button class = "modal-confirm-button">확인</button>
+            </div>
+        </div>
+        <div class="main-container flex-container justify-center align-center column">
+            <div class = "flex-container column post-detail-section">
+                <div class = "post-section">
+                    <h3 class = "post-title">제목</h3>
+                    <div class = "post-header flex-container justify-between align-center">
+                        <div class = "post-info flex-container align-center">
+                            <img class = "post-author-image" src="" alt="">
+                            <span class = "post-author">작성자</span>
+                            <span class = "post-created-at">작성일</span> 
+                        </div>
+                        <div class = "post-manage">
+                            <button class = "post-edit-button">수정</button>
+                            <button class = "post-delete-button">삭제</button>
+                        </div>
+                    </div>
+                    <hr/>
+                    <div class = "flex-container justify-center">
+                        <img class = "post-image"/>
+                    </div>
+                    
+                    <p class = "post-content">내용</p>  
+                    <div class = "post-info-likes-view-comments flex-container justify-center">
+                        <div class = "info-box likes-count-container flex-container justify-center column align-center">
+                            <span class = "post-likes-count info-value">0</span>
+                            <span class = "post-likes">좋아요</span> 
+                        </div>
+                        <div class = "info-box flex-container justify-center column align-center">
+                            <span class = "post-views-count info-value">0</span>
+                            <span class = "post-views">조회수</span> 
+                        </div>
+                        <div class = "info-box flex-container justify-center column align-center">
+                            <span class = "post-comments-count info-value">0</span>
+                            <span class = "post-comments">댓글</span> 
+                        </div>
+                    </div>
+                </div>
+                <hr class = "post-comment-divider"/>
+                <div class = "comments-section flex-container column">
+                    <form class = "comment-form flex-container column" action="" method="post">
+                        <textarea class = "comment-textarea" name  = "contents" placeholder="댓글을 남겨주세요!"></textarea>
+                        <hr/>
+                        <div class ="flex-container justify-end">
+                            <button type = "submit" class = "comment-submit-button flex-self justify-center align-center">댓글 등록</button>
+                        </div>
+                    </form>
+                    <div class = "comments-list flex-container justify-center column">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <div class="container footer-about">
+            <!-- <img src="/static/css/img/footer_logo.png" alt="footer_logo"> -->
+            <h2>About</h2>
+            <h3>Keepit-up : 킵잇업</h3>
+            <h4>Contact : keepit-up@gmail.com</h4>
+            <h4>&copy;Keepit-up. All rights reserved.</h4>
+        </div>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/ionicons@4.5.10-0/dist/ionicons.js"></script>
+    <script type="module" src="/js/post_detail.js"></script>
+    <script type="module" src="/js/header.js"></script>
+</body>
+</html>
