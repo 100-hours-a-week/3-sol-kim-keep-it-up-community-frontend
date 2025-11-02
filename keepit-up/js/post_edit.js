@@ -93,7 +93,7 @@ imageInput.addEventListener("change", () => {
 const postId = new URLSearchParams(window.location.search).get('postId');
 
 if (postId) {
-    const response = await fetch(`${API_BASE}/posts/${postId}`, {
+    const response = await fetch(`${API_BASE}/posts/detail/${postId}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

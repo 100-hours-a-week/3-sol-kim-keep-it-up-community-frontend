@@ -129,7 +129,7 @@ postDeleteButton.addEventListener('click', async () => {
     게시물 API
 */
 async function fetchPost() {
-    const response = await fetch(`${API_BASE}/posts/${postId}`, {
+    const response = await fetch(`${API_BASE}/posts/detail/${postId}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -145,7 +145,7 @@ async function fetchPost() {
     댓글 목록 API
 */
 async function fetchComments() {
-    const response = await fetch(`${API_BASE}/posts/${postId}/comments`, {
+    const response = await fetch(`${API_BASE}/posts/${postId}/comments/list`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

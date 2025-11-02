@@ -56,7 +56,7 @@ async function fetchPostList() {
     try {
         // 첫 호출
         if (cursorId == null) {
-            response = await fetch(`${API_BASE}/posts?size=${size}`, {
+            response = await fetch(`${API_BASE}/posts/list?size=${size}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -65,7 +65,7 @@ async function fetchPostList() {
             });
         } else {
             // 두 번째 슬라이스 이상
-            response = await fetch(`${API_BASE}/posts?cursorId=${cursorId}&size=${size}`, {
+            response = await fetch(`${API_BASE}/posts/list?cursorId=${cursorId}&size=${size}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
