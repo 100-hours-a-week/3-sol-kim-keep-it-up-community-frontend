@@ -100,6 +100,22 @@ export default function passwordUpdateInit() {
             if (!response.ok) {
                 console.error(data);
                 showAlertModal("비밀번호 수정에 실패했습니다.");
+            } else if (response.status == 401) {
+                const response = await fetch(`${API_BASE}/users/refresh`, {
+                    method: 'POST',
+                    credentials: 'include', 
+                });
+                
+                if (response.status == 401) {
+                    window.location.href = '/auth/signin.html';
+                }
+
+                const password_update_response = await fetch(`${API_BASE}/users/password`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password }),
+                    credentials: 'include'
+                });
             } else {
                 showAlertModal(`비밀번호가 수정되었습니다. 
 다시 로그인해주세요.`, '/auth/signin.html');

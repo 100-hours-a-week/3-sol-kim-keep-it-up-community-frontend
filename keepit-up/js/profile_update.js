@@ -31,7 +31,7 @@ export default async function profileUpdateInit() {
     }
     
     /*
-        프로필 이미지 외 사용자 정보 가져오기
+        사용자 정보 가져오기
      */
     const response = await fetch(`${API_BASE}/users`, {
         method: 'GET',
@@ -41,6 +41,31 @@ export default async function profileUpdateInit() {
         },
         credentials: 'include',
     });
+    
+    if (response.status == 401) {
+        const token_response = await fetch(`${API_BASE}/users/refresh`, {
+            method: 'POST',
+            credentials: 'include', 
+        });
+
+        console.log("token_response", token_response)
+        if (token_response.status == 401) {
+            sessionStorage.removeItem("userId");
+            window.location.href = '/auth/signin.html';
+        }
+
+        const response = await fetch(`${API_BASE}/users`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                // 'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+            },
+            credentials: 'include',
+        });
+    } else if (!response.ok) {
+        console.log(response);
+    }
+    
     const response_json = await response.json();
     console.log(response_json);
     email.textContent = response_json.data.email;
@@ -55,7 +80,7 @@ export default async function profileUpdateInit() {
         profile_image_url = DEFAULT_IMAGE_PATH;
     }
     profileImageInput.style.backgroundImage = `url("${profile_image_url}")`;
-
+    
     let file;
     // 사진 선택하면 선택한 사진으로 변경 
     profileImageInput.addEventListener("change", () => {
@@ -116,36 +141,69 @@ export default async function profileUpdateInit() {
             });
 
             const data = await response.json();
-            if (response.status == 409) {
+            if (response.status == 401) {
+                const token_response = await fetch(`${API_BASE}/users/refresh`, {
+                    method: 'POST',
+                    credentials: 'include', 
+                });
+                console.log("token_response", token_response)
+                if (token_response.status == 401) {
+                    sessionStorage.removeItem("userId");
+                    window.location.href = '/auth/signin.html';
+                }
+
+                const response = await fetch(`${API_BASE}/users`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nickname }),
+                    credentials: 'include',
+                });
+            } else if (response.status == 409) {
                 nicknameHelperText.textContent = '이미 존재하는 닉네임입니다.';
+                return;
             } else if (!response.ok) {
                 console.error(data);
                 showAlertModal('회원정보 수정에 실패했습니다.');
-            } else {
+                return;
+            } 
 
-                if (file) {
-                    console.log('file', file, 'userId', userId);
-                    const formData = new FormData();
-                    formData.append('file', file);              // File 객체 그대로
-                    formData.append('userId', String(userId)); 
+            if (file) {
+                console.log('file', file, 'userId', userId);
+                const formData = new FormData();
+                formData.append('file', file);              // File 객체 그대로
+                formData.append('userId', String(userId)); 
 
-                    const image_response = await fetch(`${API_BASE}/images/profiles`, {
+                const image_response = await fetch(`${API_BASE}/api/images/profiles`, {
+                    method: 'PUT',
+                    body: formData,
+                    credentials: 'include'
+                });
+
+                if (image_response.status === 401) {
+                    const token_response = await fetch(`${API_BASE}/users/refresh`, {
+                        method: 'POST',
+                        credentials: 'include', 
+                    });
+
+                    console.log("token_response", token_response)
+                    if (token_response.status == 401) {
+                        sessionStorage.removeItem("userId");
+                        window.location.href = '/auth/signin.html';
+                    }
+
+                    const image_response = await fetch(`${API_BASE}/api/images/profiles`, {
                         method: 'PUT',
                         body: formData,
                         credentials: 'include'
                     });
-
-                    if (!image_response.ok) {
-                        console.log(image_response);
-                        // const image_response_json = await image_response.json();
-                        // console.log(image_response_json);
-                        showAlertModal(`프로필 사진 업로드 중 에러가 발생했습니다. 
+                } else if (!image_response.ok) {
+                    console.log(image_response);
+                    showAlertModal(`프로필 사진 업로드 중 에러가 발생했습니다. 
 다시 업로드 해주세요.`);
-                    }
                 }
-                showAlertModal('회원정보가 수정되었습니다.', '/posts/post_list.html');
-                // sessionStorage.setItem('nickname', nickname);
             }
+            showAlertModal('회원정보가 수정되었습니다.', '/posts/post_list.html');
+            // sessionStorage.setItem('nickname', nickname);
         } catch (error) {
             showAlertModal(error.message);
             updateButton.disabled = false;
@@ -184,6 +242,22 @@ export default async function profileUpdateInit() {
             sessionStorage.removeItem('userId');
             withdrawalModal.style.display = 'none';
             showAlertModal('탈퇴 처리 되었습니다.', '/posts/post_list.html');
+        } else if (response.status == 401) {
+            const token_response = await fetch(`${API_BASE}/users/refresh`, {
+                method: 'POST',
+                credentials: 'include', 
+            });
+            
+            if (token_response.status == 401) {
+                sessionStorage.removeItem("userId");
+                window.location.href = '/auth/signin.html';
+            }
+
+            const response = await fetch(`${API_BASE}/users`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+            })
         } else {
             console.error(data);
             showAlertModal('회원 탈퇴 중 오류가 발생해 탈퇴 처리가 되지 않았습니다.');

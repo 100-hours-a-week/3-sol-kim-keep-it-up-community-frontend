@@ -41,13 +41,36 @@ postLikeButton.addEventListener('click', async () => {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ userId }),
-                credentials: 'include', 
-            })
+                credentials: 'include',
+            });
             const json_data = await response.json();
             if (response.ok) {
                 postLikeButton.style.backgroundColor = `var(--m-gray)`;
                 const prevCount = likeCountText.textContent;
                 likeCountText.textContent = String(parseInt(prevCount) - 1);
+            } else if (response.status == 401) {
+                const response = await fetch(`${API_BASE}/users/refresh`, {
+                    method: 'POST',
+                    credentials: 'include', 
+                });
+                
+                if (response.status == 401) {
+                    window.location.href = '/auth/signin.html';
+                }
+
+                const like_cancel_response = await fetch(`${API_BASE}/posts/${postId}/likes`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId }),
+                    credentials: 'include', 
+                })
+
+                const json_data = await like_cancel_response.json();
+                if (like_cancel_response.ok) {
+                    postLikeButton.style.backgroundColor = `var(--m-gray)`;
+                    const prevCount = likeCountText.textContent;
+                    likeCountText.textContent = String(parseInt(prevCount) - 1);
+                } 
             } else {
                 console.error(json_data);
                 showAlertModal('좋아요 취소 중 오류가 발생했습니다.');
@@ -57,14 +80,29 @@ postLikeButton.addEventListener('click', async () => {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ userId }),
-                credentials: 'include', 
-            })
+                credentials: 'include',
+            });
             const json_data = await response.json();
             if (response.ok) {
                 postLikeButton.style.backgroundColor = `var(--blue-disabled)`;
                 const prevCount = likeCountText.textContent;
                 likeCountText.textContent = String(parseInt(prevCount) + 1);
-            } else {
+            } else if (response.status == 401) {
+                const response = await fetch(`${API_BASE}/users/refresh`, {
+                    method: 'POST',
+                    credentials: 'include', 
+                });
+                
+                if (response.status == 401) {
+                    window.location.href = '/auth/signin.html';
+                }
+                const like_response = await fetch(`${API_BASE}/posts/${postId}/likes`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId }),
+                    credentials: 'include',
+                });
+                } else {
                 console.error(json_data);
                 showAlertModal('좋아요 등록 중 오류가 발생했습니다.');
             }
@@ -104,15 +142,32 @@ postDeleteButton.addEventListener('click', async () => {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
-                    // 'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
                 },
                 credentials: 'include',
             });
-            const data = await response.json();
+        
             if (response.ok) {
                 showAlertModal('게시글이 삭제되었습니다.', '/posts/post_list.html');
+            } else if (response.status == 401) {
+                const response = await fetch(`${API_BASE}/users/refresh`, {
+                    method: 'POST',
+                    credentials: 'include', 
+                });
+                
+                if (response.status == 401) {
+                    window.location.href = '/auth/signin.html';
+                }
+
+                const post_delete_response = await fetch(`${API_BASE}/posts/${postId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                });
             } else {
-                console.error(data);
+                const response_json = await response.json();
+                console.error(response_json);
                 showAlertModal('게시글 삭제에 실패했습니다.');
             }
         })
@@ -180,6 +235,15 @@ commentForm.addEventListener('submit', async (e) => {
             if (!response.ok) {
                 console.error(data);
                 showAlertModal('댓글 작성에 실패했습니다.');
+            } else if (response.status == 401) {
+                const response = await fetch(`${API_BASE}/users/refresh`, {
+                    method: 'POST',
+                    credentials: 'include', 
+                });
+                
+                if (response.status == 401) {
+                    window.location.href = '/auth/signin.html';
+                }
             } else {
                 showAlertModal('댓글이 작성되었습니다.');
                 commentForm.reset();
@@ -253,7 +317,10 @@ async function renderPost(post) {
         image_url = url.startsWith('/') ? `${API_BASE}${url}` : `${API_BASE}/${url}`;
     }
 
-    postImage.src = image_url;
+    if (image_url) {
+        postImage.src = image_url;
+    }
+    
     postContent.textContent = post.contents;
     postLikesCount.textContent = post.likesCount;
     postViewsCount.textContent = post.viewsCount;
@@ -364,6 +431,22 @@ function addEvenListenerToCommentEditButtons() {
                     if (!response.ok) {
                         console.error(data);
                         showAlertModal('댓글 수정에 실패했습니다.');
+                    } else if (response.status == 401) {
+                        const refresh_response = await fetch(`${API_BASE}/users/refresh`, {
+                            method: 'POST',
+                            credentials: 'include', 
+                        });
+                        
+                        if (refresh_response.status == 401) {
+                            window.location.href = '/auth/signin.html';
+                        }
+
+                        const response = await fetch(`${API_BASE}/posts/${postId}/comments/${commentId}`, {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ contents: updatedContents }),
+                            credentials: 'include', 
+                        });
                     } else {
                         showAlertModal('댓글이 수정되었습니다.');
                         const comments = await fetchComments();
@@ -428,6 +511,24 @@ function addEvenListenerToCommentDeleteButtons() {
                             renderCommentsHTML(comments);
                             addEvenListenerToCommentEditButtons();
                             addEvenListenerToCommentDeleteButtons();
+                        } else if (response.status == 401) {
+                            const refresh_response = await fetch(`${API_BASE}/users/refresh`, {
+                                method: 'POST',
+                                credentials: 'include', 
+                            });
+                            
+                            if (refresh_response.status == 401) {
+                                window.location.href = '/auth/signin.html';
+                            };
+
+                            const response = await fetch(`${API_BASE}/posts/${postId}/comments/${commentId}`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    // 'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+                                },
+                                credentials: 'include', 
+                            });
                         } else {
                             console.error(data);
                             showAlertModal('댓글 삭제에 실패했습니다.');
@@ -464,13 +565,30 @@ if (userId) {
         credentials: 'include', 
     });
 
-    const is_liked_response_json = await is_liked_response.json();
-    console.log('is_liked_response_json', is_liked_response_json);
-    console.log('is liked api', is_liked_response_json.data.liked);
+    if (is_liked_response.ok) {
+        const is_liked_response_json = await is_liked_response.json();
+        console.log('is_liked_response_json', is_liked_response_json);
+        console.log('is liked api', is_liked_response_json.data.liked);
 
-    if (is_liked_response_json.data.liked == true) {
-        postLikeButton.style.backgroundColor = `var(--blue-disabled)`;
-    }
+        if (is_liked_response_json.data.liked == true) {
+            postLikeButton.style.backgroundColor = `var(--blue-disabled)`;
+        }
+    } else if (is_liked_response.status == 401) {
+        const response = await fetch(`${API_BASE}/users/refresh`, {
+            method: 'POST',
+            credentials: 'include', 
+        });
+        
+        if (response.status == 401) {
+            window.location.href = '/auth/signin.html';
+        }
+
+        const is_liked_response = await fetch(`${API_BASE}/posts/${postId}/likes`, {
+            method: 'GET',    
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include', 
+        });
+    } 
 }
 
 fetchPost().then(async post => {

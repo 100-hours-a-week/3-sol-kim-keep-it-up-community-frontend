@@ -222,7 +222,7 @@ export default function signUpInit() {
                         const formData = new FormData;
                         formData.append('file', file);
                         formData.append('userId', userId);
-                        const image_response = await fetch(`${API_BASE}/images/profiles`, {
+                        const image_response = await fetch(`${API_BASE}/api/images/profiles`, {
                               method: 'POST',
                               body: formData
                         });
