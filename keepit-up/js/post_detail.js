@@ -300,7 +300,7 @@ async function renderCommentsHTML(comments) {
                 <div class = "comment" id="${comment.id}">
                     <div class = "comment-header flex-container justify-between align-center">
                         <div class = "comment-info flex-container align-center">
-                            <img src="${comment.writer.imageUrl}" alt="">
+                            <img src="${writer_profile_url}" alt="">
                             <span class = "comment-author">${comment.writer.nickname}</span>
                             <span class = "comment-date">${comment.createdAt}</span>
                         </div>
