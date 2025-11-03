@@ -1,4 +1,5 @@
 import { API_BASE } from './config.js';
+import { getUserIdFromSession, removeUserIdFromSession } from './session_manager.js';
 
 const postForm = document.querySelector('form.post-edit-form');
 const submitButton = document.querySelector('.submit-button');
@@ -7,7 +8,7 @@ const contentsTextArea = postForm.querySelector('textarea');
 const imageInput = document.querySelector('.post-image-input');
 const imagePreview = document.querySelector('.post-selected-image-preview');
 const helperText = document.querySelector('span.helper-text');
-const writerId = sessionStorage.getItem('userId');
+const writerId = getUserIdFromSession();
 
 let fileUpdated = false;
 
@@ -107,7 +108,7 @@ if (postId) {
         });
         
         if (token_response.status == 401) {
-            sessionStorage.removeItem("userId");
+            removeUserIdFromSession();
             window.location.href = '/auth/signin.html';
         }
 
@@ -171,7 +172,7 @@ submitButton.addEventListener('click', async (e) => {
             
             console.log(token_response);
             if (token_response.status == 401) {
-                sessionStorage.removeItem("userId");
+                removeUserIdFromSession();
                 window.location.href = '/auth/signin.html';
             }
 
@@ -209,7 +210,7 @@ submitButton.addEventListener('click', async (e) => {
                 
                 console.log(token_response);
                 if (token_response.status == 401) {
-                    sessionStorage.removeItem("userId");
+                    removeUserIdFromSession();
                     window.location.href = '/auth/signin.html';
                 }
 
@@ -244,7 +245,7 @@ submitButton.addEventListener('click', async (e) => {
             
             console.log(token_response);
             if (token_response.status == 401) {
-                sessionStorage.removeItem("userId");
+                removeUserIdFromSession();
                 window.location.href = '/auth/signin.html';
             }
 
@@ -284,7 +285,7 @@ submitButton.addEventListener('click', async (e) => {
                 
                 console.log(token_response);
                 if (token_response.status == 401) {
-                    sessionStorage.removeItem("userId");
+                    removeUserIdFromSession();
                     window.location.href = '/auth/signin.html';
                 }
 

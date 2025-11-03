@@ -1,4 +1,5 @@
 import { API_BASE } from './config.js';
+import { setUserIdInSession } from './session_manager.js';
 
 export default function signInInit() {
 
@@ -83,11 +84,8 @@ export default function signInInit() {
                         showAlertModal('로그인에 실패했습니다.');
                   } else {
                         console.log('response_json:', response_json);
-                        // sessionStorage.setItem('token', data.token);
-                        // sessionStorage.setItem('profileImage', data.profileImage);
-                        // sessionStorage.setItem('email', email);
                         console.log('userId:', response_json.data.id);
-                        sessionStorage.setItem('userId', response_json.data.id);
+                        setUserIdInSession(response_json.data.id);
                         showAlertModal('로그인되었습니다.', '/posts/post_list.html');
                   }
             } catch (err) {

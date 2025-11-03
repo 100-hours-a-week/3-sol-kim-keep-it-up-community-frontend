@@ -1,4 +1,5 @@
 import { API_BASE } from './config.js';
+import { getUserIdFromSession, removeUserIdFromSession } from './session_manager.js';
 
 export default function passwordUpdateInit() {
     const passwordUpdateForm = document.querySelector('form.password-update-form');
@@ -87,7 +88,7 @@ export default function passwordUpdateInit() {
             const formData = new FormData(passwordUpdateForm);
             const password = formData.get('password'); // 인풋 필드가 name="password"를 가져야 한다. 
 
-            const userId = sessionStorage.getItem('userId');
+            const userId = getUserIdFromSession();
 
             const response = await fetch(`${API_BASE}/users/password`, {
                 method: 'PATCH',
@@ -107,6 +108,7 @@ export default function passwordUpdateInit() {
                 });
                 
                 if (response.status == 401) {
+                    removeUserIdFromSession();
                     window.location.href = '/auth/signin.html';
                 }
 

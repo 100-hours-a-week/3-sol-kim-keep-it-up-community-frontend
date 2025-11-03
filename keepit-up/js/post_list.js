@@ -1,4 +1,5 @@
 import { API_BASE } from './config.js';
+import { getUserIdFromSession } from './session_manager.js';
 
 const postList = document.querySelector('.post-list');
 const postCreateButton = document.querySelector('.post-create-button');
@@ -9,7 +10,7 @@ const DEFAULT_IMAGE_PATH = '/assets/images/default_profile_image.png'
     EVENT LISTENERS
 */
 postCreateButton.addEventListener('click', () => {
-    const userId = sessionStorage.getItem('userId');
+    const userId = getUserIdFromSession();
     if (userId) {
         window.location.href = '/posts/post_edit.html';
     } else {
@@ -60,7 +61,6 @@ async function fetchPostList() {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    // 'Authorization': `Bearer ${sessionStorage.getItem('token')}`
                 },
             });
         } else {
@@ -69,7 +69,6 @@ async function fetchPostList() {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    // 'Authorization': `Bearer ${sessionStorage.getItem('token')}`
                 },
             });
         }

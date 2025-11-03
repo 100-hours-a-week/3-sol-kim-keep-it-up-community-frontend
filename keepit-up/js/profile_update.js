@@ -1,4 +1,5 @@
 import { API_BASE } from './config.js';
+import { getUserIdFromSession, removeUserIdFromSession } from './session_manager.js';
 
 export default async function profileUpdateInit() {
     const profileImageInput = document.querySelector('.profile-image-input');
@@ -6,7 +7,7 @@ export default async function profileUpdateInit() {
     const nicknameInput = document.querySelector('input.nickname');
     const nicknameHelperText = document.querySelector('.helper-text.nickname');
     const updateButton = document.querySelector('.update-button');
-    const userId = sessionStorage.getItem('userId');
+    const userId = getUserIdFromSession();
     console.log('userId:', userId);
 
     const withdrawalModal = document.querySelector('.withdrawal-modal');
@@ -37,7 +38,6 @@ export default async function profileUpdateInit() {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            // 'Authorization': `Bearer ${sessionStorage.getItem('token')}`
         },
         credentials: 'include',
     });
@@ -50,7 +50,7 @@ export default async function profileUpdateInit() {
 
         console.log("token_response", token_response)
         if (token_response.status == 401) {
-            sessionStorage.removeItem("userId");
+            removeUserIdFromSession();
             window.location.href = '/auth/signin.html';
         }
 
@@ -58,7 +58,6 @@ export default async function profileUpdateInit() {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                // 'Authorization': `Bearer ${sessionStorage.getItem('token')}`
             },
             credentials: 'include',
         });
@@ -148,7 +147,7 @@ export default async function profileUpdateInit() {
                 });
                 console.log("token_response", token_response)
                 if (token_response.status == 401) {
-                    sessionStorage.removeItem("userId");
+                    removeUserIdFromSession();
                     window.location.href = '/auth/signin.html';
                 }
 
@@ -187,7 +186,7 @@ export default async function profileUpdateInit() {
 
                     console.log("token_response", token_response)
                     if (token_response.status == 401) {
-                        sessionStorage.removeItem("userId");
+                        removeUserIdFromSession();
                         window.location.href = '/auth/signin.html';
                     }
 
@@ -203,7 +202,6 @@ export default async function profileUpdateInit() {
                 }
             }
             showAlertModal('회원정보가 수정되었습니다.', '/posts/post_list.html');
-            // sessionStorage.setItem('nickname', nickname);
         } catch (error) {
             showAlertModal(error.message);
             updateButton.disabled = false;
@@ -238,8 +236,7 @@ export default async function profileUpdateInit() {
 
         const data = await response.json();
         if (response.ok) {
-            // sessionStorage.setItem('nickname', nickname);
-            sessionStorage.removeItem('userId');
+            removeUserIdFromSession();
             withdrawalModal.style.display = 'none';
             showAlertModal('탈퇴 처리 되었습니다.', '/posts/post_list.html');
         } else if (response.status == 401) {
@@ -249,7 +246,7 @@ export default async function profileUpdateInit() {
             });
             
             if (token_response.status == 401) {
-                sessionStorage.removeItem("userId");
+                removeUserIdFromSession();
                 window.location.href = '/auth/signin.html';
             }
 

@@ -1,4 +1,5 @@
 import { API_BASE } from './config.js';
+import { getUserIdFromSession, removeUserIdFromSession } from './session_manager.js';
 
 export default async function headerInit() {
     const header = document.querySelector('header');
@@ -11,7 +12,7 @@ export default async function headerInit() {
     console.log('beforeLoginMenu', beforeLoginMenu);
     console.log('afterLoginMenu', afterLoginMenu);
 
-    const userId = sessionStorage.getItem('userId');
+    const userId = getUserIdFromSession();
 
     if (!userId) {
         dropdownButton.style.display = 'none';
@@ -76,6 +77,7 @@ export default async function headerInit() {
             });
             
             if (response.status == 401) {
+                removeUserIdFromSession();
                 window.location.href = '/auth/signin.html';
             }
 
@@ -119,7 +121,7 @@ export default async function headerInit() {
             
             console.log(token_response);
             if (token_response.status == 401) {
-                sessionStorage.removeItem("userId");
+                removeUserIdFromSession();
                 window.location.href = '/auth/signin.html';
             }
             const response = await fetch(`${API_BASE}/api/images/profiles`, {

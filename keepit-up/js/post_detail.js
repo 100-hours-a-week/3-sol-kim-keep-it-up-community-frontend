@@ -1,4 +1,5 @@
 import { API_BASE } from './config.js';
+import { getUserIdFromSession, removeUserIdFromSession } from './session_manager.js';
 
 const postDetailSection = document.querySelector('.post-detail-section');
 const postSection = postDetailSection.querySelector('.post-section');
@@ -16,7 +17,7 @@ const DEFAULT_IMAGE_PATH = '/assets/images/default_profile_image.png'
 const postId = new URLSearchParams(window.location.search).get('postId');
 console.log('postId:', postId);
 
-const userId = sessionStorage.getItem('userId');
+const userId = getUserIdFromSession();
 console.log('userId:', userId);
 
 /*
@@ -29,8 +30,6 @@ console.log('userId:', userId);
 
 postLikeButton.addEventListener('click', async () => {
     console.log('like clicked');
-    const userId = sessionStorage.getItem('userId');
-
     if (!userId) {
         showAlertModal('로그인이 필요한 서비스입니다.');
     } else {
@@ -55,6 +54,7 @@ postLikeButton.addEventListener('click', async () => {
                 });
                 
                 if (response.status == 401) {
+                    removeUserIdFromSession();
                     window.location.href = '/auth/signin.html';
                 }
 
@@ -94,6 +94,7 @@ postLikeButton.addEventListener('click', async () => {
                 });
                 
                 if (response.status == 401) {
+                    removeUserIdFromSession();
                     window.location.href = '/auth/signin.html';
                 }
                 const like_response = await fetch(`${API_BASE}/posts/${postId}/likes`, {
@@ -155,6 +156,7 @@ postDeleteButton.addEventListener('click', async () => {
                 });
                 
                 if (response.status == 401) {
+                    removeUserIdFromSession();
                     window.location.href = '/auth/signin.html';
                 }
 
@@ -188,7 +190,6 @@ async function fetchPost() {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            // 'Authorization': `Bearer ${sessionStorage.getItem('token')}`
         },
     });
     const response_json = await response.json();
@@ -204,7 +205,6 @@ async function fetchComments() {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            // 'Authorization': `Bearer ${sessionStorage.getItem('token')}`
         },
     });
     const response_json = await response.json();
@@ -242,6 +242,7 @@ commentForm.addEventListener('submit', async (e) => {
                 });
                 
                 if (response.status == 401) {
+                    removeUserIdFromSession();
                     window.location.href = '/auth/signin.html';
                 }
             } else {
@@ -438,6 +439,7 @@ function addEvenListenerToCommentEditButtons() {
                         });
                         
                         if (refresh_response.status == 401) {
+                            removeUserIdFromSession();
                             window.location.href = '/auth/signin.html';
                         }
 
@@ -498,7 +500,6 @@ function addEvenListenerToCommentDeleteButtons() {
                             method: 'DELETE',
                             headers: {
                                 'Content-Type': 'application/json',
-                                // 'Authorization': `Bearer ${sessionStorage.getItem('token')}`
                             },
                             credentials: 'include', 
                         });
@@ -518,6 +519,7 @@ function addEvenListenerToCommentDeleteButtons() {
                             });
                             
                             if (refresh_response.status == 401) {
+                                removeUserIdFromSession();
                                 window.location.href = '/auth/signin.html';
                             };
 
@@ -525,7 +527,6 @@ function addEvenListenerToCommentDeleteButtons() {
                                 method: 'DELETE',
                                 headers: {
                                     'Content-Type': 'application/json',
-                                    // 'Authorization': `Bearer ${sessionStorage.getItem('token')}`
                                 },
                                 credentials: 'include', 
                             });
@@ -580,6 +581,7 @@ if (userId) {
         });
         
         if (response.status == 401) {
+            removeUserIdFromSession();
             window.location.href = '/auth/signin.html';
         }
 
