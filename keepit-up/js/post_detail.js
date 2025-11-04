@@ -1,4 +1,5 @@
 import { API_BASE } from './config.js';
+import { MODAL_MESSAGE, MODAL_MESSAGE } from './messages.js';
 import { getUserIdFromSession, removeUserIdFromSession } from './session_manager.js';
 
 const postDetailSection = document.querySelector('.post-detail-section');
@@ -31,7 +32,7 @@ console.log('userId:', userId);
 postLikeButton.addEventListener('click', async () => {
     console.log('like clicked');
     if (!userId) {
-        showAlertModal('로그인이 필요한 서비스입니다.');
+        showAlertModal(MODAL_MESSAGE.SIGNIN_NEEDED);
     } else {
         const isLiked = postLikeButton.style.backgroundColor === `var(--blue-disabled)`;
         const likeCountText = postLikeButton.querySelector('.post-likes-count');
@@ -73,7 +74,7 @@ postLikeButton.addEventListener('click', async () => {
                 } 
             } else {
                 console.error(json_data);
-                showAlertModal('좋아요 취소 중 오류가 발생했습니다.');
+                showAlertModal(MODAL_MESSAGE.LIKE_CANCEL_FAILED);
             }
         } else {
             const response = await fetch(`${API_BASE}/posts/${postId}/likes`, {
@@ -105,7 +106,7 @@ postLikeButton.addEventListener('click', async () => {
                 });
                 } else {
                 console.error(json_data);
-                showAlertModal('좋아요 등록 중 오류가 발생했습니다.');
+                showAlertModal(MODAL_MESSAGE.LIKE_FAILED);
             }
         }
     }
@@ -148,7 +149,7 @@ postDeleteButton.addEventListener('click', async () => {
             });
         
             if (response.ok) {
-                showAlertModal('게시글이 삭제되었습니다.', '/posts/post_list.html');
+                showAlertModal(MODAL_MESSAGE.POST_DELETED, '/posts/post_list.html');
             } else if (response.status == 401) {
                 const response = await fetch(`${API_BASE}/users/refresh`, {
                     method: 'POST',
@@ -170,7 +171,7 @@ postDeleteButton.addEventListener('click', async () => {
             } else {
                 const response_json = await response.json();
                 console.error(response_json);
-                showAlertModal('게시글 삭제에 실패했습니다.');
+                showAlertModal(MODAL_MESSAGE.POST_DELETE_FAILED);
             }
         })
     } catch (error) {
@@ -234,7 +235,7 @@ commentForm.addEventListener('submit', async (e) => {
             const data = await response.json();
             if (!response.ok) {
                 console.error(data);
-                showAlertModal('댓글 작성에 실패했습니다.');
+                showAlertModal(MODAL_MESSAGE.COMMENT_CREATE_FAILED);
             } else if (response.status == 401) {
                 const response = await fetch(`${API_BASE}/users/refresh`, {
                     method: 'POST',
@@ -246,7 +247,7 @@ commentForm.addEventListener('submit', async (e) => {
                     window.location.href = '/auth/signin.html';
                 }
             } else {
-                showAlertModal('댓글이 작성되었습니다.');
+                showAlertModal(MODAL_MESSAGE.COMMENT_CREATED);
                 commentForm.reset();
                 const comments = await fetchComments();
                 renderCommentsHTML(comments);
@@ -258,7 +259,7 @@ commentForm.addEventListener('submit', async (e) => {
             alert(error.message);
         }
     } else {
-        showAlertModal('로그인이 필요한 서비스입니다.', '/auth/signin.html');
+        showAlertModal(MODAL_MESSAGE.SIGNIN_NEEDED, '/auth/signin.html');
     }
 });
 
@@ -431,7 +432,7 @@ function addEvenListenerToCommentEditButtons() {
                     const data = await response.json();
                     if (!response.ok) {
                         console.error(data);
-                        showAlertModal('댓글 수정에 실패했습니다.');
+                        showAlertModal(MODAL_MESSAGE.COMMENT_UPDATE_FAILED);
                     } else if (response.status == 401) {
                         const refresh_response = await fetch(`${API_BASE}/users/refresh`, {
                             method: 'POST',
@@ -450,7 +451,7 @@ function addEvenListenerToCommentEditButtons() {
                             credentials: 'include', 
                         });
                     } else {
-                        showAlertModal('댓글이 수정되었습니다.');
+                        showAlertModal(MODAL_MESSAGE.COMMENT_UPDATED);
                         const comments = await fetchComments();
                         renderCommentsHTML(comments);
                         addEvenListenerToCommentEditButtons();
@@ -506,7 +507,7 @@ function addEvenListenerToCommentDeleteButtons() {
                         const data = await response.json();
                         if (response.ok) {
                             commentModal.style.display = 'none';
-                            showAlertModal('댓글이 삭제되었습니다.');
+                            showAlertModal(MODAL_MESSAGE.COMMENT_DELETED);
                             commentList.innerHTML = '';
                             const comments = await fetchComments();
                             renderCommentsHTML(comments);
@@ -532,7 +533,7 @@ function addEvenListenerToCommentDeleteButtons() {
                             });
                         } else {
                             console.error(data);
-                            showAlertModal('댓글 삭제에 실패했습니다.');
+                            showAlertModal(MODAL_MESSAGE.COMMENT_DELTE_FAILED);
                         }
                     } catch (error) {
                         console.error(error);

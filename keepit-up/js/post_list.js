@@ -1,4 +1,5 @@
 import { API_BASE } from './config.js';
+import { MODAL_MESSAGE } from './messages.js';
 import { getUserIdFromSession } from './session_manager.js';
 
 const postList = document.querySelector('.post-list');
@@ -14,7 +15,7 @@ postCreateButton.addEventListener('click', () => {
     if (userId) {
         window.location.href = '/posts/post_edit.html';
     } else {
-        showAlertModal("로그인이 필요한 서비스입니다.", '/auth/signin.html');
+        showAlertModal(MODAL_MESSAGE.SIGNIN_NEEDED, '/auth/signin.html');
     }
 });
 

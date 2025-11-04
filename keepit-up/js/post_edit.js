@@ -1,4 +1,5 @@
 import { API_BASE } from './config.js';
+import { POST_MESSAGE, MODAL_MESSAGE } from './messages.js';
 import { getUserIdFromSession, removeUserIdFromSession } from './session_manager.js';
 
 const postForm = document.querySelector('form.post-edit-form');
@@ -51,7 +52,7 @@ function showAlertModal(content, next_page = null) {
 */
 titleInput.addEventListener('input', () => {
     if (titleInput.value.length > 26) { 
-        helperText.textContent = '제목은 26자 이내로 작성해주세요.';
+        helperText.textContent = POST_MESSAGE.TITLE_HELPER_TEXT;
     } else {
         helperText.textContent = '*helper-text';
     }
@@ -201,7 +202,7 @@ submitButton.addEventListener('click', async (e) => {
             console.log('image_response', image_response);
 
             if (!image_response.ok) {
-                showAlertModal('이미지 업로드 중 오류가 발생했습니다. 수정 페이지에서 다시 업로드해주세요.');
+                showAlertModal(MODAL_MESSAGE.IMAGE_UPLOAD_FAILED);
             } else if (image_response.status == 401) {
                 const token_response = await fetch(`${API_BASE}/users/refresh`, {
                     method: 'POST',
@@ -276,7 +277,7 @@ submitButton.addEventListener('click', async (e) => {
             console.log('image_response', image_response);
             // const image_response_json = await image_response.json();
             if (!image_response.ok) {
-                showAlertModal('이미지 업로드 중 오류가 발생했습니다. 글 수정에서 다시 업로드해주세요.');
+                showAlertModal(MODAL_MESSAGE.IMAGE_UPLOAD_FAILED);
             } else if (response.status == 401) {
                 const token_response = await fetch(`${API_BASE}/users/refresh`, {
                     method: 'POST',
@@ -301,12 +302,12 @@ submitButton.addEventListener('click', async (e) => {
     const data = response_json;
     if (response.status == 400) {
         console.error(data);
-        showAlertModal(`모든 항목을 입력해주세요.`);
+        showAlertModal(MODAL_MESSAGE.FILL_OUT_ALL);
     } else if (response.ok) {
-        const message = postId ? '게시글이 수정되었습니다.' : '게시글이 작성되었습니다.';
+        const message = postId ? MODAL_MESSAGE.POST_UPDATED : MODAL_MESSAGE.POST_PUBLISHED;
         showAlertModal(message, `/posts/post_detail.html?postId=${data.data.id}`);
     } else {
         console.error(data);
-        showAlertModal(`게시글 작성에 실패했습니다.`);
+        showAlertModal(MODAL_MESSAGE.POST_PUBLISHING_FAILED);
     }
 });

@@ -1,4 +1,5 @@
 import { API_BASE } from './config.js';
+import { AUTH_MESSAGE, MODAL_MESSAGE } from './messages.js';
 import { getUserIdFromSession, removeUserIdFromSession } from './session_manager.js';
 
 export default async function profileUpdateInit() {
@@ -111,11 +112,11 @@ export default async function profileUpdateInit() {
     nicknameInput.addEventListener('input', () => {
         const nickname = nicknameInput.value;
         if (nickname == undefined || nickname.trim() === '') {
-            nicknameHelperText.textContent = '닉네임을 입력해주세요.';
+            nicknameHelperText.textContent = AUTH_MESSAGE.NICKNAME_NEEDED;
         } else if (nickname.length > 10) {
-            nicknameHelperText.textContent = '닉네임은 최대 10자까지 가능합니다.';
+            nicknameHelperText.textContent = AUTH_MESSAGE.NICKNAME_HELPER_TEXT;
         } else {
-            nicknameHelperText.textContent = '*helper-text';
+            nicknameHelperText.textContent = AUTH_MESSAGE.HELPER_TEXT_MARK;
             updateButton.disabled = false;
         }
     });
@@ -158,11 +159,11 @@ export default async function profileUpdateInit() {
                     credentials: 'include',
                 });
             } else if (response.status == 409) {
-                nicknameHelperText.textContent = '이미 존재하는 닉네임입니다.';
+                nicknameHelperText.textContent = AUTH_MESSAGE.NICKNAME_CONFLICT;
                 return;
             } else if (!response.ok) {
                 console.error(data);
-                showAlertModal('회원정보 수정에 실패했습니다.');
+                showAlertModal(MODAL_MESSAGE.PROFILE_UPDATE_FAILED);
                 return;
             } 
 
@@ -197,11 +198,10 @@ export default async function profileUpdateInit() {
                     });
                 } else if (!image_response.ok) {
                     console.log(image_response);
-                    showAlertModal(`프로필 사진 업로드 중 에러가 발생했습니다. 
-다시 업로드 해주세요.`);
+                    showAlertModal(MODAL_MESSAGE.PROFILE_IMAGE_UPLOAD_FAILED);
                 }
             }
-            showAlertModal('회원정보가 수정되었습니다.', '/posts/post_list.html');
+            showAlertModal(MODAL_MESSAGE.PROFILE_UPDATED, '/posts/post_list.html');
         } catch (error) {
             showAlertModal(error.message);
             updateButton.disabled = false;
@@ -238,7 +238,7 @@ export default async function profileUpdateInit() {
         if (response.ok) {
             removeUserIdFromSession();
             withdrawalModal.style.display = 'none';
-            showAlertModal('탈퇴 처리 되었습니다.', '/posts/post_list.html');
+            showAlertModal(MODAL_MESSAGE.WITHDRAWAL_SUCCEEDED, '/posts/post_list.html');
         } else if (response.status == 401) {
             const token_response = await fetch(`${API_BASE}/users/refresh`, {
                 method: 'POST',
@@ -257,7 +257,7 @@ export default async function profileUpdateInit() {
             })
         } else {
             console.error(data);
-            showAlertModal('회원 탈퇴 중 오류가 발생해 탈퇴 처리가 되지 않았습니다.');
+            showAlertModal(MODAL_MESSAGE.WITHDRAWAL_FAILED);
         }
     });
     

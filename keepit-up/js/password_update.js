@@ -1,4 +1,5 @@
 import { API_BASE } from './config.js';
+import { AUTH_MESSAGE, MODAL_MESSAGE } from './messages.js';
 import { getUserIdFromSession, removeUserIdFromSession } from './session_manager.js';
 
 export default function passwordUpdateInit() {
@@ -20,6 +21,7 @@ export default function passwordUpdateInit() {
         alertContent.textContent = content;
         commentAlertModal.style.display = 'block';
         const modalConfirmButton = commentAlertModal.querySelector('.modal-confirm-button');
+        
         modalConfirmButton.addEventListener('click', () => {
                 console.log("clicked in signin");
                 commentAlertModal.style.display = 'none';
@@ -55,7 +57,7 @@ export default function passwordUpdateInit() {
             !/[A-Z]/.test(password) ||
             !/[0-9]/.test(password) ||
             !/[`~!@#$%^&*()-_=+]/.test(password)) {
-            passwordHelperText.textContent = '비밀번호는 8자 이상 20자 이하이며, 대문자, 소문자, 숫자, 특수문자를 각각 최소 1개 포함해야 합니다.';
+            passwordHelperText.textContent = AUTH_MESSAGE.PASSWORD_HELPER_TEXT;
         } else {
             passwordHelperText.textContent = '';
         }
@@ -70,7 +72,7 @@ export default function passwordUpdateInit() {
         const passwordConfirm = passwordConfirmInput.value;
 
         if (password !== passwordConfirm) {
-            passwordConfirmHelperText.textContent = '비밀번호가 일치하지 않습니다.';
+            passwordConfirmHelperText.textContent = AUTH_MESSAGE.PASSWORD_MISMATCH;
         } else {
             passwordConfirmHelperText.textContent = '';
         }
@@ -100,7 +102,7 @@ export default function passwordUpdateInit() {
             const data = await response.json();
             if (!response.ok) {
                 console.error(data);
-                showAlertModal("비밀번호 수정에 실패했습니다.");
+                showAlertModal(MODAL_MESSAGE.PASSWORD_UPDATE_FAILED);
             } else if (response.status == 401) {
                 const response = await fetch(`${API_BASE}/users/refresh`, {
                     method: 'POST',
@@ -119,8 +121,7 @@ export default function passwordUpdateInit() {
                     credentials: 'include'
                 });
             } else {
-                showAlertModal(`비밀번호가 수정되었습니다. 
-다시 로그인해주세요.`, '/auth/signin.html');
+                showAlertModal(MODAL_MESSAGE.PASSWORD_UPDATED, '/auth/signin.html');
                 sessionStorage.clear();
             }
         } catch (error) {

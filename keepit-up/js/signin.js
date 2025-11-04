@@ -1,4 +1,5 @@
 import { API_BASE } from './config.js';
+import { AUTH_MESSAGE, MODAL_MESSAGE } from './messages.js';
 import { setUserIdInSession } from './session_manager.js';
 
 export default function signInInit() {
@@ -33,13 +34,13 @@ export default function signInInit() {
             const email = emailInput.value;
 
             if (email == undefined || email.trim() === '') {
-                  helperText.textContent = '이메일을 입력해주세요.';
+                  helperText.textContent = AUTH_MESSAGE.EMAIL_NEEDED;
                   btn.disabled = true;
             } else if (!/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(email)) {
-                  helperText.textContent = '올바른 이메일 주소 형식을 입력해주세요. (예: example@example.com)';
+                  helperText.textContent = AUTH_MESSAGE.EMAIL_INVALID;
                   btn.disabled = true;
             } else if (password == undefined || password.trim() === '') {
-                  helperText.textContent = '비밀번호를 입력해주세요.';
+                  helperText.textContent = AUTH_MESSAGE.PASSWORD_NEEDED;
                   btn.disabled = true;
             } else if (password.length < 8 ||
                   password.length > 20 ||
@@ -47,7 +48,7 @@ export default function signInInit() {
                   !/[A-Z]/.test(password) ||
                   !/[0-9]/.test(password) ||
                   !/[`~!@#$%^&*()-_=+]/.test(password)) {
-                  helperText.textContent = '비밀번호는 8자 이상 20자 이하이며, 대문자, 소문자, 숫자, 특수문자를 각각 최소 1개 포함해야 합니다.';
+                  helperText.textContent = AUTH_MESSAGE.PASSWORD_HELPER_TEXT;
                   btn.disabled = true;
             } else {
                   helperText.textContent = '';
@@ -78,18 +79,18 @@ export default function signInInit() {
                   const response_json = await response.json();
                   if (response.status == 401) {
                         console.error(response_json);
-                        showAlertModal('아이디 또는 비밀번호를 확인해주세요.');
+                        showAlertModal(MODAL_MESSAGE.WRONG_PASSWORD_OR_EMAIL);
                   } else if (!response.ok) {
                         console.error(response_json);
-                        showAlertModal('로그인에 실패했습니다.');
+                        showAlertModal(MODAL_MESSAGE.SIGNIN_FAILED);
                   } else {
                         console.log('response_json:', response_json);
                         console.log('userId:', response_json.data.id);
                         setUserIdInSession(response_json.data.id);
-                        showAlertModal('로그인되었습니다.', '/posts/post_list.html');
+                        showAlertModal(MODAL_MESSAGE.SIGNIN_SUCCESS, '/posts/post_list.html');
                   }
             } catch (err) {
-                  showAlertModal('로그인 중 오류가 발생했습니다.');
+                  showAlertModal(MODAL_MESSAGE.SIGNIN_FAILED);
             } finally {
                   btn.disabled = false;
             }

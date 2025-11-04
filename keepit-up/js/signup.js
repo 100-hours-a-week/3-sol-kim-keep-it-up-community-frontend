@@ -1,4 +1,5 @@
 import { API_BASE } from './config.js';
+import { AUTH_MESSAGE, MODAL_MESSAGE } from './messages.js';
 
 export default function signUpInit() {
 
@@ -128,9 +129,9 @@ export default function signUpInit() {
       emailInput.addEventListener('input', () => {
             const email = emailInput.value;
             if (email == undefined || email.trim() === '') {
-                  emailHelperText.textContent = '이메일을 입력해주세요.';
+                  emailHelperText.textContent = AUTH_MESSAGE.EMAIL_NEEDED;
             } else if (!/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(email)) {
-                  emailHelperText.textContent = '올바른 이메일 주소 형식을 입력해주세요. (예: example@example.com)';
+                  emailHelperText.textContent = AUTH_MESSAGE.EMAIL_INVALID;
             } else {
                   emailHelperText.textContent = '';
             }
@@ -147,7 +148,7 @@ export default function signUpInit() {
                   !/[A-Z]/.test(password) ||
                   !/[0-9]/.test(password) ||
                   !/[`~!@#$%^&*()-_=+]/.test(password)) {
-                  passwordHelperText.textContent = '비밀번호는 8자 이상 20자 이하이며, 대문자, 소문자, 숫자, 특수문자를 각각 최소 1개 포함해야 합니다.';
+                  passwordHelperText.textContent = AUTH_MESSAGE.PASSWORD_HELPER_TEXT;
             } else {
                   passwordHelperText.textContent = '';
             }
@@ -160,7 +161,7 @@ export default function signUpInit() {
             const passwordInput = form.querySelector('input.password').value;
             const passwordConfirmInput = form.querySelector('input.password-verification').value;
             if (passwordInput !== passwordConfirmInput) {
-                  passwordConfirmHelperText.textContent = '비밀번호가 다릅니다.';
+                  passwordConfirmHelperText.textContent = AUTH_MESSAGE.PASSWORD_MISMATCH;
             } else {
                   passwordConfirmHelperText.textContent = '';
             }
@@ -172,11 +173,11 @@ export default function signUpInit() {
       nicknameInput.addEventListener('input', () => {
             const nickname = nicknameInput.value;
             if (nickname == undefined || nickname.trim() === '') {
-                  nicknameHelperText.textContent = '닉네임을 입력해주세요.';
+                  nicknameHelperText.textContent = AUTH_MESSAGE.NICKNAME_NEEDED;
             } else if (/\s/.test(nickname)) {
-                  nicknameHelperText.textContent = '띄어쓰기를 없애주세요.';
+                  nicknameHelperText.textContent = AUTH_MESSAGE.NICKNAME_BLANK_ERROR;
             } else if (nickname.length > 10) {
-                  nicknameHelperText.textContent = '닉네임은 최대 10자까지 입력 가능합니다.';
+                  nicknameHelperText.textContent = AUTH_MESSAGE.NICKNAME_HELPER_TEXT;
             } else {
                   nicknameHelperText.textContent = '';
             }
@@ -206,14 +207,14 @@ export default function signUpInit() {
                   console.error(errorData);
             
                   if (errorData.message.includes('Email')) {
-                        emailHelperText.textContent = '이미 사용 중인 이메일입니다.';
+                        emailHelperText.textContent = AUTH_MESSAGE.EMAIL_CONFLICT;
                   } else if (errorData.message.includes('Nickname')) {
-                        nicknameHelperText.textContent = '이미 사용 중인 닉네임입니다.';
+                        nicknameHelperText.textContent = AUTH_MESSAGE.NICKNAME_CONFLICT;
                   }
             } else if (!response.ok) {
                   const errorData = await response.json();
                   console.error(errorData);
-                  showAlertModal('회원가입에 실패했습니다.');
+                  showAlertModal(MODAL_MESSAGE.SIGNUP_FAILED);
             } else {
                   const response_json = await response.json();
                   console.log(response_json.data);
@@ -228,11 +229,10 @@ export default function signUpInit() {
                         });
 
                         if (!image_response.ok) {
-                              showAlertModal('프로필 사진 업로드 중 에러가 발생했습니다. 회원 정보 수정 페이지에서 다시 업로드 해주세요.');
+                              showAlertModal(MODAL_MESSAGE.PROFILE_IMAGE_UPLOAD_FAILED);
                         }
                   }
-                  showAlertModal(`     회원가입되었습니다. 
-로그인 페이지로 이동합니다.`, '/auth/signin.html');
+                  showAlertModal(MODAL_MESSAGE.SIGNUP_SUCCEEDED, '/auth/signin.html');
             }
       });
 }
