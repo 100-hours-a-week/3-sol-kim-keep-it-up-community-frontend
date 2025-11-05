@@ -1,6 +1,7 @@
 import { API_BASE } from './config.js';
-import { MODAL_MESSAGE, MODAL_MESSAGE } from './common/messages.js';
+import { MODAL_MESSAGE} from './common/messages.js';
 import { getUserIdFromSession, removeUserIdFromSession } from './common/session_managers.js';
+import { handleImageUrl } from './common/image_url_handler.js';
 
 const postDetailSection = document.querySelector('.post-detail-section');
 const postSection = postDetailSection.querySelector('.post-section');
@@ -303,9 +304,8 @@ async function renderPost(post) {
 
     const image_profile_url = post.writer.profileImageUrl;
     let writer_profile_url = null;
-    if (image_profile_url ) {
-        writer_profile_url = image_profile_url .startsWith('/') ?
-        `${API_BASE}${image_profile_url}` : `${API_BASE}/${image_profile_url}`;
+    if (image_profile_url) {
+        writer_profile_url = handleImageUrl(image_profile_url);
     } else {
         writer_profile_url = DEFAULT_IMAGE_PATH;
     }
@@ -316,7 +316,7 @@ async function renderPost(post) {
     const url = post.imageUrl;
     let image_url = null;
     if (url) {
-        image_url = url.startsWith('/') ? `${API_BASE}${url}` : `${API_BASE}/${url}`;
+        image_url = handleImageUrl(url);
     }
 
     if (image_url) {
@@ -341,8 +341,7 @@ async function renderCommentsHTML(comments) {
         const image_profile_url = comment.writer.profileImageUrl;
         let writer_profile_url = null;
         if (image_profile_url ) {
-            writer_profile_url = image_profile_url .startsWith('/') ?
-            `${API_BASE}${image_profile_url}` : `${API_BASE}/${image_profile_url}`;
+            writer_profile_url = handleImageUrl(image_profile_url);
         } else {
             writer_profile_url = DEFAULT_IMAGE_PATH;
         }

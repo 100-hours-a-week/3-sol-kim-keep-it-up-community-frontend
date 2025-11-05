@@ -1,6 +1,8 @@
 import { API_BASE } from './config.js';
 import { getUserIdFromSession, removeUserIdFromSession } from './common/session_managers.js';
 import { MODAL_MESSAGE } from './common/messages.js';
+import { handleImageUrl } from './common/image_url_handler.js';
+import { fetchAPI } from './common/api_fetcher.js';
 
 export default async function headerInit() {
     const header = document.querySelector('header');
@@ -106,14 +108,7 @@ export default async function headerInit() {
         if (response.status === 200) {
             const response_json = await response.json();
             console.log('response json', response_json);
-
-            const image_url = response_json.data.url;
-            console.log('image_url', image_url);
-            const imageUrl = image_url.startsWith('/')
-            ? `${API_BASE}${image_url}`
-            : `${API_BASE}/${image_url}`;
-            dropdownButton.src = `${imageUrl}`;
-
+            dropdownButton.src = handleImageUrl(response_json.data.url);
         } else if (response.status == 401) {
             const token_response = await fetch(`${API_BASE}/users/refresh`, {
                 method: 'POST',
@@ -134,14 +129,7 @@ export default async function headerInit() {
             if (response.status === 200) {
                 const response_json = await response.json();
                 console.log('response json', response_json);
-
-                const image_url = response_json.data.url;
-                console.log('image_url', image_url);
-                const imageUrl = image_url.startsWith('/')
-                ? `${API_BASE}${image_url}`
-                : `${API_BASE}/${image_url}`;
-                dropdownButton.src = `${imageUrl}`;
-
+                dropdownButton.src = handleImageUrl(response_json.data.url);
             } 
         } else if (!response.ok) {
             const error_data = await response.json();

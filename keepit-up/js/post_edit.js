@@ -134,8 +134,7 @@ if (postId) {
     const imagePrev = document.querySelector('.post-selected-image-preview');
     const url = response_json.data.imageUrl;
     if (url) {
-        const image_url = url.startsWith('/') ? `${API_BASE}${url}` : `${API_BASE}/${url}`;
-        imagePrev.src = image_url;
+        imagePrev.src = handleImageUrl(url);
     }
     
 } 

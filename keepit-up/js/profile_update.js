@@ -74,8 +74,7 @@ export default async function profileUpdateInit() {
     const url = response_json.data.profileImageUrl;
     let profile_image_url = null;
     if (url) {
-        profile_image_url = url.startsWith('/') ?
-        `${API_BASE}${url}` : `${API_BASE}/${url}`;
+        profile_image_url = handleImageUrl(url);
     } else {
         profile_image_url = DEFAULT_IMAGE_PATH;
     }
