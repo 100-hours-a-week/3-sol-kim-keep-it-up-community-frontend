@@ -12,5 +12,5 @@ export function isInvalidEmail(email) {
 }
 
 export function isInvalidNickname(nickname) {
-    return !/\s/.test(nickname);
+    return /\s/.test(nickname);
 }
