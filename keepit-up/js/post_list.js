@@ -1,6 +1,6 @@
 import { API_BASE } from './config.js';
-import { MODAL_MESSAGE } from './messages.js';
-import { getUserIdFromSession } from './session_manager.js';
+import { MODAL_MESSAGE } from './common/messages.js';
+import { getUserIdFromSession } from './common/session_managers.js';
 
 const postList = document.querySelector('.post-list');
 const postCreateButton = document.querySelector('.post-create-button');

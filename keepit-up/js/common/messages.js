@@ -1,5 +1,5 @@
 export const AUTH_MESSAGE = {
-HELPER_TEXT_MARK: '*helper-text',
+    HELPER_TEXT_MARK: '*helper-text',
 
     EMAIL_NEEDED: '이메일을 입력해주세요.',
     EMAIL_INVALID: '올바른 이메일 주소 형식을 입력해주세요. (예: example@example.com)',
@@ -13,13 +13,10 @@ HELPER_TEXT_MARK: '*helper-text',
     PASSWORD_NEEDED: '비밀번호를 입력해주세요.',
     PASSWORD_HELPER_TEXT: '비밀번호는 8자 이상 20자 이하이며, 대문자, 소문자, 숫자, 특수문자를 각각 최소 1개 포함해야 합니다.',
     PASSWORD_MISMATCH: '비밀번호가 일치하지 않습니다.'
-
-
 };
 
 export const POST_MESSAGE = {
     TITLE_HELPER_TEXT: '제목은 26자 이내로 작성해주세요.'
-    
 }
 
 export const MODAL_MESSAGE = {
@@ -28,6 +25,8 @@ export const MODAL_MESSAGE = {
     WRONG_PASSWORD_OR_EMAIL: '이메일 또는 비밀번호를 확인해주세요.',
     SIGNIN_SUCCESS: '로그인되었습니다.',
     SIGNIN_FAILED: '로그인에 실패했습니다.',
+
+    SIGNED_OUT: '로그아웃 되었습니다.',
         
     PASSWORD_UPDATE_FAILED: '비밀번호 수정에 실패했습니다.',
     PASSWORD_UPDATED: `비밀번호가 수정되었습니다. 

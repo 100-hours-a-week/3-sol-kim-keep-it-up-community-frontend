@@ -1,6 +1,6 @@
 import { API_BASE } from './config.js';
-import { POST_MESSAGE, MODAL_MESSAGE } from './messages.js';
-import { getUserIdFromSession, removeUserIdFromSession } from './session_manager.js';
+import { POST_MESSAGE, MODAL_MESSAGE } from './common/messages.js';
+import { getUserIdFromSession, removeUserIdFromSession } from './common/session_managers.js';
 
 const postForm = document.querySelector('form.post-edit-form');
 const submitButton = document.querySelector('.submit-button');

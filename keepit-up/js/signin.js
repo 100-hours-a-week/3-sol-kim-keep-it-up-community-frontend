@@ -1,6 +1,6 @@
 import { API_BASE } from './config.js';
-import { AUTH_MESSAGE, MODAL_MESSAGE } from './messages.js';
-import { setUserIdInSession } from './session_manager.js';
+import { AUTH_MESSAGE, MODAL_MESSAGE } from './common/messages.js';
+import { setUserIdInSession } from './common/session_managers.js';
 
 export default function signInInit() {
 

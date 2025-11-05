@@ -1,5 +1,6 @@
 import { API_BASE } from './config.js';
-import { getUserIdFromSession, removeUserIdFromSession } from './session_manager.js';
+import { getUserIdFromSession, removeUserIdFromSession } from './common/session_managers.js';
+import { MODAL_MESSAGE } from './common/messages.js';
 
 export default async function headerInit() {
     const header = document.querySelector('header');
@@ -69,7 +70,7 @@ export default async function headerInit() {
         })
 
         if (response.ok) {
-            showAlertModal('로그아웃 되었습니다.', '/auth/signin.html');
+            showAlertModal(MODAL_MESSAGE.SIGNED_OUT, '/auth/signin.html');
         } else if (response.status == 401) {
             const response = await fetch(`${API_BASE}/users/refresh`, {
                 method: 'POST',

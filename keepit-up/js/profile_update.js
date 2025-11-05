@@ -1,6 +1,6 @@
 import { API_BASE } from './config.js';
-import { AUTH_MESSAGE, MODAL_MESSAGE } from './messages.js';
-import { getUserIdFromSession, removeUserIdFromSession } from './session_manager.js';
+import { AUTH_MESSAGE, MODAL_MESSAGE } from './common/messages.js';
+import { getUserIdFromSession, removeUserIdFromSession } from './common/session_managers.js';
 
 export default async function profileUpdateInit() {
     const profileImageInput = document.querySelector('.profile-image-input');

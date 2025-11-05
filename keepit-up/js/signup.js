@@ -1,5 +1,6 @@
 import { API_BASE } from './config.js';
-import { AUTH_MESSAGE, MODAL_MESSAGE } from './messages.js';
+import { isInvalidPassword } from './common/validators.js';
+import { AUTH_MESSAGE, MODAL_MESSAGE } from './common/messages.js';
 
 export default function signUpInit() {
 

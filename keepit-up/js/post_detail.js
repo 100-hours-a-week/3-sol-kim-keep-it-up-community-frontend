@@ -1,6 +1,6 @@
 import { API_BASE } from './config.js';
-import { MODAL_MESSAGE, MODAL_MESSAGE } from './messages.js';
-import { getUserIdFromSession, removeUserIdFromSession } from './session_manager.js';
+import { MODAL_MESSAGE, MODAL_MESSAGE } from './common/messages.js';
+import { getUserIdFromSession, removeUserIdFromSession } from './common/session_managers.js';
 
 const postDetailSection = document.querySelector('.post-detail-section');
 const postSection = postDetailSection.querySelector('.post-section');
