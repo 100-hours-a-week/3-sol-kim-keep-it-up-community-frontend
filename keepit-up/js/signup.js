@@ -131,7 +131,7 @@ export default function signUpInit() {
             const email = emailInput.value;
             if (email == undefined || email.trim() === '') {
                   emailHelperText.textContent = AUTH_MESSAGE.EMAIL_NEEDED;
-            } else if (!/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(email)) {
+            } else if (isInvalidEmail(email)) {
                   emailHelperText.textContent = AUTH_MESSAGE.EMAIL_INVALID;
             } else {
                   emailHelperText.textContent = '';
@@ -143,12 +143,7 @@ export default function signUpInit() {
       */
       passwordInput.addEventListener('input', () => {
             const password = passwordInput.value;
-            if (password.length < 8 ||
-                  password.length > 20 ||
-                  !/[a-z]/.test(password) ||
-                  !/[A-Z]/.test(password) ||
-                  !/[0-9]/.test(password) ||
-                  !/[`~!@#$%^&*()-_=+]/.test(password)) {
+            if (isInvalidPassword(password)) {
                   passwordHelperText.textContent = AUTH_MESSAGE.PASSWORD_HELPER_TEXT;
             } else {
                   passwordHelperText.textContent = '';
@@ -175,7 +170,7 @@ export default function signUpInit() {
             const nickname = nicknameInput.value;
             if (nickname == undefined || nickname.trim() === '') {
                   nicknameHelperText.textContent = AUTH_MESSAGE.NICKNAME_NEEDED;
-            } else if (/\s/.test(nickname)) {
+            } else if (isInvalidNickname(nickname)) {
                   nicknameHelperText.textContent = AUTH_MESSAGE.NICKNAME_BLANK_ERROR;
             } else if (nickname.length > 10) {
                   nicknameHelperText.textContent = AUTH_MESSAGE.NICKNAME_HELPER_TEXT;

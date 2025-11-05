@@ -1,3 +1,4 @@
+import { isInvalidPassword, isInvalidEmail } from './common/validators.js';
 import { API_BASE } from './config.js';
 import { AUTH_MESSAGE, MODAL_MESSAGE } from './common/messages.js';
 import { setUserIdInSession } from './common/session_managers.js';
@@ -36,18 +37,13 @@ export default function signInInit() {
             if (email == undefined || email.trim() === '') {
                   helperText.textContent = AUTH_MESSAGE.EMAIL_NEEDED;
                   btn.disabled = true;
-            } else if (!/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(email)) {
+            } else if (isInvalidEmail(email)) {
                   helperText.textContent = AUTH_MESSAGE.EMAIL_INVALID;
                   btn.disabled = true;
             } else if (password == undefined || password.trim() === '') {
                   helperText.textContent = AUTH_MESSAGE.PASSWORD_NEEDED;
                   btn.disabled = true;
-            } else if (password.length < 8 ||
-                  password.length > 20 ||
-                  !/[a-z]/.test(password) ||
-                  !/[A-Z]/.test(password) ||
-                  !/[0-9]/.test(password) ||
-                  !/[`~!@#$%^&*()-_=+]/.test(password)) {
+            } else if (isInvalidPassword(password)) {
                   helperText.textContent = AUTH_MESSAGE.PASSWORD_HELPER_TEXT;
                   btn.disabled = true;
             } else {

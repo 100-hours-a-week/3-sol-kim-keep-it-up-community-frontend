@@ -1,3 +1,4 @@
+import { isInvalidPassword } from './common/validators.js';
 import { API_BASE } from './config.js';
 import { AUTH_MESSAGE, MODAL_MESSAGE } from './common/messages.js';
 import { getUserIdFromSession, removeUserIdFromSession } from './common/session_managers.js';
@@ -51,12 +52,7 @@ export default function passwordUpdateInit() {
     */
     passwordInput.addEventListener('input', () => {
         const password = passwordInput.value;
-        if (password.length < 8 || 
-            password.length > 20 ||
-            !/[a-z]/.test(password) ||
-            !/[A-Z]/.test(password) ||
-            !/[0-9]/.test(password) ||
-            !/[`~!@#$%^&*()-_=+]/.test(password)) {
+        if (isInvalidPassword(password)) {
             passwordHelperText.textContent = AUTH_MESSAGE.PASSWORD_HELPER_TEXT;
         } else {
             passwordHelperText.textContent = '';
