@@ -2,6 +2,7 @@ import { isInvalidPassword } from './common/validators.js';
 import { API_BASE } from './config.js';
 import { AUTH_MESSAGE, MODAL_MESSAGE } from './common/messages.js';
 import { getUserIdFromSession, removeUserIdFromSession } from './common/session_managers.js';
+import { fetchAPI, fetchAPIWithBody } from './common/api_fetcher.js';
 
 export default function passwordUpdateInit() {
     const passwordUpdateForm = document.querySelector('form.password-update-form');
@@ -88,34 +89,21 @@ export default function passwordUpdateInit() {
 
             const userId = getUserIdFromSession();
 
-            const response = await fetch(`${API_BASE}/users/password`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ password }),
-                credentials: 'include'
-            });
+            const response = await fetchAPIWithBody(`${API_BASE}/users/password`, 'PATCH', JSON.stringify({ password }));
 
             const data = await response.json();
             if (!response.ok) {
                 console.error(data);
                 showAlertModal(MODAL_MESSAGE.PASSWORD_UPDATE_FAILED);
             } else if (response.status == 401) {
-                const response = await fetch(`${API_BASE}/users/refresh`, {
-                    method: 'POST',
-                    credentials: 'include', 
-                });
+                const response = await fetchAPI(`${API_BASE}/users/refresh`, 'POST');
                 
                 if (response.status == 401) {
                     removeUserIdFromSession();
                     window.location.href = '/auth/signin.html';
                 }
 
-                const password_update_response = await fetch(`${API_BASE}/users/password`, {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ password }),
-                    credentials: 'include'
-                });
+                await fetchAPI(`${API_BASE}/users/password`, 'PATCH', JSON.stringify({ password }));
             } else {
                 showAlertModal(MODAL_MESSAGE.PASSWORD_UPDATED, '/auth/signin.html');
                 sessionStorage.clear();

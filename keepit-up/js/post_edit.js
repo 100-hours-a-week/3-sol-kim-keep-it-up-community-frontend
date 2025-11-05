@@ -1,7 +1,8 @@
 import { API_BASE } from './config.js';
 import { POST_MESSAGE, MODAL_MESSAGE } from './common/messages.js';
 import { getUserIdFromSession, removeUserIdFromSession } from './common/session_managers.js';
-
+import { handleImageUrl } from './common/image_url_handler.js';
+import { fetchAPI, fetchAPIWithBody, fetchAPIWithFile } from './common/api_fetcher.js';
 const postForm = document.querySelector('form.post-edit-form');
 const submitButton = document.querySelector('.submit-button');
 const titleInput = postForm.querySelector('input.title');
@@ -95,30 +96,17 @@ imageInput.addEventListener("change", () => {
 const postId = new URLSearchParams(window.location.search).get('postId');
 
 if (postId) {
-    let response = await fetch(`${API_BASE}/posts/detail/${postId}`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    });
+    let response = await fetchAPI(`${API_BASE}/posts/detail/${postId}`, 'GET');
 
     if (response.status === 401) {
-        const token_response = await fetch(`${API_BASE}/users/refresh`, {
-            method: 'POST',
-            credentials: 'include', 
-        });
+        const token_response = await fetchAPI(`${API_BASE}/users/refresh`, 'POST');
         
         if (token_response.status == 401) {
             removeUserIdFromSession();
             window.location.href = '/auth/signin.html';
         }
 
-        response = await fetch(`${API_BASE}/posts/detail/${postId}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
+        response = await fetchAPI(`${API_BASE}/posts/detail/${postId}`, 'GET');
     }
 
     if (!response.ok) {
@@ -157,31 +145,18 @@ submitButton.addEventListener('click', async (e) => {
     게시글 수정
     */
     if (postId) {
-        response = await fetch(`${API_BASE}/posts/${postId}`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ title, contents }),
-            credentials: 'include',
-        });
+        response = await fetchAPIWithBody(`${API_BASE}/posts/${postId}`, 'PATCH', JSON.stringify({ title, contents }));
 
         if (response.status == 401) {
-            const token_response = await fetch(`${API_BASE}/users/refresh`, {
-                method: 'POST',
-                credentials: 'include', 
-            });
-            
+            const token_response = await fetchAPI(`${API_BASE}/users/refresh`, 'POST'); 
+
             console.log(token_response);
             if (token_response.status == 401) {
                 removeUserIdFromSession();
                 window.location.href = '/auth/signin.html';
             }
 
-            response = await fetch(`${API_BASE}/posts/${postId}`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title, contents }),
-                credentials: 'include',
-            });
+            response = await fetchAPIWithBody(`${API_BASE}/posts/${postId}`, 'PATCH', JSON.stringify({ title, contents }));
         } 
 
         response_json = await response.json();
@@ -192,21 +167,14 @@ submitButton.addEventListener('click', async (e) => {
             const formData = new FormData();
             formData.append('file', file);
             formData.append('postId', postId);
-            const image_response = await fetch(`${API_BASE}/api/images/posts/${postId}`, {
-                method: 'PUT',
-                body: formData,
-                credentials: 'include'
-            })
+            const image_response = await fetchAPIWithFile(`${API_BASE}/api/images/posts/${postId}`, 'PUT', formData);
 
             console.log('image_response', image_response);
 
             if (!image_response.ok) {
                 showAlertModal(MODAL_MESSAGE.IMAGE_UPLOAD_FAILED);
             } else if (image_response.status == 401) {
-                const token_response = await fetch(`${API_BASE}/users/refresh`, {
-                    method: 'POST',
-                    credentials: 'include', 
-                });
+                const token_response = await fetchAPI(`${API_BASE}/users/refresh`, 'POST'); 
                 
                 console.log(token_response);
                 if (token_response.status == 401) {
@@ -214,11 +182,8 @@ submitButton.addEventListener('click', async (e) => {
                     window.location.href = '/auth/signin.html';
                 }
 
-                const image_response = await fetch(`${API_BASE}/api/images/posts/${postId}`, {
-                    method: 'PUT',
-                    body: formData,
-                    credentials: 'include'
-                });
+                const image_response = await fetchAPIWithFile(`${API_BASE}/api/images/posts/${postId}`, 'PUT', formData);
+                console.log('image_response', image_response);
             } 
         }
 
@@ -226,22 +191,13 @@ submitButton.addEventListener('click', async (e) => {
         /*
         게시글 작성
         */
-        response = await fetch(`${API_BASE}/posts`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ title, contents, writerId }),
-            credentials: 'include',
-        });
-
+        response = await fetchAPIWithBody(`${API_BASE}/posts`, 'POST', JSON.stringify({ title, contents, writerId }));
         if (!response.ok) {
             console.log(response);
         }
 
         if (response.status == 401) {
-            const token_response = await fetch(`${API_BASE}/users/refresh`, {
-                method: 'POST',
-                credentials: 'include', 
-            });
+            const token_response = await fetchAPI(`${API_BASE}/users/refresh`, 'POST'); 
             
             console.log(token_response);
             if (token_response.status == 401) {
@@ -249,12 +205,7 @@ submitButton.addEventListener('click', async (e) => {
                 window.location.href = '/auth/signin.html';
             }
 
-            response = await fetch(`${API_BASE}/posts`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title, contents, writerId }),
-                credentials: 'include',
-            });
+            response = await fetchAPIWithBody(`${API_BASE}/posts`, 'POST', JSON.stringify({ title, contents, writerId }));
         } 
             response_json = await response.json();
             const postId = response_json.data.id;
@@ -267,21 +218,14 @@ submitButton.addEventListener('click', async (e) => {
             const formData = new FormData();
             formData.append('file', file);
             formData.append('postId', postId);
-            const image_response = await fetch(`${API_BASE}/api/images/posts`, {
-                method: 'POST',
-                body: formData,
-                credentials: 'include'
-            })
+            const image_response = await fetchAPIWithFile(`${API_BASE}/api/images/posts`, 'POST', formData);
 
             console.log('image_response', image_response);
             // const image_response_json = await image_response.json();
             if (!image_response.ok) {
                 showAlertModal(MODAL_MESSAGE.IMAGE_UPLOAD_FAILED);
             } else if (response.status == 401) {
-                const token_response = await fetch(`${API_BASE}/users/refresh`, {
-                    method: 'POST',
-                    credentials: 'include', 
-                });
+                const token_response = await fetchAPI(`${API_BASE}/users/refresh`, 'POST'); 
                 
                 console.log(token_response);
                 if (token_response.status == 401) {
@@ -289,11 +233,7 @@ submitButton.addEventListener('click', async (e) => {
                     window.location.href = '/auth/signin.html';
                 }
 
-                const image_response = await fetch(`${API_BASE}/api/images/posts`, {
-                    method: 'POST',
-                    body: formData,
-                    credentials: 'include'
-                })
+                await fetchAPIWithFile(`${API_BASE}/api/images/posts`, 'POST', formData);
             } 
         }
     }

@@ -1,6 +1,7 @@
 import { API_BASE } from './config.js';
-import { isInvalidPassword } from './common/validators.js';
+import { isInvalidPassword, isInvalidEmail, isInvalidNickname } from './common/validators.js';
 import { AUTH_MESSAGE, MODAL_MESSAGE } from './common/messages.js';
+import { fetchAPI, fetchAPIWithBody, fetchAPIWithFile } from './common/api_fetcher.js';
 
 export default function signUpInit() {
 
@@ -90,9 +91,7 @@ export default function signUpInit() {
       async function openLegal(type) {
             legalModalTitle.textContent = type === 'terms' ? '이용약관' : '개인정보처리방침';
 
-            const response = await fetch(`${API_BASE}/legal/${type}`, {
-                  method: 'GET'
-            })
+            const response = await fetchAPI(`${API_BASE}/legal/${type}`, 'GET');
             const html = await response.text();
 
             const newDiv = document.createElement('div');
@@ -191,12 +190,7 @@ export default function signUpInit() {
             const password = formData.get('password');
             const nickname = formData.get('nickname');
 
-            const response = await fetch(`${API_BASE}/users`, {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ email, password, nickname })
-            });
-
+            const response = await fetchAPIWithBody(`${API_BASE}/users/signUp`, 'POST', JSON.stringify({ email, password, nickname }));
 
             if (response.status === 409) {
                   const errorData = await response.json();
@@ -219,11 +213,7 @@ export default function signUpInit() {
                         const formData = new FormData;
                         formData.append('file', file);
                         formData.append('userId', userId);
-                        const image_response = await fetch(`${API_BASE}/api/images/profiles`, {
-                              method: 'POST',
-                              body: formData
-                        });
-
+                        const image_response = await fetchAPIWithFile(`${API_BASE}/api/images/profiles`, 'POST', formData);
                         if (!image_response.ok) {
                               showAlertModal(MODAL_MESSAGE.PROFILE_IMAGE_UPLOAD_FAILED);
                         }

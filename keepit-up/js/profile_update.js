@@ -1,6 +1,8 @@
 import { API_BASE } from './config.js';
 import { AUTH_MESSAGE, MODAL_MESSAGE } from './common/messages.js';
 import { getUserIdFromSession, removeUserIdFromSession } from './common/session_managers.js';
+import { handleImageUrl } from './common/image_url_handler.js';
+import { fetchAPI, fetchAPIWithBody, fetchAPIWithFile } from './common/api_fetcher.js';
 
 export default async function profileUpdateInit() {
     const profileImageInput = document.querySelector('.profile-image-input');
@@ -35,19 +37,10 @@ export default async function profileUpdateInit() {
     /*
         사용자 정보 가져오기
      */
-    const response = await fetch(`${API_BASE}/users`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-    });
+    const response = await fetchAPI(`${API_BASE}/users`, 'GET');
     
     if (response.status == 401) {
-        const token_response = await fetch(`${API_BASE}/users/refresh`, {
-            method: 'POST',
-            credentials: 'include', 
-        });
+        const token_response = await fetchAPI(`${API_BASE}/users/refresh`, 'POST');
 
         console.log("token_response", token_response)
         if (token_response.status == 401) {
@@ -55,13 +48,7 @@ export default async function profileUpdateInit() {
             window.location.href = '/auth/signin.html';
         }
 
-        const response = await fetch(`${API_BASE}/users`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            credentials: 'include',
-        });
+        await fetchAPI(`${API_BASE}/users`, 'GET');
     } else if (!response.ok) {
         console.log(response);
     }
@@ -132,31 +119,19 @@ export default async function profileUpdateInit() {
             const nickname = nicknameInput.value;
             formData.append('nickname', nickname);
 
-            const response = await fetch(`${API_BASE}/users`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nickname }),
-                credentials: 'include',
-            });
+            const response = await fetchAPIWithBody(`${API_BASE}/users`, 'PATCH', JSON.stringify({ nickname }));
 
             const data = await response.json();
             if (response.status == 401) {
-                const token_response = await fetch(`${API_BASE}/users/refresh`, {
-                    method: 'POST',
-                    credentials: 'include', 
-                });
+                const token_response = await fetchAPI(`${API_BASE}/users/refresh`, 'POST');
+
                 console.log("token_response", token_response)
                 if (token_response.status == 401) {
                     removeUserIdFromSession();
                     window.location.href = '/auth/signin.html';
                 }
 
-                const response = await fetch(`${API_BASE}/users`, {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nickname }),
-                    credentials: 'include',
-                });
+                await fetchAPIWithBody(`${API_BASE}/users`, 'PATCH', JSON.stringify({ nickname }));
             } else if (response.status == 409) {
                 nicknameHelperText.textContent = AUTH_MESSAGE.NICKNAME_CONFLICT;
                 return;
@@ -172,17 +147,10 @@ export default async function profileUpdateInit() {
                 formData.append('file', file);              // File 객체 그대로
                 formData.append('userId', String(userId)); 
 
-                const image_response = await fetch(`${API_BASE}/api/images/profiles`, {
-                    method: 'PUT',
-                    body: formData,
-                    credentials: 'include'
-                });
+                const image_response = await fetchAPIWithFile(`${API_BASE}/api/images/profiles`, 'PUT', formData);
 
                 if (image_response.status === 401) {
-                    const token_response = await fetch(`${API_BASE}/users/refresh`, {
-                        method: 'POST',
-                        credentials: 'include', 
-                    });
+                    const token_response = await fetchAPI(`${API_BASE}/users/refresh`, 'POST');
 
                     console.log("token_response", token_response)
                     if (token_response.status == 401) {
@@ -190,11 +158,7 @@ export default async function profileUpdateInit() {
                         window.location.href = '/auth/signin.html';
                     }
 
-                    const image_response = await fetch(`${API_BASE}/api/images/profiles`, {
-                        method: 'PUT',
-                        body: formData,
-                        credentials: 'include'
-                    });
+                    await fetchAPIWithFile(`${API_BASE}/api/images/profiles`, 'PUT', formData);
                 } else if (!image_response.ok) {
                     console.log(image_response);
                     showAlertModal(MODAL_MESSAGE.PROFILE_IMAGE_UPLOAD_FAILED);
@@ -227,33 +191,21 @@ export default async function profileUpdateInit() {
 
     confirmButton.addEventListener('click', async () => {
         console.log("confirm button clicked");
-        const response = await fetch(`${API_BASE}/users`, {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
-        })
-
+        const response = await fetchAPI(`${API_BASE}/users`, 'DELETE');
         const data = await response.json();
         if (response.ok) {
             removeUserIdFromSession();
             withdrawalModal.style.display = 'none';
             showAlertModal(MODAL_MESSAGE.WITHDRAWAL_SUCCEEDED, '/posts/post_list.html');
         } else if (response.status == 401) {
-            const token_response = await fetch(`${API_BASE}/users/refresh`, {
-                method: 'POST',
-                credentials: 'include', 
-            });
+            const token_response = await fetchAPI(`${API_BASE}/users/refresh`, 'POST');
             
             if (token_response.status == 401) {
                 removeUserIdFromSession();
                 window.location.href = '/auth/signin.html';
             }
 
-            const response = await fetch(`${API_BASE}/users`, {
-                method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-            })
+            const response = await fetchAPI(`${API_BASE}/users`, 'DELETE');
         } else {
             console.error(data);
             showAlertModal(MODAL_MESSAGE.WITHDRAWAL_FAILED);

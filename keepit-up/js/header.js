@@ -65,30 +65,19 @@ export default async function headerInit() {
         console.log("logout button clicked");
         sessionStorage.removeItem('userId');
 
-        const response = await fetch(`${API_BASE}/users/signOut`, {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
-        })
+        const response = await fetchAPI(`${API_BASE}/users/signOut`, 'DELETE');
 
         if (response.ok) {
             showAlertModal(MODAL_MESSAGE.SIGNED_OUT, '/auth/signin.html');
         } else if (response.status == 401) {
-            const response = await fetch(`${API_BASE}/users/refresh`, {
-                method: 'POST',
-                credentials: 'include', 
-            });
-            
+            const response = await fetchAPI(`${API_BASE}/users/refresh`, 'POST');
+
             if (response.status == 401) {
                 removeUserIdFromSession();
                 window.location.href = '/auth/signin.html';
             }
 
-            const signout_response = await fetch(`${API_BASE}/users/signOut`, {
-                method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-            })
+            await fetchAPI(`${API_BASE}/users/signOut`, 'DELETE');
         } else {
             console.log(response.data.message);
         }
@@ -99,32 +88,21 @@ export default async function headerInit() {
         dropdownButton.src = DEFAULT_IMAGE_PATH;
         
         console.log('userID', userId);
-        const response = await fetch(`${API_BASE}/api/images/profiles`, {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include'
-        })
+        const response = await fetchAPI(`${API_BASE}/api/images/profiles`, 'GET');
+        console.log('response', response);
 
         if (response.status === 200) {
             const response_json = await response.json();
             console.log('response json', response_json);
             dropdownButton.src = handleImageUrl(response_json.data.url);
         } else if (response.status == 401) {
-            const token_response = await fetch(`${API_BASE}/users/refresh`, {
-                method: 'POST',
-                credentials: 'include', 
-            });
-            
+            const token_response = await fetchAPI(`${API_BASE}/users/refresh`, 'POST');
             console.log(token_response);
             if (token_response.status == 401) {
                 removeUserIdFromSession();
                 window.location.href = '/auth/signin.html';
             }
-            const response = await fetch(`${API_BASE}/api/images/profiles`, {
-                method: 'GET',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include'
-            })
+            const response = fetchAPI(`${API_BASE}/api/images/profiles`, 'GET');
 
             if (response.status === 200) {
                 const response_json = await response.json();

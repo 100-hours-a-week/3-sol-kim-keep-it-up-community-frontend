@@ -2,6 +2,7 @@ import { isInvalidPassword, isInvalidEmail } from './common/validators.js';
 import { API_BASE } from './config.js';
 import { AUTH_MESSAGE, MODAL_MESSAGE } from './common/messages.js';
 import { setUserIdInSession } from './common/session_managers.js';
+import { fetchAPIWithBody } from './common/api_fetcher.js';
 
 export default function signInInit() {
 
@@ -65,13 +66,8 @@ export default function signInInit() {
                   const formData = new FormData(form);
                   const email = formData.get('email');
                   const password = formData.get('password');
-                  const response = await fetch(`${API_BASE}/users/signIn`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email, password }),
-                        credentials: 'include',
-                  });
-
+                  const response = await fetchAPIWithBody(`${API_BASE}/users/signIn`, 'POST', JSON.stringify({ email, password }));
+            
                   const response_json = await response.json();
                   if (response.status == 401) {
                         console.error(response_json);

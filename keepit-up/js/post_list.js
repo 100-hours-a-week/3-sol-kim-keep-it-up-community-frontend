@@ -1,6 +1,8 @@
 import { API_BASE } from './config.js';
 import { MODAL_MESSAGE } from './common/messages.js';
 import { getUserIdFromSession } from './common/session_managers.js';
+import { handleImageUrl } from './common/image_url_handler.js';
+import { fetchAPI } from './common/api_fetcher.js';
 
 const postList = document.querySelector('.post-list');
 const postCreateButton = document.querySelector('.post-create-button');
@@ -58,20 +60,10 @@ async function fetchPostList() {
     try {
         // 첫 호출
         if (cursorId == null) {
-            response = await fetch(`${API_BASE}/posts/list?size=${size}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
+            response = await fetchAPI(`${API_BASE}/posts/list?size=${size}`, 'GET');
         } else {
             // 두 번째 슬라이스 이상
-            response = await fetch(`${API_BASE}/posts/list?cursorId=${cursorId}&size=${size}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
+            response = await fetchAPI(`${API_BASE}/posts/list?cursorId=${cursorId}&size=${size}`, 'GET');
         }
 
         const response_json = await response.json();
