@@ -1,8 +1,8 @@
-import { API_BASE } from './config.js';
 import { POST_MESSAGE, MODAL_MESSAGE } from './common/messages.js';
-import { getUserIdFromSession, removeUserIdFromSession } from './common/session_managers.js';
+import { getUserIdFromSession } from './common/session_managers.js';
 import { handleImageUrl } from './common/image_url_handler.js';
-import { fetchAPI, fetchAPIWithBody, fetchAPIWithFile } from './common/api_fetcher.js';
+import { updatePost, updatePostFile, refreshAccessToken, postPost, postPostFile, getPost } from './api/api.js';
+
 const postForm = document.querySelector('form.post-edit-form');
 const submitButton = document.querySelector('.submit-button');
 const titleInput = postForm.querySelector('input.title');
@@ -96,17 +96,11 @@ imageInput.addEventListener("change", () => {
 const postId = new URLSearchParams(window.location.search).get('postId');
 
 if (postId) {
-    let response = await fetchAPI(`${API_BASE}/posts/detail/${postId}`, 'GET');
+    let response = await getPost(postId);
 
     if (response.status === 401) {
-        const token_response = await fetchAPI(`${API_BASE}/users/refresh`, 'POST');
-        
-        if (token_response.status == 401) {
-            removeUserIdFromSession();
-            window.location.href = '/auth/signin.html';
-        }
-
-        response = await fetchAPI(`${API_BASE}/posts/detail/${postId}`, 'GET');
+        await refreshAccessToken();
+        response = await getPost();
     }
 
     if (!response.ok) {
@@ -124,7 +118,6 @@ if (postId) {
     if (url) {
         imagePrev.src = handleImageUrl(url);
     }
-    
 } 
 
 /*
@@ -145,19 +138,17 @@ submitButton.addEventListener('click', async (e) => {
     게시글 수정
     */
     if (postId) {
-        response = await fetchAPIWithBody(`${API_BASE}/posts/${postId}`, 'PATCH', JSON.stringify({ title, contents }));
+        response = await updatePost(postId, title, contents);
 
         if (response.status == 401) {
-            const token_response = await fetchAPI(`${API_BASE}/users/refresh`, 'POST'); 
-
-            console.log(token_response);
-            if (token_response.status == 401) {
-                removeUserIdFromSession();
-                window.location.href = '/auth/signin.html';
-            }
-
-            response = await fetchAPIWithBody(`${API_BASE}/posts/${postId}`, 'PATCH', JSON.stringify({ title, contents }));
+            await refreshAccessToken();
+            response = await updatePost(postId, title, contents);
         } 
+
+        if (!response.ok) {
+            console.log(response.message);
+            return;
+        }
 
         response_json = await response.json();
         /*
@@ -167,22 +158,15 @@ submitButton.addEventListener('click', async (e) => {
             const formData = new FormData();
             formData.append('file', file);
             formData.append('postId', postId);
-            const image_response = await fetchAPIWithFile(`${API_BASE}/api/images/posts/${postId}`, 'PUT', formData);
+            const image_response = await updatePostFile(postId, formData);
 
             console.log('image_response', image_response);
 
             if (!image_response.ok) {
                 showAlertModal(MODAL_MESSAGE.IMAGE_UPLOAD_FAILED);
             } else if (image_response.status == 401) {
-                const token_response = await fetchAPI(`${API_BASE}/users/refresh`, 'POST'); 
-                
-                console.log(token_response);
-                if (token_response.status == 401) {
-                    removeUserIdFromSession();
-                    window.location.href = '/auth/signin.html';
-                }
-
-                const image_response = await fetchAPIWithFile(`${API_BASE}/api/images/posts/${postId}`, 'PUT', formData);
+                await refreshAccessToken();
+                const image_response = await updatePostFile(postId, formData);
                 console.log('image_response', image_response);
             } 
         }
@@ -191,21 +175,18 @@ submitButton.addEventListener('click', async (e) => {
         /*
         게시글 작성
         */
-        response = await fetchAPIWithBody(`${API_BASE}/posts`, 'POST', JSON.stringify({ title, contents, writerId }));
+        response = await postPost(title, contents);
         if (!response.ok) {
             console.log(response);
         }
 
         if (response.status == 401) {
-            const token_response = await fetchAPI(`${API_BASE}/users/refresh`, 'POST'); 
-            
-            console.log(token_response);
-            if (token_response.status == 401) {
-                removeUserIdFromSession();
-                window.location.href = '/auth/signin.html';
-            }
+            await refreshAccessToken();
+            response = await postPost(title, contents);
 
-            response = await fetchAPIWithBody(`${API_BASE}/posts`, 'POST', JSON.stringify({ title, contents, writerId }));
+            if (!response.ok) {
+                console.log(response.message);
+            }
         } 
             response_json = await response.json();
             const postId = response_json.data.id;
@@ -218,22 +199,19 @@ submitButton.addEventListener('click', async (e) => {
             const formData = new FormData();
             formData.append('file', file);
             formData.append('postId', postId);
-            const image_response = await fetchAPIWithFile(`${API_BASE}/api/images/posts`, 'POST', formData);
+            const image_response = await postPostFile(formData);
 
             console.log('image_response', image_response);
-            // const image_response_json = await image_response.json();
+
             if (!image_response.ok) {
                 showAlertModal(MODAL_MESSAGE.IMAGE_UPLOAD_FAILED);
             } else if (response.status == 401) {
-                const token_response = await fetchAPI(`${API_BASE}/users/refresh`, 'POST'); 
-                
-                console.log(token_response);
-                if (token_response.status == 401) {
-                    removeUserIdFromSession();
-                    window.location.href = '/auth/signin.html';
-                }
+                await refreshAccessToken();
+                image_response = await postPostFile(formData);
 
-                await fetchAPIWithFile(`${API_BASE}/api/images/posts`, 'POST', formData);
+                if (!image_response.ok) {
+                    console.log(image_response.message);
+                }
             } 
         }
     }

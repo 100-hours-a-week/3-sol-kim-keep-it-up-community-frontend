@@ -1,8 +1,9 @@
-import { API_BASE } from './config.js';
-import { MODAL_MESSAGE} from './common/messages.js';
-import { getUserIdFromSession, removeUserIdFromSession } from './common/session_managers.js';
+import { DEFAULT_IMAGE_PATH } from './config.js';
+import { MODAL_MESSAGE } from './common/messages.js';
+import { getUserIdFromSession } from './common/session_managers.js';
 import { handleImageUrl } from './common/image_url_handler.js';
-import { fetchAPI, fetchAPIWithBody } from './common/api_fetcher.js';
+import { refreshAccessToken } from './api/api.js';
+import { increaseViewCount, getWhetherLiked, likePost, cancelPostLike, getPost, getPostCommentsList, postComment, updateComment, deleteComment, deletePost } from './api/api.js';
 
 const postDetailSection = document.querySelector('.post-detail-section');
 const postSection = postDetailSection.querySelector('.post-section');
@@ -14,8 +15,6 @@ const postLikeButton = postSection.querySelector('.likes-count-container');
 
 const postEditButton = postSection.querySelector('.post-edit-button');
 const postDeleteButton = postSection.querySelector('.post-delete-button');
-
-const DEFAULT_IMAGE_PATH = '/assets/images/default_profile_image.png'
 
 const postId = new URLSearchParams(window.location.search).get('postId');
 console.log('postId:', postId);
@@ -39,23 +38,16 @@ postLikeButton.addEventListener('click', async () => {
         const isLiked = postLikeButton.style.backgroundColor === `var(--blue-disabled)`;
         const likeCountText = postLikeButton.querySelector('.post-likes-count');
         if (isLiked) {
-            const response = await fetchAPIWithBody(`${API_BASE}/posts/${postId}/likes`, 'DELETE', JSON.stringify({ userId }));
+            const response = await cancelPostLike(postId);
             const json_data = await response.json();
             if (response.ok) {
                 postLikeButton.style.backgroundColor = `var(--m-gray)`;
                 const prevCount = likeCountText.textContent;
                 likeCountText.textContent = String(parseInt(prevCount) - 1);
             } else if (response.status == 401) {
-                const response = await fetchAPI(`${API_BASE}/users/refresh`, 'POST');
-                
-                if (response.status == 401) {
-                    removeUserIdFromSession();
-                    window.location.href = '/auth/signin.html';
-                }
+                await refreshAccessToken();
+                const like_cancel_response = await cancelPostLike(postId);
 
-                const like_cancel_response = await fetchAPIWithBody(`${API_BASE}/posts/${postId}/likes`, 'DELETE', JSON.stringify({ userId }));
-
-                const json_data = await like_cancel_response.json();
                 if (like_cancel_response.ok) {
                     postLikeButton.style.backgroundColor = `var(--m-gray)`;
                     const prevCount = likeCountText.textContent;
@@ -66,21 +58,15 @@ postLikeButton.addEventListener('click', async () => {
                 showAlertModal(MODAL_MESSAGE.LIKE_CANCEL_FAILED);
             }
         } else {
-            const response = await fetchAPIWithBody(`${API_BASE}/posts/${postId}/likes`, 'POST', JSON.stringify({ userId }));
+            const response = await likePost(postId);
             const json_data = await response.json();
             if (response.ok) {
                 postLikeButton.style.backgroundColor = `var(--blue-disabled)`;
                 const prevCount = likeCountText.textContent;
                 likeCountText.textContent = String(parseInt(prevCount) + 1);
             } else if (response.status == 401) {
-                const response = await fetchAPI(`${API_BASE}/users/refresh`, 'POST');
-                
-                if (response.status == 401) {
-                    removeUserIdFromSession();
-                    window.location.href = '/auth/signin.html';
-                }
-
-                await fetchAPIWithBody(`${API_BASE}/posts/${postId}/likes`, 'POST', JSON.stringify({ userId }));
+                await refreshAccessToken();
+                await likePost(postId);
                 } else {
                 console.error(json_data);
                 showAlertModal(MODAL_MESSAGE.LIKE_FAILED);
@@ -117,19 +103,13 @@ postDeleteButton.addEventListener('click', async () => {
         const confirmButton = postModal.querySelector('.modal-confirm-button');
         confirmButton.addEventListener('click', async () => {
             console.log("confirm button clicked");
-            const response = await fetchAPI(`${API_BASE}/posts/${postId}`, 'DELETE');
+            const response = await deletePost(postId);
         
             if (response.ok) {
                 showAlertModal(MODAL_MESSAGE.POST_DELETED, '/posts/post_list.html');
             } else if (response.status == 401) {
-                const response = await fetchAPI(`${API_BASE}/users/refresh`, 'POST');
-                
-                if (response.status == 401) {
-                    removeUserIdFromSession();
-                    window.location.href = '/auth/signin.html';
-                }
-
-                await fetchAPI(`${API_BASE}/posts/${postId}`, 'DELETE');
+                await refreshAccessToken();
+                await deletePost(postId);
             } else {
                 const response_json = await response.json();
                 console.error(response_json);
@@ -149,7 +129,7 @@ postDeleteButton.addEventListener('click', async () => {
     게시물 API
 */
 async function fetchPost() {
-    const response = await fetchAPI(`${API_BASE}/posts/detail/${postId}`, 'GET');
+    const response = await getPost(postId);
     const response_json = await response.json();
     console.log(response_json);
     return response_json.data;
@@ -159,7 +139,7 @@ async function fetchPost() {
     댓글 목록 API
 */
 async function fetchComments() {
-    const response = await fetchAPI(`${API_BASE}/posts/${postId}/comments/list`, 'GET');
+    const response = await getPostCommentsList(postId);
     const response_json = await response.json();
     console.log(response_json);
     return response_json.data;
@@ -176,20 +156,15 @@ commentForm.addEventListener('submit', async (e) => {
             const formData = new FormData(commentForm);
             const contents = formData.get('contents'); // 인풋 필드가 name="contents"가 있어야 한다.
             console.log('content:', contents);
-            const writerId = userId;
 
-            const response = await fetchAPIWithBody(`${API_BASE}/posts/${postId}/comments`, 'POST', JSON.stringify({ writerId, contents, postId })); 
+            const response = await postComment(postId, contents); 
             const data = await response.json();
             if (!response.ok) {
                 console.error(data);
                 showAlertModal(MODAL_MESSAGE.COMMENT_CREATE_FAILED);
             } else if (response.status == 401) {
-                const response = await fetchAPI(`${API_BASE}/users/refresh`, 'POST');
-                
-                if (response.status == 401) {
-                    removeUserIdFromSession();
-                    window.location.href = '/auth/signin.html';
-                }
+                await refreshAccessToken();
+                await postComment(postId, contents); 
             } else {
                 showAlertModal(MODAL_MESSAGE.COMMENT_CREATED);
                 commentForm.reset();
@@ -326,7 +301,7 @@ async function renderCommentsHTML(comments) {
 */
 function addEvenListenerToCommentEditButtons() {
     const myCommentsEditButtons = commentList.querySelectorAll('.comment-edit-button');
-    myCommentsEditButtons.forEach((editButton, index) => {
+    myCommentsEditButtons.forEach(editButton => {
         editButton.addEventListener('click', (e) => {
             console.log('수정 버튼 클릭 됨');
             const commentManageContainer = e.target.closest('.comment-manage');
@@ -365,19 +340,14 @@ function addEvenListenerToCommentEditButtons() {
                 try {
                     const updatedContents = editTextarea.value;
                     const commentId = e.target.closest('.comment').id;
-                    const response = await fetchAPIWithBody(`${API_BASE}/posts/${postId}/comments/${commentId}`, 'PATCH', JSON.stringify({ contents: updatedContents }));
+                    const response = await updateComment(postId, commentId, updatedContents);
                     const data = await response.json();
                     if (!response.ok) {
                         console.error(data);
                         showAlertModal(MODAL_MESSAGE.COMMENT_UPDATE_FAILED);
                     } else if (response.status == 401) {
-                        const refresh_response = await fetchAPI(`${API_BASE}/users/refresh`, 'POST');
-                        if (refresh_response.status == 401) {
-                            removeUserIdFromSession();
-                            window.location.href = '/auth/signin.html';
-                        }
-
-                        const response = await fetchAPIWithBody(`${API_BASE}/posts/${postId}/comments/${commentId}`, 'PATCH', JSON.stringify({ contents: updatedContents }));
+                        await refreshAccessToken();
+                        await updateComment(postId, commentId, updatedContents);
                     } else {
                         showAlertModal(MODAL_MESSAGE.COMMENT_UPDATED);
                         const comments = await fetchComments();
@@ -425,7 +395,7 @@ function addEvenListenerToCommentDeleteButtons() {
                 confirmButton.addEventListener('click', async () => {
                     try {
                         const commentId = e.target.closest('.comment').id;
-                        const response = await fetchAPI(`${API_BASE}/posts/${postId}/comments/${commentId}`, 'DELETE');
+                        const response = await deleteComment(postId, commentId);
                         const data = await response.json();
                         if (response.ok) {
                             commentModal.style.display = 'none';
@@ -436,14 +406,8 @@ function addEvenListenerToCommentDeleteButtons() {
                             addEvenListenerToCommentEditButtons();
                             addEvenListenerToCommentDeleteButtons();
                         } else if (response.status == 401) {
-                            const refresh_response = await fetchAPI(`${API_BASE}/users/refresh`, 'POST');
-                            
-                            if (refresh_response.status == 401) {
-                                removeUserIdFromSession();
-                                window.location.href = '/auth/signin.html';
-                            };
-
-                            await fetchAPI(`${API_BASE}/posts/${postId}/comments/${commentId}`, 'DELETE');
+                            await refreshAccessToken();
+                            await deleteComment(postId, commentId);
                         } else {
                             console.error(data);
                             showAlertModal(MODAL_MESSAGE.COMMENT_DELTE_FAILED);
@@ -464,14 +428,15 @@ function addEvenListenerToCommentDeleteButtons() {
 /*
     Main Logic
 */
-
-
-const views_response = await fetchAPI(`${API_BASE}/posts/${postId}/viewcount`, 'PATCH');
-const views_response_json = await views_response.json();
-console.log('viewcount api', views_response_json);
+const view_count_response = await increaseViewCount(postId);
+if (view_count_response.ok) {
+    const view_count_response_json = await view_count_response.json();
+} else {
+    console.log(views_response_json.message);
+}
 
 if (userId) {
-    const is_liked_response = await fetchAPI(`${API_BASE}/posts/${postId}/likes`, 'GET');
+    const is_liked_response = await getWhetherLiked(postId);
 
     if (is_liked_response.ok) {
         const is_liked_response_json = await is_liked_response.json();
@@ -482,14 +447,8 @@ if (userId) {
             postLikeButton.style.backgroundColor = `var(--blue-disabled)`;
         }
     } else if (is_liked_response.status == 401) {
-        const response = await fetchAPI(`${API_BASE}/users/refresh`, 'POST');
-        
-        if (response.status == 401) {
-            removeUserIdFromSession();
-            window.location.href = '/auth/signin.html';
-        }
-
-        await fetchAPI(`${API_BASE}/posts/${postId}/likes`, 'GET');
+        await refreshAccessToken();
+        await getWhetherLiked(postId);
     } 
 }
 

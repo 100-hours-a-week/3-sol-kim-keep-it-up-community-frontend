@@ -1,8 +1,7 @@
 import { isInvalidPassword, isInvalidEmail } from './common/validators.js';
-import { API_BASE } from './config.js';
 import { AUTH_MESSAGE, MODAL_MESSAGE } from './common/messages.js';
 import { setUserIdInSession } from './common/session_managers.js';
-import { fetchAPIWithBody } from './common/api_fetcher.js';
+import { signIn } from './api/api.js';
 
 export default function signInInit() {
 
@@ -66,7 +65,7 @@ export default function signInInit() {
                   const formData = new FormData(form);
                   const email = formData.get('email');
                   const password = formData.get('password');
-                  const response = await fetchAPIWithBody(`${API_BASE}/users/signIn`, 'POST', JSON.stringify({ email, password }));
+                  const response = await signIn(email, password);
             
                   const response_json = await response.json();
                   if (response.status == 401) {

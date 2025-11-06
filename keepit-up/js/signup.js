@@ -1,7 +1,7 @@
-import { API_BASE } from './config.js';
+import { DEFAULT_IMAGE_PATH } from './config.js';
 import { isInvalidPassword, isInvalidEmail, isInvalidNickname } from './common/validators.js';
 import { AUTH_MESSAGE, MODAL_MESSAGE } from './common/messages.js';
-import { fetchAPI, fetchAPIWithBody, fetchAPIWithFile } from './common/api_fetcher.js';
+import { getLegalHTML, signUp, uploadProfileImage } from './api/api.js';
 
 export default function signUpInit() {
 
@@ -74,7 +74,6 @@ export default function signUpInit() {
       const fileInput = document.querySelector("input[type=file]");
 
       fileInput.addEventListener("change", previewFile);
-      const DEFAULT_IMAGE_PATH = '/assets/images/default_profile_image.png'
       fileInput.style.backgroundImage = `url("${DEFAULT_IMAGE_PATH}")`;
 
       legalLinks.forEach(a => {
@@ -91,7 +90,7 @@ export default function signUpInit() {
       async function openLegal(type) {
             legalModalTitle.textContent = type === 'terms' ? '이용약관' : '개인정보처리방침';
 
-            const response = await fetchAPI(`${API_BASE}/legal/${type}`, 'GET');
+            const response = await getLegalHTML(type);
             const html = await response.text();
 
             const newDiv = document.createElement('div');
@@ -190,7 +189,7 @@ export default function signUpInit() {
             const password = formData.get('password');
             const nickname = formData.get('nickname');
 
-            const response = await fetchAPIWithBody(`${API_BASE}/users/signUp`, 'POST', JSON.stringify({ email, password, nickname }));
+            const response = await signUp(email, password, nickname);
 
             if (response.status === 409) {
                   const errorData = await response.json();
@@ -213,8 +212,9 @@ export default function signUpInit() {
                         const formData = new FormData;
                         formData.append('file', file);
                         formData.append('userId', userId);
-                        const image_response = await fetchAPIWithFile(`${API_BASE}/api/images/profiles`, 'POST', formData);
+                        const image_response = await uploadProfileImage(formData);
                         if (!image_response.ok) {
+                              console.log(image_response);
                               showAlertModal(MODAL_MESSAGE.PROFILE_IMAGE_UPLOAD_FAILED);
                         }
                   }

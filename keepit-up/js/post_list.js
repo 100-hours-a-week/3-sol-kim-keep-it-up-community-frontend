@@ -1,13 +1,11 @@
-import { API_BASE } from './config.js';
+import { DEFAULT_IMAGE_PATH } from './config.js';
 import { MODAL_MESSAGE } from './common/messages.js';
 import { getUserIdFromSession } from './common/session_managers.js';
 import { handleImageUrl } from './common/image_url_handler.js';
-import { fetchAPI } from './common/api_fetcher.js';
+import { getFirstPostListSlice, getPostListAfterFirstSlice } from './api/api.js';
 
 const postList = document.querySelector('.post-list');
 const postCreateButton = document.querySelector('.post-create-button');
-
-const DEFAULT_IMAGE_PATH = '/assets/images/default_profile_image.png'
 
 /*
     EVENT LISTENERS
@@ -60,10 +58,10 @@ async function fetchPostList() {
     try {
         // 첫 호출
         if (cursorId == null) {
-            response = await fetchAPI(`${API_BASE}/posts/list?size=${size}`, 'GET');
+            response = await getFirstPostListSlice(size);
         } else {
             // 두 번째 슬라이스 이상
-            response = await fetchAPI(`${API_BASE}/posts/list?cursorId=${cursorId}&size=${size}`, 'GET');
+            response = await getPostListAfterFirstSlice(cursorId, size);
         }
 
         const response_json = await response.json();

@@ -1,8 +1,7 @@
 import { isInvalidPassword } from './common/validators.js';
-import { API_BASE } from './config.js';
 import { AUTH_MESSAGE, MODAL_MESSAGE } from './common/messages.js';
-import { getUserIdFromSession, removeUserIdFromSession } from './common/session_managers.js';
-import { fetchAPI, fetchAPIWithBody } from './common/api_fetcher.js';
+import { refreshAccessToken } from './api/api.js';
+import { updatePassword } from './api/api.js';
 
 export default function passwordUpdateInit() {
     const passwordUpdateForm = document.querySelector('form.password-update-form');
@@ -16,6 +15,9 @@ export default function passwordUpdateInit() {
 
     /*
     FUNCTIONS
+    */
+    /*
+        모달
     */
     function showAlertModal(content, next_page = null) {
         const commentAlertModal = document.querySelector('.comment-alert-modal');
@@ -86,24 +88,14 @@ export default function passwordUpdateInit() {
             btn.disabled = true;
             const formData = new FormData(passwordUpdateForm);
             const password = formData.get('password'); // 인풋 필드가 name="password"를 가져야 한다. 
-
-            const userId = getUserIdFromSession();
-
-            const response = await fetchAPIWithBody(`${API_BASE}/users/password`, 'PATCH', JSON.stringify({ password }));
-
-            const data = await response.json();
+            const response = await updatePassword(password);
+            
             if (!response.ok) {
-                console.error(data);
+                console.error(response);
                 showAlertModal(MODAL_MESSAGE.PASSWORD_UPDATE_FAILED);
             } else if (response.status == 401) {
-                const response = await fetchAPI(`${API_BASE}/users/refresh`, 'POST');
-                
-                if (response.status == 401) {
-                    removeUserIdFromSession();
-                    window.location.href = '/auth/signin.html';
-                }
-
-                await fetchAPI(`${API_BASE}/users/password`, 'PATCH', JSON.stringify({ password }));
+                await refreshAccessToken();
+                await updatePassword(password);
             } else {
                 showAlertModal(MODAL_MESSAGE.PASSWORD_UPDATED, '/auth/signin.html');
                 sessionStorage.clear();
