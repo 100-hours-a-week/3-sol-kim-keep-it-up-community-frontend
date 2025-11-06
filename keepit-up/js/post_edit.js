@@ -1,4 +1,7 @@
-import { API_BASE } from './config.js';
+import { POST_MESSAGE, MODAL_MESSAGE } from './common/messages.js';
+import { getUserIdFromSession } from './common/session_managers.js';
+import { handleImageUrl } from './common/image_url_handler.js';
+import { updatePost, updatePostFile, refreshAccessToken, postPost, postPostFile, getPost } from './api/api.js';
 
 const postForm = document.querySelector('form.post-edit-form');
 const submitButton = document.querySelector('.submit-button');
@@ -7,7 +10,7 @@ const contentsTextArea = postForm.querySelector('textarea');
 const imageInput = document.querySelector('.post-image-input');
 const imagePreview = document.querySelector('.post-selected-image-preview');
 const helperText = document.querySelector('span.helper-text');
-const writerId = sessionStorage.getItem('userId');
+const writerId = getUserIdFromSession();
 
 let fileUpdated = false;
 
@@ -50,7 +53,7 @@ function showAlertModal(content, next_page = null) {
 */
 titleInput.addEventListener('input', () => {
     if (titleInput.value.length > 26) { 
-        helperText.textContent = '제목은 26자 이내로 작성해주세요.';
+        helperText.textContent = POST_MESSAGE.TITLE_HELPER_TEXT;
     } else {
         helperText.textContent = '*helper-text';
     }
@@ -93,30 +96,11 @@ imageInput.addEventListener("change", () => {
 const postId = new URLSearchParams(window.location.search).get('postId');
 
 if (postId) {
-    let response = await fetch(`${API_BASE}/posts/detail/${postId}`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    });
+    let response = await getPost(postId);
 
     if (response.status === 401) {
-        const token_response = await fetch(`${API_BASE}/users/refresh`, {
-            method: 'POST',
-            credentials: 'include', 
-        });
-        
-        if (token_response.status == 401) {
-            sessionStorage.removeItem("userId");
-            window.location.href = '/auth/signin.html';
-        }
-
-        response = await fetch(`${API_BASE}/posts/detail/${postId}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
+        await refreshAccessToken();
+        response = await getPost();
     }
 
     if (!response.ok) {
@@ -132,10 +116,8 @@ if (postId) {
     const imagePrev = document.querySelector('.post-selected-image-preview');
     const url = response_json.data.imageUrl;
     if (url) {
-        const image_url = url.startsWith('/') ? `${API_BASE}${url}` : `${API_BASE}/${url}`;
-        imagePrev.src = image_url;
+        imagePrev.src = handleImageUrl(url);
     }
-    
 } 
 
 /*
@@ -156,32 +138,17 @@ submitButton.addEventListener('click', async (e) => {
     게시글 수정
     */
     if (postId) {
-        response = await fetch(`${API_BASE}/posts/${postId}`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ title, contents }),
-            credentials: 'include',
-        });
+        response = await updatePost(postId, title, contents);
 
         if (response.status == 401) {
-            const token_response = await fetch(`${API_BASE}/users/refresh`, {
-                method: 'POST',
-                credentials: 'include', 
-            });
-            
-            console.log(token_response);
-            if (token_response.status == 401) {
-                sessionStorage.removeItem("userId");
-                window.location.href = '/auth/signin.html';
-            }
-
-            response = await fetch(`${API_BASE}/posts/${postId}`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title, contents }),
-                credentials: 'include',
-            });
+            await refreshAccessToken();
+            response = await updatePost(postId, title, contents);
         } 
+
+        if (!response.ok) {
+            console.log(response.message);
+            return;
+        }
 
         response_json = await response.json();
         /*
@@ -191,33 +158,16 @@ submitButton.addEventListener('click', async (e) => {
             const formData = new FormData();
             formData.append('file', file);
             formData.append('postId', postId);
-            const image_response = await fetch(`${API_BASE}/api/images/posts/${postId}`, {
-                method: 'PUT',
-                body: formData,
-                credentials: 'include'
-            })
+            const image_response = await updatePostFile(postId, formData);
 
             console.log('image_response', image_response);
 
             if (!image_response.ok) {
-                showAlertModal('이미지 업로드 중 오류가 발생했습니다. 수정 페이지에서 다시 업로드해주세요.');
+                showAlertModal(MODAL_MESSAGE.IMAGE_UPLOAD_FAILED);
             } else if (image_response.status == 401) {
-                const token_response = await fetch(`${API_BASE}/users/refresh`, {
-                    method: 'POST',
-                    credentials: 'include', 
-                });
-                
-                console.log(token_response);
-                if (token_response.status == 401) {
-                    sessionStorage.removeItem("userId");
-                    window.location.href = '/auth/signin.html';
-                }
-
-                const image_response = await fetch(`${API_BASE}/api/images/posts/${postId}`, {
-                    method: 'PUT',
-                    body: formData,
-                    credentials: 'include'
-                });
+                await refreshAccessToken();
+                const image_response = await updatePostFile(postId, formData);
+                console.log('image_response', image_response);
             } 
         }
 
@@ -225,35 +175,18 @@ submitButton.addEventListener('click', async (e) => {
         /*
         게시글 작성
         */
-        response = await fetch(`${API_BASE}/posts`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ title, contents, writerId }),
-            credentials: 'include',
-        });
-
+        response = await postPost(title, contents);
         if (!response.ok) {
             console.log(response);
         }
 
         if (response.status == 401) {
-            const token_response = await fetch(`${API_BASE}/users/refresh`, {
-                method: 'POST',
-                credentials: 'include', 
-            });
-            
-            console.log(token_response);
-            if (token_response.status == 401) {
-                sessionStorage.removeItem("userId");
-                window.location.href = '/auth/signin.html';
-            }
+            await refreshAccessToken();
+            response = await postPost(title, contents);
 
-            response = await fetch(`${API_BASE}/posts`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title, contents, writerId }),
-                credentials: 'include',
-            });
+            if (!response.ok) {
+                console.log(response.message);
+            }
         } 
             response_json = await response.json();
             const postId = response_json.data.id;
@@ -266,33 +199,19 @@ submitButton.addEventListener('click', async (e) => {
             const formData = new FormData();
             formData.append('file', file);
             formData.append('postId', postId);
-            const image_response = await fetch(`${API_BASE}/api/images/posts`, {
-                method: 'POST',
-                body: formData,
-                credentials: 'include'
-            })
+            const image_response = await postPostFile(formData);
 
             console.log('image_response', image_response);
-            // const image_response_json = await image_response.json();
-            if (!image_response.ok) {
-                showAlertModal('이미지 업로드 중 오류가 발생했습니다. 글 수정에서 다시 업로드해주세요.');
-            } else if (response.status == 401) {
-                const token_response = await fetch(`${API_BASE}/users/refresh`, {
-                    method: 'POST',
-                    credentials: 'include', 
-                });
-                
-                console.log(token_response);
-                if (token_response.status == 401) {
-                    sessionStorage.removeItem("userId");
-                    window.location.href = '/auth/signin.html';
-                }
 
-                const image_response = await fetch(`${API_BASE}/api/images/posts`, {
-                    method: 'POST',
-                    body: formData,
-                    credentials: 'include'
-                })
+            if (!image_response.ok) {
+                showAlertModal(MODAL_MESSAGE.IMAGE_UPLOAD_FAILED);
+            } else if (response.status == 401) {
+                await refreshAccessToken();
+                image_response = await postPostFile(formData);
+
+                if (!image_response.ok) {
+                    console.log(image_response.message);
+                }
             } 
         }
     }
@@ -300,12 +219,12 @@ submitButton.addEventListener('click', async (e) => {
     const data = response_json;
     if (response.status == 400) {
         console.error(data);
-        showAlertModal(`모든 항목을 입력해주세요.`);
+        showAlertModal(MODAL_MESSAGE.FILL_OUT_ALL);
     } else if (response.ok) {
-        const message = postId ? '게시글이 수정되었습니다.' : '게시글이 작성되었습니다.';
+        const message = postId ? MODAL_MESSAGE.POST_UPDATED : MODAL_MESSAGE.POST_PUBLISHED;
         showAlertModal(message, `/posts/post_detail.html?postId=${data.data.id}`);
     } else {
         console.error(data);
-        showAlertModal(`게시글 작성에 실패했습니다.`);
+        showAlertModal(MODAL_MESSAGE.POST_PUBLISHING_FAILED);
     }
 });

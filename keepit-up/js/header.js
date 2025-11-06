@@ -1,4 +1,8 @@
-import { API_BASE } from './config.js';
+import { DEFAULT_IMAGE_PATH } from './config.js';
+import { getUserIdFromSession } from './common/session_managers.js';
+import { MODAL_MESSAGE } from './common/messages.js';
+import { handleImageUrl } from './common/image_url_handler.js';
+import { signOut, refreshAccessToken, getProfileImage } from './api/api.js';
 
 export default async function headerInit() {
     const header = document.querySelector('header');
@@ -11,7 +15,7 @@ export default async function headerInit() {
     console.log('beforeLoginMenu', beforeLoginMenu);
     console.log('afterLoginMenu', afterLoginMenu);
 
-    const userId = sessionStorage.getItem('userId');
+    const userId = getUserIdFromSession();
 
     if (!userId) {
         dropdownButton.style.display = 'none';
@@ -35,7 +39,6 @@ export default async function headerInit() {
         })
     }
 
-
     /*
         드롭다운 메뉴
         - 회원정보 수정
@@ -52,7 +55,6 @@ export default async function headerInit() {
             dropdownMenu.style.display = 'block';
             console.log('dropdown menu opened');
         }
-    
     });
 
     const logoutButton = header.querySelector('.logout-button');
@@ -61,88 +63,41 @@ export default async function headerInit() {
         console.log("logout button clicked");
         sessionStorage.removeItem('userId');
 
-        const response = await fetch(`${API_BASE}/users/signOut`, {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
-        })
+        const response = await signOut();
 
         if (response.ok) {
-            showAlertModal('로그아웃 되었습니다.', '/auth/signin.html');
+            showAlertModal(MODAL_MESSAGE.SIGNED_OUT, '/auth/signin.html');
         } else if (response.status == 401) {
-            const response = await fetch(`${API_BASE}/users/refresh`, {
-                method: 'POST',
-                credentials: 'include', 
-            });
-            
-            if (response.status == 401) {
-                window.location.href = '/auth/signin.html';
-            }
-
-            const signout_response = await fetch(`${API_BASE}/users/signOut`, {
-                method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-            })
+            await refreshAccessToken();
+            await signOut();
         } else {
             console.log(response.data.message);
         }
     });
 
     if (userId) {
-        const DEFAULT_IMAGE_PATH = '/assets/images/default_profile_image.png'
         dropdownButton.src = DEFAULT_IMAGE_PATH;
         
         console.log('userID', userId);
-        const response = await fetch(`${API_BASE}/api/images/profiles`, {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include'
-        })
+        const response = await getProfileImage();
+        console.log('response', response);
 
         if (response.status === 200) {
             const response_json = await response.json();
             console.log('response json', response_json);
-
-            const image_url = response_json.data.url;
-            console.log('image_url', image_url);
-            const imageUrl = image_url.startsWith('/')
-            ? `${API_BASE}${image_url}`
-            : `${API_BASE}/${image_url}`;
-            dropdownButton.src = `${imageUrl}`;
+            dropdownButton.src = handleImageUrl(response_json.data.url);
 
         } else if (response.status == 401) {
-            const token_response = await fetch(`${API_BASE}/users/refresh`, {
-                method: 'POST',
-                credentials: 'include', 
-            });
-            
-            console.log(token_response);
-            if (token_response.status == 401) {
-                sessionStorage.removeItem("userId");
-                window.location.href = '/auth/signin.html';
-            }
-            const response = await fetch(`${API_BASE}/api/images/profiles`, {
-                method: 'GET',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include'
-            })
+            refreshAccessToken();
+            const response = getProfileImage();
 
             if (response.status === 200) {
                 const response_json = await response.json();
                 console.log('response json', response_json);
-
-                const image_url = response_json.data.url;
-                console.log('image_url', image_url);
-                const imageUrl = image_url.startsWith('/')
-                ? `${API_BASE}${image_url}`
-                : `${API_BASE}/${image_url}`;
-                dropdownButton.src = `${imageUrl}`;
-
+                dropdownButton.src = handleImageUrl(response_json.data.url);
             } 
         } else if (!response.ok) {
-            const error_data = await response.json();
-            console.error(error_data);
+            console.error(response);
         } 
     }
 }

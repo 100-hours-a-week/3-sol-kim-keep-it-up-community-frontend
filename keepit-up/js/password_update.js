@@ -1,4 +1,7 @@
-import { API_BASE } from './config.js';
+import { isInvalidPassword } from './common/validators.js';
+import { AUTH_MESSAGE, MODAL_MESSAGE } from './common/messages.js';
+import { refreshAccessToken } from './api/api.js';
+import { updatePassword } from './api/api.js';
 
 export default function passwordUpdateInit() {
     const passwordUpdateForm = document.querySelector('form.password-update-form');
@@ -13,12 +16,16 @@ export default function passwordUpdateInit() {
     /*
     FUNCTIONS
     */
+    /*
+        모달
+    */
     function showAlertModal(content, next_page = null) {
         const commentAlertModal = document.querySelector('.comment-alert-modal');
         const alertContent = commentAlertModal.querySelector('p');
         alertContent.textContent = content;
         commentAlertModal.style.display = 'block';
         const modalConfirmButton = commentAlertModal.querySelector('.modal-confirm-button');
+        
         modalConfirmButton.addEventListener('click', () => {
                 console.log("clicked in signin");
                 commentAlertModal.style.display = 'none';
@@ -48,13 +55,8 @@ export default function passwordUpdateInit() {
     */
     passwordInput.addEventListener('input', () => {
         const password = passwordInput.value;
-        if (password.length < 8 || 
-            password.length > 20 ||
-            !/[a-z]/.test(password) ||
-            !/[A-Z]/.test(password) ||
-            !/[0-9]/.test(password) ||
-            !/[`~!@#$%^&*()-_=+]/.test(password)) {
-            passwordHelperText.textContent = '비밀번호는 8자 이상 20자 이하이며, 대문자, 소문자, 숫자, 특수문자를 각각 최소 1개 포함해야 합니다.';
+        if (isInvalidPassword(password)) {
+            passwordHelperText.textContent = AUTH_MESSAGE.PASSWORD_HELPER_TEXT;
         } else {
             passwordHelperText.textContent = '';
         }
@@ -69,7 +71,7 @@ export default function passwordUpdateInit() {
         const passwordConfirm = passwordConfirmInput.value;
 
         if (password !== passwordConfirm) {
-            passwordConfirmHelperText.textContent = '비밀번호가 일치하지 않습니다.';
+            passwordConfirmHelperText.textContent = AUTH_MESSAGE.PASSWORD_MISMATCH;
         } else {
             passwordConfirmHelperText.textContent = '';
         }
@@ -86,39 +88,16 @@ export default function passwordUpdateInit() {
             btn.disabled = true;
             const formData = new FormData(passwordUpdateForm);
             const password = formData.get('password'); // 인풋 필드가 name="password"를 가져야 한다. 
-
-            const userId = sessionStorage.getItem('userId');
-
-            const response = await fetch(`${API_BASE}/users/password`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ password }),
-                credentials: 'include'
-            });
-
-            const data = await response.json();
+            const response = await updatePassword(password);
+            
             if (!response.ok) {
-                console.error(data);
-                showAlertModal("비밀번호 수정에 실패했습니다.");
+                console.error(response);
+                showAlertModal(MODAL_MESSAGE.PASSWORD_UPDATE_FAILED);
             } else if (response.status == 401) {
-                const response = await fetch(`${API_BASE}/users/refresh`, {
-                    method: 'POST',
-                    credentials: 'include', 
-                });
-                
-                if (response.status == 401) {
-                    window.location.href = '/auth/signin.html';
-                }
-
-                const password_update_response = await fetch(`${API_BASE}/users/password`, {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ password }),
-                    credentials: 'include'
-                });
+                await refreshAccessToken();
+                await updatePassword(password);
             } else {
-                showAlertModal(`비밀번호가 수정되었습니다. 
-다시 로그인해주세요.`, '/auth/signin.html');
+                showAlertModal(MODAL_MESSAGE.PASSWORD_UPDATED, '/auth/signin.html');
                 sessionStorage.clear();
             }
         } catch (error) {

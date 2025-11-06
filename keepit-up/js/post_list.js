@@ -1,19 +1,21 @@
-import { API_BASE } from './config.js';
+import { DEFAULT_IMAGE_PATH } from './config.js';
+import { MODAL_MESSAGE } from './common/messages.js';
+import { getUserIdFromSession } from './common/session_managers.js';
+import { handleImageUrl } from './common/image_url_handler.js';
+import { getFirstPostListSlice, getPostListAfterFirstSlice } from './api/api.js';
 
 const postList = document.querySelector('.post-list');
 const postCreateButton = document.querySelector('.post-create-button');
-
-const DEFAULT_IMAGE_PATH = '/assets/images/default_profile_image.png'
 
 /*
     EVENT LISTENERS
 */
 postCreateButton.addEventListener('click', () => {
-    const userId = sessionStorage.getItem('userId');
+    const userId = getUserIdFromSession();
     if (userId) {
         window.location.href = '/posts/post_edit.html';
     } else {
-        showAlertModal("로그인이 필요한 서비스입니다.", '/auth/signin.html');
+        showAlertModal(MODAL_MESSAGE.SIGNIN_NEEDED, '/auth/signin.html');
     }
 });
 
@@ -56,22 +58,10 @@ async function fetchPostList() {
     try {
         // 첫 호출
         if (cursorId == null) {
-            response = await fetch(`${API_BASE}/posts/list?size=${size}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    // 'Authorization': `Bearer ${sessionStorage.getItem('token')}`
-                },
-            });
+            response = await getFirstPostListSlice(size);
         } else {
             // 두 번째 슬라이스 이상
-            response = await fetch(`${API_BASE}/posts/list?cursorId=${cursorId}&size=${size}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    // 'Authorization': `Bearer ${sessionStorage.getItem('token')}`
-                },
-            });
+            response = await getPostListAfterFirstSlice(cursorId, size);
         }
 
         const response_json = await response.json();
@@ -92,8 +82,7 @@ async function fetchPostList() {
                 const image_profile_url = post.writer.profileImageUrl;
                 let writer_profile_url = null;
                 if (image_profile_url ) {
-                    writer_profile_url = image_profile_url .startsWith('/') ?
-                    `${API_BASE}${image_profile_url}` : `${API_BASE}/${image_profile_url}`;
+                    writer_profile_url = handleImageUrl(image_profile_url);
                 } else {
                     writer_profile_url = DEFAULT_IMAGE_PATH;
                 }
