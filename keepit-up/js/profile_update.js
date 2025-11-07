@@ -1,4 +1,8 @@
-import { API_BASE } from './config.js';
+import { DEFAULT_IMAGE_PATH } from './config.js';
+import { AUTH_MESSAGE, MODAL_MESSAGE } from './common/messages.js';
+import { getUserIdFromSession, removeUserIdFromSession } from './common/session_managers.js';
+import { handleImageUrl } from './common/image_url_handler.js';
+import { refreshAccessToken, getUserProfile, updateUserProfile, updateUserProfileImage, withdraw } from './api/api.js';
 
 export default async function profileUpdateInit() {
     const profileImageInput = document.querySelector('.profile-image-input');
@@ -6,12 +10,10 @@ export default async function profileUpdateInit() {
     const nicknameInput = document.querySelector('input.nickname');
     const nicknameHelperText = document.querySelector('.helper-text.nickname');
     const updateButton = document.querySelector('.update-button');
-    const userId = sessionStorage.getItem('userId');
+    const userId = getUserIdFromSession();
     console.log('userId:', userId);
 
     const withdrawalModal = document.querySelector('.withdrawal-modal');
-
-    const DEFAULT_IMAGE_PATH = '/assets/images/default_profile_image.png'
 
     /*
     FUNCTIONS
@@ -31,15 +33,20 @@ export default async function profileUpdateInit() {
     }
     
     /*
-        프로필 이미지 외 사용자 정보 가져오기
+        사용자 정보 가져오기
      */
-    const response = await fetch(`${API_BASE}/users/${userId}`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            // 'Authorization': `Bearer ${sessionStorage.getItem('token')}`
-        },
-    });
+    const response = await getUserProfile();
+    
+    if (response.status == 401) {
+        await refreshAccessToken();
+        const profile_response = await getUserProfile();
+        if (!profile_response.ok) {
+            console.log(profile_response.message);
+        }
+    } else if (!response.ok) {
+        console.log(response);
+    }
+    
     const response_json = await response.json();
     console.log(response_json);
     email.textContent = response_json.data.email;
@@ -48,13 +55,12 @@ export default async function profileUpdateInit() {
     const url = response_json.data.profileImageUrl;
     let profile_image_url = null;
     if (url) {
-        profile_image_url = url.startsWith('/') ?
-        `${API_BASE}${url}` : `${API_BASE}/${url}`;
+        profile_image_url = handleImageUrl(url);
     } else {
         profile_image_url = DEFAULT_IMAGE_PATH;
     }
     profileImageInput.style.backgroundImage = `url("${profile_image_url}")`;
-
+    
     let file;
     // 사진 선택하면 선택한 사진으로 변경 
     profileImageInput.addEventListener("change", () => {
@@ -86,11 +92,11 @@ export default async function profileUpdateInit() {
     nicknameInput.addEventListener('input', () => {
         const nickname = nicknameInput.value;
         if (nickname == undefined || nickname.trim() === '') {
-            nicknameHelperText.textContent = '닉네임을 입력해주세요.';
+            nicknameHelperText.textContent = AUTH_MESSAGE.NICKNAME_NEEDED;
         } else if (nickname.length > 10) {
-            nicknameHelperText.textContent = '닉네임은 최대 10자까지 가능합니다.';
+            nicknameHelperText.textContent = AUTH_MESSAGE.NICKNAME_HELPER_TEXT;
         } else {
-            nicknameHelperText.textContent = '*helper-text';
+            nicknameHelperText.textContent = AUTH_MESSAGE.HELPER_TEXT_MARK;
             updateButton.disabled = false;
         }
     });
@@ -107,42 +113,46 @@ export default async function profileUpdateInit() {
             const nickname = nicknameInput.value;
             formData.append('nickname', nickname);
 
-            const response = await fetch(`${API_BASE}/users/${userId}`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nickname }),
-            });
+            const response = await updateUserProfile(nickname);
 
             const data = await response.json();
-            if (response.status == 409) {
-                nicknameHelperText.textContent = '이미 존재하는 닉네임입니다.';
+            if (response.status == 401) {
+                await refreshAccessToken();
+                const profile_response = await updateUserProfile(nickname);
+
+                if (!profile_response.ok) {
+                    console.log(profile_response.message);
+                }
+            } else if (response.status == 409) {
+                nicknameHelperText.textContent = AUTH_MESSAGE.NICKNAME_CONFLICT;
+                return;
             } else if (!response.ok) {
                 console.error(data);
-                showAlertModal('회원정보 수정에 실패했습니다.');
-            } else {
+                showAlertModal(MODAL_MESSAGE.PROFILE_UPDATE_FAILED);
+                return;
+            } 
 
-                if (file) {
-                    console.log('file', file, 'userId', userId);
-                    const formData = new FormData();
-                    formData.append('file', file);              // File 객체 그대로
-                    formData.append('userId', String(userId)); 
-                    const image_response = await fetch(`${API_BASE}/images/profiles`, {
-                        method: 'PUT',
-                        body: formData
-                    });
+            if (file) {
+                console.log('file', file, 'userId', userId);
+                const formData = new FormData();
+                formData.append('file', file);              // File 객체 그대로
+                formData.append('userId', String(userId)); 
 
+                const image_response = await updateUserProfileImage(formData);
 
-                    if (!image_response.ok) {
-                        console.log(image_response);
-                        // const image_response_json = await image_response.json();
-                        // console.log(image_response_json);
-                        showAlertModal(`프로필 사진 업로드 중 에러가 발생했습니다. 
-다시 업로드 해주세요.`);
+                if (image_response.status === 401) {
+                    await refreshAccessToken();
+                    const profile_response = await updateUserProfileImage(formData);
+
+                    if (!profile_response.ok) {
+                        console.log(profile_response.message);
                     }
+                } else if (!image_response.ok) {
+                    console.log(image_response);
+                    showAlertModal(MODAL_MESSAGE.PROFILE_IMAGE_UPLOAD_FAILED);
                 }
-                showAlertModal('회원정보가 수정되었습니다.', '/posts/post_list.html');
-                // sessionStorage.setItem('nickname', nickname);
             }
+            showAlertModal(MODAL_MESSAGE.PROFILE_UPDATED, '/posts/post_list.html');
         } catch (error) {
             showAlertModal(error.message);
             updateButton.disabled = false;
@@ -169,22 +179,24 @@ export default async function profileUpdateInit() {
 
     confirmButton.addEventListener('click', async () => {
         console.log("confirm button clicked");
-        const response = await fetch(`${API_BASE}/users/${userId}`, {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
-        })
+        const response = await withdraw();
         const data = await response.json();
         if (response.ok) {
-            // sessionStorage.setItem('nickname', nickname);
-            sessionStorage.removeItem('userId');
+            removeUserIdFromSession();
             withdrawalModal.style.display = 'none';
-            showAlertModal('탈퇴 처리 되었습니다.', '/posts/post_list.html');
+            showAlertModal(MODAL_MESSAGE.WITHDRAWAL_SUCCEEDED, '/posts/post_list.html');
+        } else if (response.status == 401) {
+            await refreshAccessToken();
+            const response = await withdraw();
+
+            if (!response.ok) {
+                console.log(response.message);
+            }
         } else {
             console.error(data);
-            showAlertModal('회원 탈퇴 중 오류가 발생해 탈퇴 처리가 되지 않았습니다.');
+            showAlertModal(MODAL_MESSAGE.WITHDRAWAL_FAILED);
         }
     });
-    
 }
 
 profileUpdateInit();
