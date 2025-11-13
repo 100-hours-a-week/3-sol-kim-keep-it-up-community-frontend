@@ -206,9 +206,6 @@ submitButton.addEventListener('click', async (e) => {
             게시글 이미지 등록
             */
             console.log('file', file, 'postId', postId);
-            // const formData = new FormData();
-            // formData.append('file', file);
-            // formData.append('postId', postId);
 
             const presignedUrl_response = await getPresignedUrl(file.name);// POST presignedUrl 발급
             if (presignedUrl_response.ok) {

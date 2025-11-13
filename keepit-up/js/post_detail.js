@@ -409,7 +409,7 @@ function addEvenListenerToCommentDeleteButtons() {
                             await deleteComment(postId, commentId);
                         } else {
                             console.error(data);
-                            showAlertModal(MODAL_MESSAGE.COMMENT_DELTE_FAILED);
+                            showAlertModal(MODAL_MESSAGE.COMMENT_DELETE_FAILED);
                         }
                     } catch (error) {
                         console.error(error);
