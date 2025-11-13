@@ -82,7 +82,7 @@ async function fetchPostList() {
                 const image_profile_url = post.writer.profileImageUrl;
                 let writer_profile_url = null;
                 if (image_profile_url ) {
-                    writer_profile_url = handleImageUrl(image_profile_url);
+                    writer_profile_url = image_profile_url;
                 } else {
                     writer_profile_url = DEFAULT_IMAGE_PATH;
                 }

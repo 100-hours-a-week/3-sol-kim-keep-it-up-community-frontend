@@ -1,7 +1,7 @@
 import { DEFAULT_IMAGE_PATH } from './config.js';
 import { isInvalidPassword, isInvalidEmail, isInvalidNickname } from './common/validators.js';
 import { AUTH_MESSAGE, MODAL_MESSAGE } from './common/messages.js';
-import { getLegalHTML, signUp, uploadProfileImage } from './api/api.js';
+import { getLegalHTML, signUp, storeProfileImageUrlToServer, getPresignedUrl, uploadToS3 } from './api/api.js';
 
 export default function signUpInit() {
 
@@ -209,13 +209,21 @@ export default function signUpInit() {
                   console.log(response_json.data);
                   if (file) {
                         const userId = response_json.data.id;
-                        const formData = new FormData;
-                        formData.append('file', file);
-                        formData.append('userId', userId);
-                        const image_response = await uploadProfileImage(formData);
-                        if (!image_response.ok) {
-                              console.log(image_response);
-                              showAlertModal(MODAL_MESSAGE.PROFILE_IMAGE_UPLOAD_FAILED);
+                        console.log("UserId", userId);
+                        console.log(file);
+                        const presignedUrl_response = await getPresignedUrl(file.name);// POST presignedUrl 발급
+                        if (presignedUrl_response.ok) {
+                              const presignedUrl_response_json = await presignedUrl_response.json();
+                              console.log(presignedUrl_response_json);
+                              const presignedUrl = presignedUrl_response_json.url;
+                              const location = presignedUrl_response_json.location;
+                              const s3_response = await uploadToS3(presignedUrl, file.type, file);
+                              if (s3_response.ok) {
+                                    storeProfileImageUrlToServer(location, userId);
+                              } else {
+                                    console.log(image_response);
+                                    showAlertModal(MODAL_MESSAGE.PROFILE_IMAGE_UPLOAD_FAILED);
+                              }
                         }
                   }
                   showAlertModal(MODAL_MESSAGE.SIGNUP_SUCCEEDED, '/auth/signin.html');

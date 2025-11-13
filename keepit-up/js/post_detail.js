@@ -1,7 +1,6 @@
 import { DEFAULT_IMAGE_PATH } from './config.js';
 import { MODAL_MESSAGE } from './common/messages.js';
 import { getUserIdFromSession } from './common/session_managers.js';
-import { handleImageUrl } from './common/image_url_handler.js';
 import { refreshAccessToken } from './api/api.js';
 import { increaseViewCount, getWhetherLiked, likePost, cancelPostLike, getPost, getPostCommentsList, postComment, updateComment, deleteComment, deletePost } from './api/api.js';
 
@@ -223,7 +222,7 @@ async function renderPost(post) {
     const image_profile_url = post.writer.profileImageUrl;
     let writer_profile_url = null;
     if (image_profile_url) {
-        writer_profile_url = handleImageUrl(image_profile_url);
+        writer_profile_url = image_profile_url;
     } else {
         writer_profile_url = DEFAULT_IMAGE_PATH;
     }
@@ -234,7 +233,7 @@ async function renderPost(post) {
     const url = post.imageUrl;
     let image_url = null;
     if (url) {
-        image_url = handleImageUrl(url);
+        image_url = url;
     }
 
     if (image_url) {
@@ -259,7 +258,7 @@ async function renderCommentsHTML(comments) {
         const image_profile_url = comment.writer.profileImageUrl;
         let writer_profile_url = null;
         if (image_profile_url ) {
-            writer_profile_url = handleImageUrl(image_profile_url);
+            writer_profile_url = image_profile_url;
         } else {
             writer_profile_url = DEFAULT_IMAGE_PATH;
         }

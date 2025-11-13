@@ -1,7 +1,7 @@
 import { POST_MESSAGE, MODAL_MESSAGE } from './common/messages.js';
 import { getUserIdFromSession } from './common/session_managers.js';
 import { handleImageUrl } from './common/image_url_handler.js';
-import { updatePost, updatePostFile, refreshAccessToken, postPost, postPostFile, getPost } from './api/api.js';
+import { getPresignedUrl, uploadToS3, updatePost, updatePostImageUrl, storePostImageUrlToServer, refreshAccessToken, postPost, getPost} from './api/api.js';
 
 const postForm = document.querySelector('form.post-edit-form');
 const submitButton = document.querySelector('.submit-button');
@@ -155,20 +155,30 @@ submitButton.addEventListener('click', async (e) => {
         게시글 이미지 수정
         */
         if (fileUpdated) {
-            const formData = new FormData();
-            formData.append('file', file);
-            formData.append('postId', postId);
-            const image_response = await updatePostFile(postId, formData);
+            const presignedUrl_response = await getPresignedUrl(file.name);// POST presignedUrl 발급
+            if (presignedUrl_response.ok) {
+                const presignedUrl_response_json = await presignedUrl_response.json();
+                const presignedUrl = presignedUrl_response_json.url;
+                const location = presignedUrl_response_json.location;
+                const s3_response = await uploadToS3(presignedUrl, file.type, file);
+                if (s3_response.ok) {
+                    const image_response = await updatePostImageUrl(location, postId);
+                    
+                    if (!image_response.ok) {
+                        showAlertModal(MODAL_MESSAGE.POST_IMAGE_UPLOAD_FAILED);
+                    } else if (response.status == 401) {
+                        await refreshAccessToken();
+                        image_response = await updatePostImageUrl(location, postId);
 
-            console.log('image_response', image_response);
-
-            if (!image_response.ok) {
-                showAlertModal(MODAL_MESSAGE.IMAGE_UPLOAD_FAILED);
-            } else if (image_response.status == 401) {
-                await refreshAccessToken();
-                const image_response = await updatePostFile(postId, formData);
-                console.log('image_response', image_response);
-            } 
+                        if (!image_response.ok) {
+                            console.log(image_response.message);
+                        }
+                    } 
+                } else {
+                    console.log(image_response);
+                    showAlertModal(MODAL_MESSAGE.POST_IMAGE_UPLOAD_FAILED);
+                }
+            }
         }
 
     } else {
@@ -196,23 +206,35 @@ submitButton.addEventListener('click', async (e) => {
             게시글 이미지 등록
             */
             console.log('file', file, 'postId', postId);
-            const formData = new FormData();
-            formData.append('file', file);
-            formData.append('postId', postId);
-            const image_response = await postPostFile(formData);
+            // const formData = new FormData();
+            // formData.append('file', file);
+            // formData.append('postId', postId);
 
-            console.log('image_response', image_response);
+            const presignedUrl_response = await getPresignedUrl(file.name);// POST presignedUrl 발급
+            if (presignedUrl_response.ok) {
+                const presignedUrl_response_json = await presignedUrl_response.json();
+                console.log(presignedUrl_response_json);
+                const presignedUrl = presignedUrl_response_json.url;
+                const location = presignedUrl_response_json.location;
+                const s3_response = await uploadToS3(presignedUrl, file.type, file);
+                if (s3_response.ok) {
+                    const image_response = await storePostImageUrlToServer(location, postId);
+                    
+                    if (!image_response.ok) {
+                        showAlertModal(MODAL_MESSAGE.POST_IMAGE_UPLOAD_FAILED);
+                    } else if (response.status == 401) {
+                        await refreshAccessToken();
+                        image_response = await storePostImageUrlToServer(location, postId);
 
-            if (!image_response.ok) {
-                showAlertModal(MODAL_MESSAGE.IMAGE_UPLOAD_FAILED);
-            } else if (response.status == 401) {
-                await refreshAccessToken();
-                image_response = await postPostFile(formData);
-
-                if (!image_response.ok) {
-                    console.log(image_response.message);
+                        if (!image_response.ok) {
+                            console.log(image_response.message);
+                        }
+                    } 
+                } else {
+                    console.log(image_response);
+                    showAlertModal(MODAL_MESSAGE.POST_IMAGE_UPLOAD_FAILED);
                 }
-            } 
+            }
         }
     }
 
