@@ -91,17 +91,19 @@ export default function signUpInit() {
             legalModalTitle.textContent = type === 'terms' ? '이용약관' : '개인정보처리방침';
 
             const response = await getLegalHTML(type);
-            const html = await response.text();
+            if (response.ok) {
+                  const html = await response.text();
 
-            const newDiv = document.createElement('div');
-            newDiv.innerHTML = html;
-            const body = newDiv.querySelector('main');
-            legalModalContent.innerHTML = body.innerHTML; // 본문만 주입
+                  const newDiv = document.createElement('div');
+                  newDiv.innerHTML = html;
+                  const body = newDiv.querySelector('main');
+                  legalModalContent.innerHTML = body.innerHTML; // 본문만 주입
 
-            legalModal.showModal();
-            legalModalCloseButton.addEventListener('click', () => {
-                  legalModal.close();
-            })
+                  legalModal.showModal();
+                  legalModalCloseButton.addEventListener('click', () => {
+                        legalModal.close();
+                  })
+            }
       }
 
       let file;
