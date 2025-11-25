@@ -1,6 +1,5 @@
 import { POST_MESSAGE, MODAL_MESSAGE } from './common/messages.js';
 import { getUserIdFromSession } from './common/session_managers.js';
-import { handleImageUrl } from './common/image_url_handler.js';
 import { getPresignedUrl, uploadToS3, updatePost, updatePostImageUrl, storePostImageUrlToServer, refreshAccessToken, postPost, getPost} from './api/api.js';
 
 const postForm = document.querySelector('form.post-edit-form');
@@ -116,7 +115,7 @@ if (postId) {
     const imagePrev = document.querySelector('.post-selected-image-preview');
     const url = response_json.data.imageUrl;
     if (url) {
-        imagePrev.src = handleImageUrl(url);
+        imagePrev.src = url;
     }
 } 
 
