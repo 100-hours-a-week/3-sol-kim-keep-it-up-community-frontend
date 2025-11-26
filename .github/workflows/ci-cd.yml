@@ -59,7 +59,7 @@ jobs:
             - name: Check if Docker is installed
               id: check-docker
               run: |
-                DOCKER_EXISTS=$(ssh -i ~/.ssh/id_rsa -o StrcitHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} 'command -v docker >/dev/null && echo "true" || echo "false"')
+                DOCKER_EXISTS=$(ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} 'command -v docker >/dev/null && echo "true" || echo "false"')
                 echo "docker_exists=$DOCKER_EXISTS" >> $GITHUB_OUTPUT
 
             - name: Install Docker on EC2
@@ -77,8 +77,8 @@ jobs:
                     | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
                   echo \
                     "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
-                    httpsL//download.docker.com/linux/ubuntu \
-                    $(lsdb_release -cs) stable" \
+                    https://download.docker.com/linux/ubuntu \
+                    $(lsb_release -cs) stable" \
                     | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
                   sudo apt-get update
                   sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
