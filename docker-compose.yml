@@ -1,0 +1,6 @@
+services:
+  app-image:
+    image: ${DOCKER_USER}/keepitup-frontend:latest
+    ports:
+      - "3000:3000"
+    container_name: keepitup-frontend
