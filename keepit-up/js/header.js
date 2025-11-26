@@ -85,7 +85,7 @@ export default async function headerInit() {
         if (response.status === 200) {
             const response_json = await response.json();
             console.log('response json', response_json);
-            dropdownButton.src = handleImageUrl(response_json.data.url);
+            dropdownButton.src = response_json.data.url;
 
         } else if (response.status == 401) {
             refreshAccessToken();
@@ -94,7 +94,7 @@ export default async function headerInit() {
             if (response.status === 200) {
                 const response_json = await response.json();
                 console.log('response json', response_json);
-                dropdownButton.src = handleImageUrl(response_json.data.url);
+                dropdownButton.src = response_json.data.url;
             } 
         } else if (!response.ok) {
             console.error(response);

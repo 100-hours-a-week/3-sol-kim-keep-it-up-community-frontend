@@ -42,14 +42,14 @@ export const MODAL_MESSAGE = {
     POST_DELETED: '게시글이 삭제되었습니다.',
     POST_PUBLISHING_FAILED: '게시글 작성에 실패했습니다.',
     POST_DELETE_FAILED: '게시글 삭제에 실패했습니다.',
-    IMAGE_UPLOAD_FAILED: '이미지 업로드 중 오류가 발생했습니다. 수정 페이지에서 다시 업로드해주세요.',
+    POST_IMAGE_UPLOAD_FAILED: '이미지 업로드 중 오류가 발생했습니다. 수정 페이지에서 다시 업로드해주세요.',
 
     COMMENT_CREATED: '댓글이 작성되었습니다.',
     COMMENT_UPDATED: '댓글이 수정되었습니다.',
     COMMENT_DELETED: '댓글이 삭제되었습니다.',
     COMMENT_CREATE_FAILED: '댓글 작성에 실패했습니다.',
     COMMENT_UPDATE_FAILED: '댓글 수정에 실패했습니다.',
-    COMMENT_DELTE_FAILED: '댓글 삭제에 실패했습니다.',
+    COMMENT_DELETE_FAILED: '댓글 삭제에 실패했습니다.',
 
     LIKE_CANCEL_FAILED: '좋아요 취소 중 오류가 발생했습니다.',
     LIKE_FAILED: '좋아요 등록 중 오류가 발생했습니다.',

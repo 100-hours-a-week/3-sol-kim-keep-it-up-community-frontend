@@ -1,0 +1,96 @@
+name: Frontend CI/CD
+
+on: 
+    push:
+        branches:
+            - main
+    pull_request:
+        branches:
+            - main
+
+jobs:
+    test:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+            
+            - name: Set up Node
+              uses: actions/setup-node@v2
+              with:
+                node-version: 18.x
+
+            - name: Install dependencies
+              run: npm install
+    
+    build-and-push-image:
+        needs: test
+        runs-on: ubuntu-latest
+
+        steps: 
+            - name: Checkout
+              uses: actions/checkout@v2
+
+            - name: Private Registry Login
+              uses: docker/login-action@v3
+              with:
+                registry: ${{ secrets.REGISTRY_URL }}
+                username: ${{ secrets.REGISTRY_USERNAME }}
+                password: ${{ secrets.REGISTRY_PASSWORD }}
+
+            - name: Build and Push Docker Image
+              run: |
+                docker build --platform linux/amd64 -t ${{ secrets.REGISTRY_URL}}/frontend-deploy:latest .
+                docker push ${{ secrets.REGISTRY_URL }}/frontend-deploy:latest
+
+    deploy:
+        needs: build-and-push-image
+        runs-on: ubuntu-latest
+        env:
+            REGISTRY_URL: ${{ secrets.REGISTRY_URL }}
+
+        steps: 
+            - name: Prepare SSH Key
+              run: |
+                mkdir -p ~/.ssh
+                echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+                chmod 600 ~/.ssh/id_rsa
+                ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+
+            - name: Check if Docker is installed
+              id: check-docker
+              run: |
+                DOCKER_EXISTS=$(ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} 'command -v docker >/dev/null && echo "true" || echo "false"')
+                echo "docker_exists=$DOCKER_EXISTS" >> $GITHUB_OUTPUT
+
+            - name: Install Docker on EC2
+              if: steps.check-docker.outputs.docker_exists == 'false'
+              run: |
+                ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
+                  sudo apt-get update
+                  sudo apt-get install -y \
+                    ca-certificates \
+                    curl \
+                    gnupg \
+                    lsb-release 
+                  sudo mkdir -p /etc/apt/keyrings
+                  curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
+                    | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+                  echo \
+                    "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+                    https://download.docker.com/linux/ubuntu \
+                    $(lsb_release -cs) stable" \
+                    | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+                  sudo apt-get update
+                  sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+                  sudo usermod -aG docker $USER
+                EOF
+            
+            - name: Deploy to EC2 via Docker Compose
+              run: |
+                ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "REGISTRY_URL=$REGISTRY_URL sudo -E bash -s" << 'EOF'
+                  cd /home/${{ secrets.SERVER_USER }}/frontend
+                  docker compose pull
+                  docker compose up -d
+                EOF

@@ -1,5 +1,28 @@
 import { API_BASE } from '../config.js';
 import { fetchAPI, fetchAPIWithBody, fetchAPIWithFile } from '../common/api_fetcher.js';
+import { GET_PRESIGNED_URL } from '../config.js';
+import { removeUserIdFromSession } from '../common/session_managers.js';
+
+export async function getPresignedUrl(filename) {
+    return await fetch(
+            GET_PRESIGNED_URL, {
+                method: 'POST',
+                body: JSON.stringify({ filename: filename , contentType: "image/*" }),
+            }
+    );
+}
+
+export async function uploadToS3(presignedUrl, fileType, file) {
+    return await fetch(presignedUrl, {
+                            method: 'PUT',
+                            headers: {
+                                    'Content-Type': fileType,
+                                    "access-control-allow-origin": "*",
+                            },  
+                            body: file,
+                        });
+}
+
 
 // GET 이용약관, 개인정보처리방침
 export function getLegalHTML(type) {
@@ -12,8 +35,8 @@ export function signUp(email, password, nickname) {
 }
 
 // POST 프로필 사진 등록
-export function uploadProfileImage(formData) {
-    return fetchAPIWithFile(`${API_BASE}/api/images/signUp/profiles`, 'POST', formData);
+export function storeProfileImageUrlToServer(imageUrl, userId) {
+    return fetchAPIWithBody(`${API_BASE}/images/signUp/profiles`, 'POST', JSON.stringify({ imageUrl, userId }));
 }
 
 // POST 로그인
@@ -38,7 +61,7 @@ export async function refreshAccessToken() {
 
 // GET 프로필 이미지 조회
 export function getProfileImage() {
-    return fetchAPI(`${API_BASE}/api/images/profiles`, 'GET');
+    return fetchAPI(`${API_BASE}/images/profiles`, 'GET');
 }
 
 // PATCH 비밀번호 변경
@@ -102,8 +125,8 @@ export function postPost(title, contents) {
 }
 
 // POST 게시글 이미지 등록
-export function postPostFile(formData) {
-    return fetchAPIWithFile(`${API_BASE}/api/images/posts`, 'POST', formData);
+export function storePostImageUrlToServer(imageUrl, postId) {
+    return fetchAPIWithBody(`${API_BASE}/images/posts/${postId}`, 'POST', JSON.stringify({ imageUrl }));
 }
 
 // PATCH 게시글 수정
@@ -112,8 +135,8 @@ export function updatePost(postId, title, contents) {
 }
 
 // PUT 게시글 이미지 변경
-export function updatePostFile(postId, formData) {
-    return fetchAPIWithFile(`${API_BASE}/api/images/posts/${postId}`, 'PUT', formData);
+export function updatePostImageUrl(imageUrl, postId) {
+    return fetchAPIWithBody(`${API_BASE}/images/posts/${postId}`, 'PUT', JSON.stringify({ imageUrl }));
 }
 
 // GET 게시글 목록 조회 (최초 1회)
@@ -137,8 +160,8 @@ export function updateUserProfile(nickname) {
 }
 
 // PUT 사용자 프로필 사진 수정
-export function updateUserProfileImage(formData) {
-    return fetchAPIWithFile(`${API_BASE}/api/images/profiles`, 'PUT', formData);
+export function updateUserProfileImageUrl(imageUrl, userId) {
+    return fetchAPIWithBody(`${API_BASE}/images/profiles`, 'PUT', JSON.stringify({ imageUrl, userId }));
 }
 
 // DELETE 회원탈퇴

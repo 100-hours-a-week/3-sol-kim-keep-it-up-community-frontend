@@ -1,8 +1,7 @@
 import { DEFAULT_IMAGE_PATH } from './config.js';
 import { AUTH_MESSAGE, MODAL_MESSAGE } from './common/messages.js';
 import { getUserIdFromSession, removeUserIdFromSession } from './common/session_managers.js';
-import { handleImageUrl } from './common/image_url_handler.js';
-import { refreshAccessToken, getUserProfile, updateUserProfile, updateUserProfileImage, withdraw } from './api/api.js';
+import { getPresignedUrl, uploadToS3, refreshAccessToken, getUserProfile, updateUserProfile, updateUserProfileImageUrl, withdraw } from './api/api.js';
 
 export default async function profileUpdateInit() {
     const profileImageInput = document.querySelector('.profile-image-input');
@@ -55,7 +54,7 @@ export default async function profileUpdateInit() {
     const url = response_json.data.profileImageUrl;
     let profile_image_url = null;
     if (url) {
-        profile_image_url = handleImageUrl(url);
+        profile_image_url = url;
     } else {
         profile_image_url = DEFAULT_IMAGE_PATH;
     }
@@ -134,22 +133,29 @@ export default async function profileUpdateInit() {
 
             if (file) {
                 console.log('file', file, 'userId', userId);
-                const formData = new FormData();
-                formData.append('file', file);              // File 객체 그대로
-                formData.append('userId', String(userId)); 
-
-                const image_response = await updateUserProfileImage(formData);
-
-                if (image_response.status === 401) {
-                    await refreshAccessToken();
-                    const profile_response = await updateUserProfileImage(formData);
-
-                    if (!profile_response.ok) {
-                        console.log(profile_response.message);
+                const presignedUrl_response = await getPresignedUrl(file.name);// POST presignedUrl 발급
+                if (presignedUrl_response.ok) {
+                    const presignedUrl_response_json = await presignedUrl_response.json();
+                    const presignedUrl = presignedUrl_response_json.url;
+                    const location = presignedUrl_response_json.location;
+                    const s3_response = await uploadToS3(presignedUrl, file.type, file);
+                    if (s3_response.ok) {
+                        const image_response = await updateUserProfileImageUrl(location, userId);
+                        
+                        if (!image_response.ok) {
+                            showAlertModal(MODAL_MESSAGE.PROFILE_IMAGE_UPLOAD_FAILED);
+                        } else if (response.status == 401) {
+                            await refreshAccessToken();
+                            image_response = await updateUserProfileImageUrl(location, userId);
+    
+                            if (!image_response.ok) {
+                                console.log(image_response.message);
+                            }
+                        } 
+                    } else {
+                        console.log(image_response);
+                        showAlertModal(MODAL_MESSAGE.PROFILE_IMAGE_UPLOAD_FAILED);
                     }
-                } else if (!image_response.ok) {
-                    console.log(image_response);
-                    showAlertModal(MODAL_MESSAGE.PROFILE_IMAGE_UPLOAD_FAILED);
                 }
             }
             showAlertModal(MODAL_MESSAGE.PROFILE_UPDATED, '/posts/post_list.html');
