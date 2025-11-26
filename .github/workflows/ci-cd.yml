@@ -47,6 +47,8 @@ jobs:
     deploy:
         needs: build-and-push-image
         runs-on: ubuntu-latest
+        env:
+            REGISTRY_URL: ${{ secrets.REGISTRY_URL }}
 
         steps: 
             - name: Prepare SSH Key
@@ -87,7 +89,7 @@ jobs:
             
             - name: Deploy to EC2 via Docker Compose
               run: |
-                ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
+                ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "REGISTRY_URL=$REGISTRY_URL sudo -E bash -s" << 'EOF'
                   cd /home/${{ secrets.SERVER_USER }}/frontend
                   docker compose pull
                   docker compose up -d
