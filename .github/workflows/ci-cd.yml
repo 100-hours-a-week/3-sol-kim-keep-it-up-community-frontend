@@ -23,6 +23,12 @@ jobs:
 
             - name: Install dependencies
               run: npm install
+
+            - name: Run application
+              run: |
+                node keepit-up/app.js &
+                sleep 1
+                curl http://localhost:3000
     
     build-and-push-image:
         needs: test
