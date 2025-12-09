@@ -2,6 +2,8 @@
 
 > 목표 달성을 위한 커뮤니티 서비스 **Keepit-Up**의 프론트엔드 레포지토리입니다.
 
+데모 영상: [https://www.notion.so/Keepit-up-2c41c972687480eeb11fd1012561225d?source=copy_link](https://www.notion.so/Keepit-up-2c41c972687480eeb11fd1012561225d?source=copy_link)
+
 ---
 
 ## 📌 프로젝트 개요
