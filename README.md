@@ -4,6 +4,8 @@
 
 데모 영상: [https://www.notion.so/Keepit-up-2c41c972687480eeb11fd1012561225d?source=copy_link](https://www.notion.so/Keepit-up-2c41c972687480eeb11fd1012561225d?source=copy_link)
 
+고민 과정 및 트러블 슈팅: [https://www.notion.so/Keepit-up-2c41c97268748025a76bf956a04baeeb?source=copy_link](https://www.notion.so/Keepit-up-2c41c97268748025a76bf956a04baeeb?source=copy_link)
+
 ---
 
 ## 📌 프로젝트 개요
